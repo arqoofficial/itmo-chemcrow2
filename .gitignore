@@ -2,7 +2,7 @@
 
 # fatsapi-fullstack
 .venv
-.env
+#.env
 
 .vscode/*
 !.vscode/extensions.json
