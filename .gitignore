@@ -1,1 +1,13 @@
 .DS_Store
+
+# fatsapi-fullstack
+.venv
+.vscode
+.env
+
+!.vscode/extensions.json
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
