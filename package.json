@@ -1,5 +1,5 @@
 {
-  "name": "fastapi-full-stack-template",
+  "name": "chemcrow2",
   "private": true,
   "workspaces": [
     "frontend"
