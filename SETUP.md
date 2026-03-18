@@ -58,21 +58,36 @@ cp .env.example .env
 ### Запуск
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
 Docker соберёт и запустит: PostgreSQL, backend (с hot reload), frontend (nginx), Adminer, Mailcatcher.
 
-### Остановка
+### Управление контейнерами
 
 ```bash
-docker compose down
+# Остановить (данные БД сохраняются)
+docker compose stop
+
+# Запустить снова
+docker compose start
+
+# Пересобрать после изменений кода (без предварительного stop/down)
+docker compose up --build -d
 ```
 
-Для полного удаления данных (включая БД):
+> **Не используйте `docker compose down` в повседневной разработке.**
+> `down` удаляет контейнеры и сети. При следующем `up` PostgreSQL может не принять пароль,
+> потому что volume с данными БД остаётся, а пароль применяется только при первой инициализации.
+>
+> Для обычной работы достаточно `docker compose stop` / `start` или просто
+> `docker compose up --build -d` — Docker Compose сам пересоздаст только изменившиеся контейнеры.
+
+Если всё-таки нужен полный сброс окружения (включая данные БД):
 
 ```bash
 docker compose down -v
+docker compose up --build -d
 ```
 
 ### Доступные сервисы
