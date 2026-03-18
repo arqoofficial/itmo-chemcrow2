@@ -1,14 +1,14 @@
 services:
 
   db:
-    image: postgres:18
+    image: postgres:17
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 10s
+      interval: 5s
       retries: 5
-      start_period: 30s
-      timeout: 10s
+      start_period: 10s
+      timeout: 5s
     volumes:
       - app-db-data:/var/lib/postgresql/data/pgdata
     env_file:
