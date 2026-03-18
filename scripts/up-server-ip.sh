@@ -1,2 +1,2 @@
-docker compose -f compose.production-ip.yml up -d --build
-docker compose logs -f
+docker compose -f compose.production.yml up -d --build
+docker compose -f compose.production.yml logs -f
