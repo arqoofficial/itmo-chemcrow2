@@ -1,18 +1,11 @@
-import { FaGithub, FaLinkedinIn } from "react-icons/fa"
-import { FaXTwitter } from "react-icons/fa6"
+import { FaGithub } from "react-icons/fa"
 
 const socialLinks = [
   {
     icon: FaGithub,
-    href: "https://github.com/fastapi/fastapi",
+    href: "https://github.com/arqoofficial/itmo-fastapi-fullstack",
     label: "GitHub",
-  },
-  { icon: FaXTwitter, href: "https://x.com/fastapi", label: "X" },
-  {
-    icon: FaLinkedinIn,
-    href: "https://linkedin.com/company/fastapi",
-    label: "LinkedIn",
-  },
+  }
 ]
 
 export function Footer() {
