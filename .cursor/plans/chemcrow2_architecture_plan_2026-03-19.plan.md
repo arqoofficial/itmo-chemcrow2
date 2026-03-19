@@ -22,7 +22,7 @@ todos:
     status: completed
   - id: phase2-chat-frontend
     content: "Фаза 2.3: Фронтенд страницы чатов (ChatList, ChatWindow, MessageBubble, ToolCallCard)"
-    status: pending
+    status: completed
   - id: phase3-retrosynthesis
     content: "Фаза 3.1: Микросервис ретросинтеза (services/retrosynthesis/) + Celery-задача + GPU Dockerfile"
     status: pending

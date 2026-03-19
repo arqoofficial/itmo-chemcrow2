@@ -18,7 +18,10 @@ import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutMoleculeEditorRouteImport } from './routes/_layout/molecule-editor'
 import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
+import { Route as LayoutChatRouteImport } from './routes/_layout/chat'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutChatIndexRouteImport } from './routes/_layout/chat/index'
+import { Route as LayoutChatConversationIdRouteImport } from './routes/_layout/chat/$conversationId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -64,11 +67,27 @@ const LayoutItemsRoute = LayoutItemsRouteImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutChatRoute = LayoutChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutAdminRoute = LayoutAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutChatIndexRoute = LayoutChatIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutChatRoute,
+} as any)
+const LayoutChatConversationIdRoute =
+  LayoutChatConversationIdRouteImport.update({
+    id: '/$conversationId',
+    path: '/$conversationId',
+    getParentRoute: () => LayoutChatRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof LayoutIndexRoute
@@ -77,9 +96,12 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
+  '/chat': typeof LayoutChatRouteWithChildren
   '/items': typeof LayoutItemsRoute
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
+  '/chat/': typeof LayoutChatIndexRoute
+  '/chat/$conversationId': typeof LayoutChatConversationIdRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -91,6 +113,8 @@ export interface FileRoutesByTo {
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
+  '/chat': typeof LayoutChatIndexRoute
+  '/chat/$conversationId': typeof LayoutChatConversationIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -100,10 +124,13 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
+  '/_layout/chat': typeof LayoutChatRouteWithChildren
   '/_layout/items': typeof LayoutItemsRoute
   '/_layout/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
+  '/_layout/chat/': typeof LayoutChatIndexRoute
+  '/_layout/chat/$conversationId': typeof LayoutChatConversationIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,9 +141,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
+    | '/chat'
     | '/items'
     | '/molecule-editor'
     | '/settings'
+    | '/chat/'
+    | '/chat/$conversationId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -128,6 +158,8 @@ export interface FileRouteTypes {
     | '/molecule-editor'
     | '/settings'
     | '/'
+    | '/chat'
+    | '/chat/$conversationId'
   id:
     | '__root__'
     | '/_layout'
@@ -136,10 +168,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/_layout/admin'
+    | '/_layout/chat'
     | '/_layout/items'
     | '/_layout/molecule-editor'
     | '/_layout/settings'
     | '/_layout/'
+    | '/_layout/chat/'
+    | '/_layout/chat/$conversationId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/chat': {
+      id: '/_layout/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof LayoutChatRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/admin': {
       id: '/_layout/admin'
       path: '/admin'
@@ -222,11 +264,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/chat/': {
+      id: '/_layout/chat/'
+      path: '/'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof LayoutChatIndexRouteImport
+      parentRoute: typeof LayoutChatRoute
+    }
+    '/_layout/chat/$conversationId': {
+      id: '/_layout/chat/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/chat/$conversationId'
+      preLoaderRoute: typeof LayoutChatConversationIdRouteImport
+      parentRoute: typeof LayoutChatRoute
+    }
   }
 }
 
+interface LayoutChatRouteChildren {
+  LayoutChatIndexRoute: typeof LayoutChatIndexRoute
+  LayoutChatConversationIdRoute: typeof LayoutChatConversationIdRoute
+}
+
+const LayoutChatRouteChildren: LayoutChatRouteChildren = {
+  LayoutChatIndexRoute: LayoutChatIndexRoute,
+  LayoutChatConversationIdRoute: LayoutChatConversationIdRoute,
+}
+
+const LayoutChatRouteWithChildren = LayoutChatRoute._addFileChildren(
+  LayoutChatRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
+  LayoutChatRoute: typeof LayoutChatRouteWithChildren
   LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutMoleculeEditorRoute: typeof LayoutMoleculeEditorRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
@@ -235,6 +306,7 @@ interface LayoutRouteChildren {
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
+  LayoutChatRoute: LayoutChatRouteWithChildren,
   LayoutItemsRoute: LayoutItemsRoute,
   LayoutMoleculeEditorRoute: LayoutMoleculeEditorRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,

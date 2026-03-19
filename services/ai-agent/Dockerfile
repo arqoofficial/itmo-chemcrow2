@@ -1,5 +1,7 @@
 FROM python:3.11-slim
 
+COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
+
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -7,9 +9,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY services/ai-agent/pyproject.toml .
-RUN pip install --no-cache-dir .
-
 COPY services/ai-agent/app ./app
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system .
 
 EXPOSE 8100
 
