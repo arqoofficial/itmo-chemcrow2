@@ -7,7 +7,7 @@ todos:
     status: completed
   - id: phase1-models
     content: "Фаза 1.2: Расширить models.py (Conversation, ChatMessage, TaskJob) + Alembic-миграции"
-    status: pending
+    status: completed
   - id: phase1-sse
     content: "Фаза 1.3: Реализовать SSE-эндпоинты для real-time обновлений задач"
     status: pending
