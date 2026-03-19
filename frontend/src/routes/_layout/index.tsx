@@ -81,7 +81,7 @@ function Dashboard() {
               Мы — команда хакатона{" "}
               <span className="font-semibold text-foreground">ITMO</span>,
               создавшая <span className="font-semibold text-emerald-400">ChemCrow2</span> —
-              интеллектуальный агентный ассистент для химиков.
+              интеллектуальный агентный ассистент для химиков нового поколения.
               Приложение помогает специалистам в лабораторной работе: от поиска
               информации о соединениях до прогнозирования свойств молекул и
               планирования синтеза.
@@ -137,14 +137,15 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Images section — constrained to same width as hero above */}
-      <div className="flex items-center gap-4 overflow-hidden">
-        {/* Left — hackathon photo, fills available space, natural aspect */}
-        <div className="flex-1 min-w-0 h-[360px] overflow-hidden rounded-2xl border shadow-md">
+      {/* Images section — overflow-hidden on outer div clips to hero width */}
+      <div className="overflow-hidden">
+      <div className="flex items-center gap-4">
+        {/* Left — hackathon photo, natural aspect ratio, height fixed */}
+        <div className="flex-shrink-0 h-[360px] overflow-hidden rounded-2xl border shadow-md">
           <img
             src={itmoHackathon}
             alt="ITMO Hackathon"
-            className="h-full w-auto max-w-full block"
+            className="h-full w-auto block"
           />
         </div>
 
@@ -160,6 +161,7 @@ function Dashboard() {
             className="h-full w-full object-cover"
           />
         </div>
+      </div>
       </div>
     </div>
   )
