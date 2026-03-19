@@ -49,10 +49,21 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const queryClient = useQueryClient()
   const bottomRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const pollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
   const [localMessages, setLocalMessages] = useState<ChatMessagePublic[]>([])
   const [pendingToolCalls, setPendingToolCalls] = useState<ToolCallInfo[]>([])
   const [sseEnabled, setSseEnabled] = useState(false)
+  const [isRecovering, setIsRecovering] = useState(false)
+  const messageCountBeforeSend = useRef(0)
+
+  const stopPolling = useCallback(() => {
+    if (pollTimerRef.current) {
+      clearInterval(pollTimerRef.current)
+      pollTimerRef.current = null
+    }
+    setIsRecovering(false)
+  }, [])
 
   const { data, isLoading } = useQuery({
     queryKey: ["messages", conversationId],
@@ -64,10 +75,30 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   })
 
   useEffect(() => {
+    setLocalMessages([])
+    setPendingToolCalls([])
+    stopPolling()
+  }, [conversationId, stopPolling])
+
+  useEffect(() => {
+    return () => stopPolling()
+  }, [stopPolling])
+
+  useEffect(() => {
     if (data?.data) {
-      setLocalMessages(data.data)
+      setLocalMessages((prev) => {
+        const serverIds = new Set(data.data.map((m) => m.id))
+        const localOnly = prev.filter(
+          (m) => m.id && !serverIds.has(m.id),
+        )
+        if (localOnly.length === 0) return data.data
+        return [...data.data, ...localOnly]
+      })
+      if (isRecovering && data.data.length > messageCountBeforeSend.current) {
+        stopPolling()
+      }
     }
-  }, [data])
+  }, [data, isRecovering, stopPolling])
 
   const scrollToBottom = useCallback(() => {
     requestAnimationFrame(() =>
@@ -85,10 +116,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       })
       setPendingToolCalls([])
       setSseEnabled(false)
+      stopPolling()
       queryClient.invalidateQueries({ queryKey: ["messages", conversationId] })
       queryClient.invalidateQueries({ queryKey: ["conversations"] })
     },
-    [conversationId, queryClient],
+    [conversationId, queryClient, stopPolling],
   )
 
   const handleToolCall = useCallback((tc: ToolCallInfo) => {
@@ -98,11 +130,24 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const handleError = useCallback(
     (_err: string) => {
       setSseEnabled(false)
+      setIsRecovering(true)
       queryClient.invalidateQueries({
         queryKey: ["messages", conversationId],
       })
+
+      if (pollTimerRef.current) return
+      let attempts = 0
+      pollTimerRef.current = setInterval(() => {
+        attempts++
+        queryClient.invalidateQueries({
+          queryKey: ["messages", conversationId],
+        })
+        if (attempts >= 15) {
+          stopPolling()
+        }
+      }, 2000)
     },
-    [conversationId, queryClient],
+    [conversationId, queryClient, stopPolling],
   )
 
   const { streamingState, streamingContent } = useConversationSSE({
@@ -124,6 +169,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         if (prev.some((m) => m.id === userMsg.id)) return prev
         return [...prev, userMsg]
       })
+      messageCountBeforeSend.current = localMessages.length + 1
       setSseEnabled(true)
     },
   })
@@ -137,6 +183,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const isWaiting: boolean =
     sendMutation.isPending ||
+    isRecovering ||
     (["connecting", "thinking", "streaming"] as StreamingState[]).includes(
       streamingState,
     )
@@ -167,7 +214,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               </div>
             ))}
 
-            {streamingState === "thinking" && <ThinkingIndicator />}
+            {(streamingState === "thinking" || isRecovering) && (
+              <ThinkingIndicator />
+            )}
 
             {streamingState === "streaming" && streamingContent && (
               <StreamingBubble content={streamingContent} />

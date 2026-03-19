@@ -80,9 +80,11 @@ export function useConversationSSE({
                 setStreamingContent((prev) => prev + (data.content ?? ""))
                 break
               case "message":
-                setStreamingState("idle")
-                setStreamingContent("")
-                callbacksRef.current.onMessage?.(data as ChatMessagePublic)
+                if (data.id && data.content != null) {
+                  setStreamingState("idle")
+                  setStreamingContent("")
+                  callbacksRef.current.onMessage?.(data as ChatMessagePublic)
+                }
                 break
               case "tool_call":
                 callbacksRef.current.onToolCall?.(data as ToolCallInfo)
@@ -97,12 +99,16 @@ export function useConversationSSE({
           }
         },
         onerror: (err) => {
-          if (ctrl.signal.aborted) return
-          console.error("SSE error:", err)
           setStreamingState("idle")
-          callbacksRef.current.onError?.("Connection lost")
+          if (!ctrl.signal.aborted) {
+            console.error("SSE error:", err)
+            callbacksRef.current.onError?.("Connection lost")
+          }
+          throw err
         },
         openWhenHidden: true,
+      }).catch(() => {
+        /* error already handled in onerror / onError callback */
       })
     })
   }, [conversationId])
