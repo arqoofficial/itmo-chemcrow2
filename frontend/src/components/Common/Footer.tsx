@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react"
 const socialLinks = [
   {
     icon: FaGithub,
-    href: "https://github.com/arqoofficial/itmo-fastapi-fullstack",
+    href: "https://github.com/arqoofficial/itmo-chemcrow2",
     label: "GitHub",
   },
 ]
