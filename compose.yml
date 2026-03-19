@@ -92,6 +92,7 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
       - SMTP_HOST=mailcatcher
       - SMTP_PORT=1025
       - SMTP_TLS=false
@@ -131,6 +132,37 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
+
+  ai-agent:
+    build:
+      context: .
+      dockerfile: services/ai-agent/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8100:8100"
+    depends_on:
+      redis:
+        condition: service_healthy
+    develop:
+      watch:
+        - path: ./services/ai-agent
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/ai-agent/pyproject.toml
+          action: rebuild
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - BACKEND_URL=http://backend:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   mailcatcher:
     image: schickling/mailcatcher
