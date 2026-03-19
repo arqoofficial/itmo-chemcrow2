@@ -18,9 +18,12 @@ class Settings(BaseSettings):
 
     # LLM providers
     OPENAI_API_KEY: str = ""
-    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_MODEL: str = "gpt-4-turbo"
+    OPENAI_BASE_URL: str = ""
+
     ANTHROPIC_API_KEY: str = ""
     ANTHROPIC_MODEL: str = "claude-sonnet-4-20250514"
+    ANTHROPIC_BASE_URL: str = ""
 
     DEFAULT_LLM_PROVIDER: Literal["openai", "anthropic"] = "openai"
 

@@ -4,6 +4,7 @@ import { useMemo } from "react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import type { ChatMessagePublic, ToolCallInfo } from "@/client/chatTypes"
 import { cn } from "@/lib/utils"
+import { MarkdownContent } from "./MarkdownContent"
 import { ToolCallCard } from "./ToolCallCard"
 
 interface MessageBubbleProps {
@@ -56,7 +57,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
               : "bg-muted rounded-tl-sm",
           )}
         >
-          <p className="whitespace-pre-wrap break-words">{message.content}</p>
+          {isUser ? (
+            <p className="whitespace-pre-wrap break-words">{message.content}</p>
+          ) : (
+            <MarkdownContent content={message.content} />
+          )}
         </div>
 
         {toolCalls.length > 0 && (

@@ -9,6 +9,7 @@ import {
   useConversationSSE,
 } from "@/hooks/useConversationSSE"
 import { ChatInput } from "./ChatInput"
+import { MarkdownContent } from "./MarkdownContent"
 import { MessageBubble } from "./MessageBubble"
 import { ToolCallCard } from "./ToolCallCard"
 
@@ -37,7 +38,7 @@ function StreamingBubble({ content }: { content: string }) {
         <Bot className="h-4 w-4 text-white" />
       </div>
       <div className="max-w-[75%] rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5 text-sm leading-relaxed">
-        <p className="whitespace-pre-wrap break-words">{content}</p>
+        <MarkdownContent content={content} />
         <span className="inline-block h-4 w-1.5 animate-pulse bg-foreground/60" />
       </div>
     </div>
