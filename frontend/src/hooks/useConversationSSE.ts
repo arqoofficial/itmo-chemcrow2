@@ -30,12 +30,34 @@ export function useConversationSSE({
   const callbacksRef = useRef({ onMessage, onToolCall, onError })
   callbacksRef.current = { onMessage, onToolCall, onError }
 
+  const contentRef = useRef("")
+  const rafRef = useRef<number | null>(null)
+
+  const flushContent = useCallback(() => {
+    setStreamingContent(contentRef.current)
+    rafRef.current = null
+  }, [])
+
+  const scheduleFlush = useCallback(() => {
+    if (rafRef.current === null) {
+      rafRef.current = requestAnimationFrame(flushContent)
+    }
+  }, [flushContent])
+
+  const cancelFlush = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+    }
+  }, [])
+
   const connect = useCallback(() => {
     if (abortRef.current) abortRef.current.abort()
 
     const ctrl = new AbortController()
     abortRef.current = ctrl
     setStreamingState("connecting")
+    contentRef.current = ""
     setStreamingContent("")
 
     const base = OpenAPI.BASE || ""
@@ -77,10 +99,13 @@ export function useConversationSSE({
                 break
               case "token":
                 setStreamingState("streaming")
-                setStreamingContent((prev) => prev + (data.content ?? ""))
+                contentRef.current += data.content ?? ""
+                scheduleFlush()
                 break
               case "message":
                 if (data.id && data.content != null) {
+                  cancelFlush()
+                  contentRef.current = ""
                   setStreamingState("idle")
                   setStreamingContent("")
                   callbacksRef.current.onMessage?.(data as ChatMessagePublic)
@@ -111,14 +136,16 @@ export function useConversationSSE({
         /* error already handled in onerror / onError callback */
       })
     })
-  }, [conversationId])
+  }, [conversationId, scheduleFlush, cancelFlush])
 
   const disconnect = useCallback(() => {
+    cancelFlush()
     abortRef.current?.abort()
     abortRef.current = null
+    contentRef.current = ""
     setStreamingState("idle")
     setStreamingContent("")
-  }, [])
+  }, [cancelFlush])
 
   useEffect(() => {
     if (enabled && conversationId) {

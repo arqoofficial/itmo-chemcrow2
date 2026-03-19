@@ -96,8 +96,8 @@ async def task_events(
 
                     if status in ("completed", "failed"):
                         break
-
-                await asyncio.sleep(0.1)
+                else:
+                    await asyncio.sleep(0.01)
         except asyncio.CancelledError:
             logger.debug("SSE stream cancelled for task %s", task_id)
             raise
@@ -167,8 +167,8 @@ async def conversation_events(
                         "event": event_name,
                         "data": json.dumps(parsed),
                     }
-
-                await asyncio.sleep(0.1)
+                else:
+                    await asyncio.sleep(0.01)
         except asyncio.CancelledError:
             logger.debug(
                 "SSE stream cancelled for conversation %s", conversation_id
