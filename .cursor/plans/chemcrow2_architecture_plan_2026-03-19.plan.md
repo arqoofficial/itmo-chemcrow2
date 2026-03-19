@@ -13,7 +13,7 @@ todos:
     status: completed
   - id: phase1-task-api
     content: "Фаза 1.4: API для задач (POST создание, GET статус, GET результат, SSE подписка)"
-    status: pending
+    status: completed
   - id: phase2-ai-agent
     content: "Фаза 2.1: Создать сервис AI-агентов (services/ai-agent/) с LangGraph + LLM providers"
     status: pending
