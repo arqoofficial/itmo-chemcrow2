@@ -1,13 +1,12 @@
+"""Tool registry — temporary minimal version until Task 10 rewrites this."""
 from __future__ import annotations
 
 from langchain.tools import BaseTool
 
-from app.tools.literature_search import literature_search
-from app.tools.property_prediction import predict_properties
-from app.tools.retrosynthesis import retrosynthesis
+from app.tools.rdkit_tools import func_groups, mol_similarity, smiles2weight
 
 ALL_TOOLS: list[BaseTool] = [
-    predict_properties,
-    retrosynthesis,
-    literature_search,
+    smiles2weight,
+    mol_similarity,
+    func_groups,
 ]
