@@ -28,6 +28,7 @@ const technologies = [
   { name: "TanStack Router", category: "frontend" },
   { name: "PostgreSQL", category: "backend" },
   { name: "Docker", category: "infra" },
+  { name: "Cursor", category: "ai" },
   { name: "Tailwind CSS", category: "frontend" },
 ]
 
@@ -137,15 +138,13 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Images section — overflow-hidden on outer div clips to hero width */}
-      <div className="overflow-hidden">
+      {/* Images section — flex distributes width in 1722:670 ratio keeping both images the same height */}
       <div className="flex items-center gap-4">
-        {/* Left — hackathon photo, natural aspect ratio, height fixed */}
-        <div className="flex-shrink-0 h-[360px] overflow-hidden rounded-2xl border shadow-md">
+        <div className="flex-[1722] min-w-0 overflow-hidden rounded-2xl border shadow-md aspect-[1722/670]">
           <img
             src={itmoHackathon}
             alt="ITMO Hackathon"
-            className="h-full w-auto block"
+            className="w-full h-full object-cover block"
           />
         </div>
 
@@ -153,15 +152,13 @@ function Dashboard() {
           <span className="text-3xl font-bold text-muted-foreground select-none">+</span>
         </div>
 
-        {/* Right — crow photo, square, same height */}
-        <div className="flex-shrink-0 size-[360px] overflow-hidden rounded-2xl border shadow-md">
+        <div className="flex-[670] min-w-0 overflow-hidden rounded-2xl border shadow-md aspect-square">
           <img
             src={chemcrowImg}
             alt="ChemCrow2 Team"
-            className="h-full w-full object-cover"
+            className="w-full h-full object-cover block"
           />
         </div>
-      </div>
       </div>
     </div>
   )

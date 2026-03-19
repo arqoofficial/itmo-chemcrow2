@@ -1,10 +1,8 @@
 import { Link } from "@tanstack/react-router"
 
-import { useTheme } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import chemIcon from "/assets/images/chemcrow2_3.jpg"
-import logo from "/assets/images/fastapi-logo.svg"
-import logoLight from "/assets/images/fastapi-logo-light.svg"
+import chemLogo from "/assets/images/chemcrow2-logo.png"
 
 interface LogoProps {
   variant?: "full" | "icon" | "responsive"
@@ -17,19 +15,14 @@ export function Logo({
   className,
   asLink = true,
 }: LogoProps) {
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === "dark"
-
-  const fullLogo = isDark ? logoLight : logo
-
   const content =
     variant === "responsive" ? (
       <>
         <img
-          src={fullLogo}
+          src={chemLogo}
           alt="ChemCrow2"
           className={cn(
-            "h-6 w-auto group-data-[collapsible=icon]:hidden",
+            "h-8 w-auto rounded-lg group-data-[collapsible=icon]:hidden",
             className,
           )}
         />
@@ -44,7 +37,7 @@ export function Logo({
       </>
     ) : (
       <img
-        src={variant === "full" ? fullLogo : chemIcon}
+        src={variant === "full" ? chemLogo : chemIcon}
         alt="ChemCrow2"
         className={cn(
           variant === "full" ? "h-6 w-auto" : "size-6 rounded-full object-cover",
