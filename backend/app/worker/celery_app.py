@@ -6,6 +6,10 @@ celery_app = Celery(
     "chemcrow2",
     broker=settings.REDIS_URL,
     backend=settings.REDIS_URL,
+    include=[
+        "app.worker.tasks.chat",
+        "app.worker.tasks.example",
+    ],
 )
 
 celery_app.conf.update(
@@ -27,4 +31,4 @@ celery_app.conf.update(
     result_expires=86400,
 )
 
-celery_app.autodiscover_tasks(["app.worker.tasks"])
+celery_app.autodiscover_tasks()

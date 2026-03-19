@@ -21,10 +21,12 @@ logger = logging.getLogger(__name__)
 
 TASK_REGISTRY: dict[str, str] = {
     "example": "tasks.example_long_task",
+    "chat": "tasks.process_chat_message",
 }
 
 TASK_QUEUES: dict[str, str] = {
     "retrosynthesis": "gpu",
+    "chat": "chat",
 }
 
 DEFAULT_QUEUE = "default"
@@ -52,6 +54,27 @@ def dispatch_task(task_job: TaskJob) -> str:
         task_job.id,
         result.id,
         queue,
+    )
+    return result.id
+
+
+def dispatch_chat_task(conversation_id: str, user_id: str) -> str:
+    """
+    Dispatch a chat processing task to the 'chat' Celery queue.
+    Returns the Celery async result ID.
+    """
+    result = celery_app.send_task(
+        "tasks.process_chat_message",
+        kwargs={
+            "conversation_id": conversation_id,
+            "user_id": user_id,
+        },
+        queue="chat",
+    )
+    logger.info(
+        "Dispatched chat task (conversation=%s, celery=%s)",
+        conversation_id,
+        result.id,
     )
     return result.id
 

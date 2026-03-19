@@ -9,7 +9,7 @@ COPY frontend/package.json /app/frontend/
 
 WORKDIR /app/frontend
 
-RUN bun install
+RUN bun install --frozen-lockfile
 
 COPY ./frontend /app/frontend
 ARG VITE_API_URL

@@ -16,13 +16,13 @@ todos:
     status: completed
   - id: phase2-ai-agent
     content: "Фаза 2.1: Создать сервис AI-агентов (services/ai-agent/) с LangGraph + LLM providers"
-    status: pending
+    status: completed
   - id: phase2-chat-backend
     content: "Фаза 2.2: Backend API для чатов (CRUD conversations, messages, streaming через SSE)"
-    status: pending
+    status: completed
   - id: phase2-chat-frontend
     content: "Фаза 2.3: Фронтенд страницы чатов (ChatList, ChatWindow, MessageBubble, ToolCallCard)"
-    status: pending
+    status: completed
   - id: phase3-retrosynthesis
     content: "Фаза 3.1: Микросервис ретросинтеза (services/retrosynthesis/) + Celery-задача + GPU Dockerfile"
     status: pending

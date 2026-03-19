@@ -70,6 +70,9 @@ class Settings(BaseSettings):
 
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    AI_AGENT_URL: str = "http://localhost:8100"
+    AI_AGENT_TIMEOUT: float = 120.0
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587

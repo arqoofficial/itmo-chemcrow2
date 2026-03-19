@@ -66,6 +66,7 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
       interval: 10s
@@ -94,8 +95,28 @@ services:
     environment:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
     deploy:
       replicas: 2
+
+  ai-agent:
+    build:
+      context: .
+      dockerfile: services/ai-agent/Dockerfile
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - BACKEND_URL=http://backend:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
