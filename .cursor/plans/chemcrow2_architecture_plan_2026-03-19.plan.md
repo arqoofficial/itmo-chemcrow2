@@ -10,7 +10,7 @@ todos:
     status: completed
   - id: phase1-sse
     content: "Фаза 1.3: Реализовать SSE-эндпоинты для real-time обновлений задач"
-    status: pending
+    status: completed
   - id: phase1-task-api
     content: "Фаза 1.4: API для задач (POST создание, GET статус, GET результат, SSE подписка)"
     status: pending
