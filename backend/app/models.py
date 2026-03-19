@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 from pydantic import EmailStr
-from sqlalchemy import DateTime
+from sqlalchemy import DateTime, Text
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -54,6 +54,12 @@ class User(UserBase, table=True):
         sa_type=DateTime(timezone=True),  # type: ignore
     )
     items: list["Item"] = Relationship(back_populates="owner", cascade_delete=True)
+    conversations: list["Conversation"] = Relationship(
+        back_populates="user", cascade_delete=True
+    )
+    tasks: list["TaskJob"] = Relationship(
+        back_populates="user", cascade_delete=True
+    )
 
 
 # Properties to return via API, id is always required
@@ -105,6 +111,137 @@ class ItemPublic(ItemBase):
 
 class ItemsPublic(SQLModel):
     data: list[ItemPublic]
+    count: int
+
+
+# --- Conversation models ---
+
+
+class ConversationBase(SQLModel):
+    title: str = Field(max_length=255)
+
+
+class ConversationCreate(ConversationBase):
+    pass
+
+
+class ConversationUpdate(SQLModel):
+    title: str | None = Field(default=None, max_length=255)
+
+
+class Conversation(ConversationBase, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    updated_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    user: User | None = Relationship(back_populates="conversations")
+    messages: list["ChatMessage"] = Relationship(
+        back_populates="conversation", cascade_delete=True
+    )
+
+
+class ConversationPublic(ConversationBase):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+
+
+class ConversationsPublic(SQLModel):
+    data: list[ConversationPublic]
+    count: int
+
+
+# --- ChatMessage models ---
+
+
+class ChatMessageCreate(SQLModel):
+    role: str = Field(max_length=20)
+    content: str
+
+
+class ChatMessage(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    conversation_id: uuid.UUID = Field(
+        foreign_key="conversation.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    role: str = Field(max_length=20)
+    content: str = Field(sa_type=Text())  # type: ignore
+    tool_calls: str | None = Field(default=None, sa_type=Text())  # type: ignore
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    conversation: Conversation | None = Relationship(back_populates="messages")
+
+
+class ChatMessagePublic(SQLModel):
+    id: uuid.UUID
+    conversation_id: uuid.UUID
+    role: str
+    content: str
+    tool_calls: str | None = None
+    created_at: datetime | None = None
+
+
+class ChatMessagesPublic(SQLModel):
+    data: list[ChatMessagePublic]
+    count: int
+
+
+# --- TaskJob models ---
+
+
+class TaskJobCreate(SQLModel):
+    task_type: str = Field(max_length=50)
+    input_data: str
+
+
+class TaskJob(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    user_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE", index=True
+    )
+    task_type: str = Field(max_length=50)
+    status: str = Field(default="pending", max_length=20, index=True)
+    input_data: str = Field(sa_type=Text())  # type: ignore
+    result_data: str | None = Field(default=None, sa_type=Text())  # type: ignore
+    error: str | None = Field(default=None, sa_type=Text())  # type: ignore
+    celery_task_id: str | None = Field(default=None, max_length=255, index=True)
+    created_at: datetime | None = Field(
+        default_factory=get_datetime_utc,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    completed_at: datetime | None = Field(
+        default=None,
+        sa_type=DateTime(timezone=True),  # type: ignore
+    )
+    user: User | None = Relationship(back_populates="tasks")
+
+
+class TaskJobPublic(SQLModel):
+    id: uuid.UUID
+    user_id: uuid.UUID
+    task_type: str
+    status: str
+    input_data: str
+    result_data: str | None = None
+    error: str | None = None
+    celery_task_id: str | None = None
+    created_at: datetime | None = None
+    completed_at: datetime | None = None
+
+
+class TaskJobsPublic(SQLModel):
+    data: list[TaskJobPublic]
     count: int
 
 
