@@ -139,6 +139,98 @@ git checkout -b hotfix/<name>-<task>
 
 Дальше обычный короткий цикл: commit -> push -> PR -> review -> merge.
 
+## Релизы стабильных версий (теги + GitHub UI)
+
+Используем SemVer: `vMAJOR.MINOR.PATCH` (например, `v0.4.0`).
+
+- `PATCH` - багфиксы без изменения API.
+- `MINOR` - новые возможности с обратной совместимостью.
+- `MAJOR` - несовместимые изменения.
+
+### Когда делаем релиз
+
+- В `main` уже влиты проверенные изменения.
+- Проект запускается, базовые проверки проходят.
+- Команда согласовала, что версия стабильна для демо/выдачи.
+
+### Шаги релиза через тег
+
+1) Обновить локальный `main`:
+
+```bash
+git checkout main
+git pull origin main
+```
+
+2) Создать аннотированный тег:
+
+```bash
+git tag -a v0.4.0 -m "Release v0.4.0: Redis + Celery integration"
+```
+
+3) Отправить тег в удаленный репозиторий:
+
+```bash
+git push origin v0.4.0
+```
+
+Альтернатива (отправить все локальные теги):
+
+```bash
+git push origin --tags
+```
+
+### Оформление Release через GitHub веб-интерфейс
+
+1) Откройте `Releases` -> `Draft a new release`.
+2) Выберите или введите тег (например, `v0.4.0`).
+3) Укажите target branch: `main`.
+4) Заполните title: `v0.4.0`.
+5) Добавьте release notes:
+   - ключевые изменения;
+   - исправленные баги;
+   - возможные breaking changes;
+   - как быстро проверить релиз.
+6) Нажмите `Publish release`.
+
+### Мини-шаблон release notes
+
+```md
+## Highlights
+- ...
+
+## Fixes
+- ...
+
+## Breaking changes
+- None
+
+## Quick check
+- [ ] Backend starts
+- [ ] Frontend starts
+- [ ] Core user flow works
+```
+
+### Проверка релиза
+
+```bash
+git fetch --tags
+git tag --list
+git show v0.4.0
+```
+
+### Если ошиблись с тегом (до активного использования)
+
+```bash
+# удалить локально
+git tag -d v0.4.0
+
+# удалить на origin
+git push origin :refs/tags/v0.4.0
+```
+
+После удаления создайте новый корректный тег (например, `v0.4.1`).
+
 ## Что НЕ делаем
 
 - Не работаем в одной общей feature-ветке всей командой.
