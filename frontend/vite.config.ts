@@ -10,6 +10,21 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom", "react/jsx-runtime"],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/ketcher/, /indigo/, /node_modules/],
+      transformMixedEsModules: true,
+    },
+  },
+  optimizeDeps: {
+    include: [
+      "ketcher-react",
+      "ketcher-standalone",
+      "ketcher-core",
+      "indigo-ketcher",
+    ],
   },
   plugins: [
     tanstackRouter({
