@@ -68,6 +68,8 @@ class Settings(BaseSettings):
             path=self.POSTGRES_DB,
         )
 
+    REDIS_URL: str = "redis://localhost:6379/0"
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587

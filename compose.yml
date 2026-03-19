@@ -1,5 +1,18 @@
 services:
 
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
   db:
     image: postgres:17
     restart: unless-stopped
@@ -78,6 +91,7 @@ services:
       - .env
     environment:
       - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
       - SMTP_HOST=mailcatcher
       - SMTP_PORT=1025
       - SMTP_TLS=false
@@ -87,6 +101,36 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  celery-worker:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: celery -A app.worker.celery_app worker -l info -c 2 -Q default,chat
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+    develop:
+      watch:
+        - path: ./backend
+          action: sync
+          target: /app/backend
+          ignore:
+            - ./backend/.venv
+            - .venv
+        - path: ./backend/pyproject.toml
+          action: rebuild
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
 
   mailcatcher:
     image: schickling/mailcatcher
@@ -114,3 +158,4 @@ services:
 
 volumes:
   app-db-data:
+  redis-data:

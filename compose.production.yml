@@ -1,5 +1,16 @@
 services:
 
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
   db:
     image: postgres:17
     restart: always
@@ -54,6 +65,7 @@ services:
       - .env
     environment:
       - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
       interval: 10s
@@ -62,6 +74,28 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+
+  celery-worker:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: always
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: celery -A app.worker.celery_app worker -l info -c 4 -Q default,chat
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
+    deploy:
+      replicas: 2
 
   frontend:
     image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
@@ -82,3 +116,4 @@ services:
 
 volumes:
   app-db-data:
+  redis-data:
