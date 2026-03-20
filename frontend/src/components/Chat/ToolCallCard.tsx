@@ -18,7 +18,7 @@ export function ToolCallCard({ toolCall }: ToolCallCardProps) {
   const status = toolCall.status ?? "completed"
 
   return (
-    <Card className="my-2 overflow-hidden border-muted bg-muted/30 p-0">
+    <Card className="my-2 overflow-hidden border-muted bg-muted/30 p-0" data-testid="tool-call-card">
       <div className="flex items-center gap-2 border-b border-muted px-3 py-2">
         {statusIcon[status]}
         <span className="text-xs font-medium">{toolCall.name}</span>
