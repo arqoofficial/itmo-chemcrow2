@@ -50,6 +50,14 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           isUser ? "items-end" : "items-start",
         )}
       >
+        {toolCalls.length > 0 && (
+          <div className="w-full space-y-1">
+            {toolCalls.map((tc, i) => (
+              <ToolCallCard key={`${tc.name}-${i}`} toolCall={tc} />
+            ))}
+          </div>
+        )}
+
         <div
           className={cn(
             "rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
@@ -64,14 +72,6 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             <MarkdownContent content={message.content} />
           )}
         </div>
-
-        {toolCalls.length > 0 && (
-          <div className="w-full space-y-1">
-            {toolCalls.map((tc, i) => (
-              <ToolCallCard key={`${tc.name}-${i}`} toolCall={tc} />
-            ))}
-          </div>
-        )}
 
         {message.created_at && (
           <span className="px-1 text-[10px] text-muted-foreground">

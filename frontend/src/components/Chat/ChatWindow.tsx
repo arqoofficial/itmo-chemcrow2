@@ -18,29 +18,53 @@ interface ChatWindowProps {
   conversationId: string
 }
 
-function ThinkingIndicator() {
-  return (
-    <div className="flex items-center gap-3 px-4 py-3">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600">
-        <Bot className="h-4 w-4 text-white" />
-      </div>
-      <div className="flex items-center gap-2 rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5">
-        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Думаю…</span>
-      </div>
-    </div>
-  )
-}
-
-function StreamingBubble({ content }: { content: string }) {
+function ThinkingIndicator({ toolCalls = [] }: { toolCalls?: ToolCallInfo[] }) {
   return (
     <div className="flex gap-3 px-4 py-3">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600">
         <Bot className="h-4 w-4 text-white" />
       </div>
-      <div className="max-w-[75%] rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5 text-sm leading-relaxed">
-        <MarkdownContent content={content} />
-        <span className="inline-block h-4 w-1.5 animate-pulse bg-foreground/60" />
+      <div className="flex max-w-[75%] flex-col gap-2">
+        {toolCalls.length > 0 && (
+          <div className="w-full">
+            {toolCalls.map((tc, i) => (
+              <ToolCallCard key={`${tc.name}-${JSON.stringify(tc.args)}-${i}`} toolCall={tc} />
+            ))}
+          </div>
+        )}
+        <div className="flex items-center gap-2 rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">Думаю…</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function StreamingBubble({
+  content,
+  toolCalls = [],
+}: {
+  content: string
+  toolCalls?: ToolCallInfo[]
+}) {
+  return (
+    <div className="flex gap-3 px-4 py-3">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600">
+        <Bot className="h-4 w-4 text-white" />
+      </div>
+      <div className="flex max-w-[75%] flex-col gap-2">
+        {toolCalls.length > 0 && (
+          <div className="w-full">
+            {toolCalls.map((tc, i) => (
+              <ToolCallCard key={`${tc.name}-${JSON.stringify(tc.args)}-${i}`} toolCall={tc} />
+            ))}
+          </div>
+        )}
+        <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5 text-sm leading-relaxed">
+          <MarkdownContent content={content} />
+          <span className="inline-block h-4 w-1.5 animate-pulse bg-foreground/60" />
+        </div>
       </div>
     </div>
   )
@@ -109,7 +133,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     )
   }, [])
 
-  useEffect(scrollToBottom, [localMessages, scrollToBottom])
+  useEffect(scrollToBottom, [localMessages, pendingToolCalls, scrollToBottom])
 
   const handleSSEMessage = useCallback(
     (msg: ChatMessagePublic) => {
@@ -127,7 +151,18 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   )
 
   const handleToolCall = useCallback((tc: ToolCallInfo) => {
-    setPendingToolCalls((prev) => [...prev, tc])
+    setPendingToolCalls((prev) => {
+      const tcKey = `${tc.name}:${JSON.stringify(tc.args)}`
+      const existingIndex = prev.findIndex(
+        (item) => `${item.name}:${JSON.stringify(item.args)}` === tcKey,
+      )
+
+      if (existingIndex === -1) return [...prev, tc]
+
+      const next = [...prev]
+      next[existingIndex] = { ...next[existingIndex], ...tc }
+      return next
+    })
   }, [])
 
   const handleHazards = useCallback((chemicals: HazardChemical[]) => {
@@ -217,18 +252,15 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
               <MessageBubble key={msg.id} message={msg} />
             ))}
 
-            {pendingToolCalls.map((tc, i) => (
-              <div key={`tc-${i}`} className="px-4">
-                <ToolCallCard toolCall={tc} />
-              </div>
-            ))}
-
             {(streamingState === "thinking" || isRecovering) && (
-              <ThinkingIndicator />
+              <ThinkingIndicator toolCalls={pendingToolCalls} />
             )}
 
             {streamingState === "streaming" && streamingContent && (
-              <StreamingBubble content={streamingContent} />
+              <StreamingBubble
+                content={streamingContent}
+                toolCalls={pendingToolCalls}
+              />
             )}
 
             <div ref={bottomRef} />
