@@ -37,6 +37,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "form-data": "4.0.5",
+    "highlight.js": "^11.11.1",
     "ketcher-core": "^3.12.0",
     "ketcher-react": "^3.12.0",
     "ketcher-standalone": "^3.12.0",
