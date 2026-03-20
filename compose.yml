@@ -164,6 +164,28 @@ services:
       timeout: 5s
       retries: 5
 
+  reaction-predict:
+    image: doncamilom/rxnpred:latest
+    restart: unless-stopped
+    ports:
+      - "8051:8051"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8051/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  retrosynthesis:
+    image: doncamilom/retrosynthesis:latest
+    restart: unless-stopped
+    ports:
+      - "8052:8052"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8052/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   mailcatcher:
     image: schickling/mailcatcher
     restart: unless-stopped
