@@ -43,6 +43,17 @@ export default defineConfig({
       dependencies: ['setup'],
     },
 
+    {
+      name: 'chat',
+      testMatch: /chat\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      timeout: 300_000,
+      dependencies: ['setup'],
+    },
+
     // {
     //   name: 'firefox',
     //   use: {
