@@ -100,8 +100,8 @@ export interface FileRoutesByFullPath {
   '/items': typeof LayoutItemsRoute
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
-  '/chat/': typeof LayoutChatIndexRoute
   '/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/chat/': typeof LayoutChatIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -113,8 +113,8 @@ export interface FileRoutesByTo {
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
-  '/chat': typeof LayoutChatIndexRoute
   '/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/chat': typeof LayoutChatIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -129,8 +129,8 @@ export interface FileRoutesById {
   '/_layout/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/_layout/settings': typeof LayoutSettingsRoute
   '/_layout/': typeof LayoutIndexRoute
-  '/_layout/chat/': typeof LayoutChatIndexRoute
   '/_layout/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/_layout/chat/': typeof LayoutChatIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -145,8 +145,8 @@ export interface FileRouteTypes {
     | '/items'
     | '/molecule-editor'
     | '/settings'
-    | '/chat/'
     | '/chat/$conversationId'
+    | '/chat/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -158,8 +158,8 @@ export interface FileRouteTypes {
     | '/molecule-editor'
     | '/settings'
     | '/'
-    | '/chat'
     | '/chat/$conversationId'
+    | '/chat'
   id:
     | '__root__'
     | '/_layout'
@@ -173,8 +173,8 @@ export interface FileRouteTypes {
     | '/_layout/molecule-editor'
     | '/_layout/settings'
     | '/_layout/'
-    | '/_layout/chat/'
     | '/_layout/chat/$conversationId'
+    | '/_layout/chat/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -282,13 +282,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface LayoutChatRouteChildren {
-  LayoutChatIndexRoute: typeof LayoutChatIndexRoute
   LayoutChatConversationIdRoute: typeof LayoutChatConversationIdRoute
+  LayoutChatIndexRoute: typeof LayoutChatIndexRoute
 }
 
 const LayoutChatRouteChildren: LayoutChatRouteChildren = {
-  LayoutChatIndexRoute: LayoutChatIndexRoute,
   LayoutChatConversationIdRoute: LayoutChatConversationIdRoute,
+  LayoutChatIndexRoute: LayoutChatIndexRoute,
 }
 
 const LayoutChatRouteWithChildren = LayoutChatRoute._addFileChildren(
