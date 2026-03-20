@@ -145,8 +145,8 @@ def _process_sync(
     bind=True,
     name="tasks.process_chat_message",
     queue="chat",
-    soft_time_limit=120,
-    time_limit=150,
+    soft_time_limit=settings.CHAT_TASK_SOFT_TIME_LIMIT,
+    time_limit=settings.CHAT_TASK_HARD_TIME_LIMIT,
 )
 def process_chat_message(
     self,

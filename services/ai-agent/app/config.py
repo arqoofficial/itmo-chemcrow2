@@ -30,6 +30,15 @@ class Settings(BaseSettings):
     # Internal service URLs
     BACKEND_URL: str = "http://backend:8000"
 
+    # Optional tool API keys
+    SERP_API_KEY: str = ""
+    CHEMSPACE_API_KEY: str = ""
+    SEMANTIC_SCHOLAR_API_KEY: str = ""
+
+    # Reaction containers
+    REACTION_PREDICT_URL: str = "http://reaction-predict:8051"
+    RETROSYNTHESIS_URL: str = "http://retrosynthesis:8052"
+
     # Agent limits
     AGENT_MAX_ITERATIONS: int = 10
     AGENT_TIMEOUT_SECONDS: int = 120

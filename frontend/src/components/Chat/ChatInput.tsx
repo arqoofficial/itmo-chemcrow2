@@ -54,12 +54,14 @@ export function ChatInput({
             disabled={disabled}
             rows={1}
             className="w-full resize-none rounded-xl border bg-muted/50 px-4 py-3 pr-12 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+            data-testid="chat-input"
           />
           <Button
             size="icon"
             className="absolute right-2 bottom-2 h-7 w-7 rounded-lg"
             onClick={handleSubmit}
             disabled={disabled || !value.trim()}
+            data-testid="chat-send-button"
           >
             <ArrowUp className="h-4 w-4" />
           </Button>
