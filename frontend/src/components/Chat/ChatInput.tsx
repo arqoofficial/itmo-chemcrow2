@@ -43,8 +43,8 @@ export function ChatInput({
 
   return (
     <div className="border-t bg-background p-4">
-      <div className="mx-auto flex max-w-3xl items-end gap-2">
-        <div className="relative flex-1">
+      <div className="mx-auto flex max-w-3xl items-center gap-2">
+        <div className="flex-1">
           <textarea
             ref={textareaRef}
             value={value}
@@ -53,19 +53,19 @@ export function ChatInput({
             placeholder={placeholder}
             disabled={disabled}
             rows={1}
-            className="w-full resize-none rounded-xl border bg-muted/50 px-4 py-3 pr-12 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full resize-none rounded-xl border bg-muted/50 px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary disabled:cursor-not-allowed disabled:opacity-50"
             data-testid="chat-input"
           />
-          <Button
-            size="icon"
-            className="absolute right-2 bottom-2 h-7 w-7 rounded-lg"
-            onClick={handleSubmit}
-            disabled={disabled || !value.trim()}
-            data-testid="chat-send-button"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </Button>
         </div>
+        <Button
+          size="icon"
+          className="h-9 w-9 shrink-0 rounded-lg"
+          onClick={handleSubmit}
+          disabled={disabled || !value.trim()}
+          data-testid="chat-send-button"
+        >
+          <ArrowUp className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   )
