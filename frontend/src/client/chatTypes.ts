@@ -50,6 +50,18 @@ export type ToolCallInfo = {
   status?: "running" | "completed" | "failed"
 }
 
+export type HazardChemical = {
+  id: string
+  names: string[]
+  iupac: string
+  cas: string
+  severity: "critical" | "high" | "medium"
+  hazard_categories: string[]
+  safety_warnings: string[]
+  pkkn_list: "potent" | "poisonous"
+  description: string
+}
+
 export type SSEEvent =
   | { event: "connected"; data: { conversation_id: string } }
   | { event: "thinking"; data: Record<string, unknown> }
@@ -67,4 +79,5 @@ export type SSEEvent =
       data: { content: string }
     }
   | { event: "tool_call"; data: ToolCallInfo }
+  | { event: "hazards"; data: { chemicals: HazardChemical[] } }
   | { event: "error"; data: { detail: string } }

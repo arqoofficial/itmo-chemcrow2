@@ -1,0 +1,884 @@
+{
+  "allobarbital": {
+    "smiles": "C=CCC1(CC=C)C(=O)NC(=O)NC1=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "52-43-7"
+  },
+  "barbital": {
+    "smiles": "CCC1(CC)C(=O)NC(=O)NC1=O",
+    "iupac": "5,5-diethyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C8H12N2O3",
+    "cas": "57-44-3"
+  },
+  "benzobarbital": {
+    "smiles": "CCC1(C(=O)NC(=O)N(C(=O)c2ccccc2)C1=O)c3ccccc3",
+    "iupac": "1-benzoyl-5-ethyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C19H16N2O4",
+    "cas": "744-80-9"
+  },
+  "butalbital": {
+    "smiles": "CC(C)CC1(CC=C)C(=O)NC(=O)NC1=O",
+    "iupac": "5-(2-methylpropyl)-5-prop-2-enyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C11H16N2O3",
+    "cas": "77-26-9"
+  },
+  "butobarbital": {
+    "smiles": "CCCCC1(CC)C(=O)NC(=O)NC1=O",
+    "iupac": "5-butyl-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C10H16N2O3",
+    "cas": "77-28-1"
+  },
+  "vinylbital": {
+    "smiles": "CCCC(C)C1(C=C)C(=O)NC(=O)NC1=O",
+    "iupac": "5-ethenyl-5-pentan-2-yl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C11H16N2O3",
+    "cas": "2430-49-1"
+  },
+  "hexobarbital": {
+    "smiles": "CN1C(=O)NC(=O)C(C)(C1=O)C2=CCCCC2",
+    "iupac": "5-(cyclohexen-1-yl)-1,5-dimethyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C12H16N2O3",
+    "cas": "56-29-1"
+  },
+  "mephobarbital": {
+    "smiles": "CCC1(C(=O)NC(=O)N(C)C1=O)c2ccccc2",
+    "iupac": "5-ethyl-1-methyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C13H14N2O3",
+    "cas": "115-38-8"
+  },
+  "methyprylon": {
+    "smiles": "CCC1(CC)C(=O)NCC(C)C1=O",
+    "iupac": "3,3-diethyl-5-methylpiperidine-2,4-dione",
+    "molecular_formula": "C10H17NO2",
+    "cas": "125-64-4"
+  },
+  "butabarbital": {
+    "smiles": "CCC(C)C1(CC)C(=O)NC(=O)NC1=O",
+    "iupac": "5-butan-2-yl-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C10H16N2O3",
+    "cas": "125-40-6"
+  },
+  "secobarbital": {
+    "smiles": "CCCC(C)C1(CC=C)C(=O)NC(=O)NC1=O",
+    "iupac": "5-pentan-2-yl-5-prop-2-enyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C12H18N2O3",
+    "cas": "76-73-3"
+  },
+  "thiopental": {
+    "smiles": "CCCC(C)C1(CC)C(=O)NC(=S)NC1=O",
+    "iupac": "5-ethyl-5-pentan-2-yl-2-sulfanylidene-1,3-diazinane-4,6-dione",
+    "molecular_formula": "C11H18N2O2S",
+    "cas": "76-75-5"
+  },
+  "phenobarbital": {
+    "smiles": "CCC1(C(=O)NC(=O)NC1=O)c2ccccc2",
+    "iupac": "5-ethyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C12H12N2O3",
+    "cas": "50-06-6"
+  },
+  "cyclobarbital": {
+    "smiles": "CCC1(C(=O)NC(=O)NC1=O)C2=CCCCC2",
+    "iupac": "5-(cyclohexen-1-yl)-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "molecular_formula": "C12H16N2O3",
+    "cas": "52-31-3"
+  },
+  "ethinamate": {
+    "smiles": "NC(=O)OC1(CCCCC1)C#C",
+    "iupac": "(1-ethynylcyclohexyl) carbamate",
+    "molecular_formula": "C9H13NO2",
+    "cas": "126-52-3"
+  },
+  "ethchlorvynol": {
+    "smiles": "CCC(O)(\\C=C\\Cl)C#C",
+    "iupac": "(E)-1-chloro-3-ethylpent-1-en-4-yn-3-ol",
+    "molecular_formula": "C7H9ClO",
+    "cas": "113-18-8"
+  },
+  "bromazepam": {
+    "smiles": "Brc1ccc2NC(=O)CN=C(c3ccccn3)c2c1",
+    "iupac": "7-bromo-5-pyridin-2-yl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C14H10BrN3O",
+    "cas": "1812-30-2"
+  },
+  "brotizolam": {
+    "smiles": "Cc1nnc2CN=C(c3ccccc3Cl)c4cc(Br)sc4n12",
+    "iupac": "4-bromo-7-(2-chlorophenyl)-13-methyl-3-thia-1,8,11,12-tetrazatricyclo[8.3.0.02,6]trideca-2(6),4,7,10,12-pentaene",
+    "molecular_formula": "C15H10BrClN4S",
+    "cas": "57801-81-7"
+  },
+  "delorazepam": {
+    "smiles": "Clc1ccc2NC(=O)CN=C(c3ccccc3Cl)c2c1",
+    "iupac": "7-chloro-5-(2-chlorophenyl)-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H10Cl2N2O",
+    "cas": "2894-67-9"
+  },
+  "diazepam": {
+    "smiles": "CN1C(=O)CN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-1-methyl-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H13ClN2O",
+    "cas": "439-14-5"
+  },
+  "camazepam": {
+    "smiles": "CN(C)C(=O)OC1N=C(c2ccccc2)c3cc(Cl)ccc3N(C)C1=O",
+    "iupac": "(7-chloro-1-methyl-2-oxo-5-phenyl-3H-1,4-benzodiazepin-3-yl) N,N-dimethylcarbamate",
+    "molecular_formula": "C19H18ClN3O3",
+    "cas": "36104-80-0"
+  },
+  "ketazolam": {
+    "smiles": "CN1C(=O)CN2C(=O)C=C(C)OC2(c3ccccc3)c4cc(Cl)ccc14",
+    "iupac": "11-chloro-2,8-dimethyl-12b-phenyl-6H-[1,3]oxazino[3,2-d][1,4]benzodiazepine-4,7-dione",
+    "molecular_formula": "C20H17ClN2O3",
+    "cas": "27223-35-4"
+  },
+  "clobazam": {
+    "smiles": "CN1C(=O)CC(=O)N(c2ccccc2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-1-methyl-5-phenyl-1,5-benzodiazepine-2,4-dione",
+    "molecular_formula": "C16H13ClN2O2",
+    "cas": "22316-47-8"
+  },
+  "cloxazolam": {
+    "smiles": "Clc1ccc2NC(=O)CN3CCOC3(c4ccccc4Cl)c2c1",
+    "iupac": "10-chloro-11b-(2-chlorophenyl)-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "molecular_formula": "C17H14Cl2N2O2",
+    "cas": "24166-13-0"
+  },
+  "clonazepam": {
+    "smiles": "[O-][N+](=O)c1ccc2NC(=O)CN=C(c3ccccc3Cl)c2c1",
+    "iupac": "5-(2-chlorophenyl)-7-nitro-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H10ClN3O3",
+    "cas": "1622-61-3"
+  },
+  "clorazepate": {
+    "smiles": "OC(=O)C1N=C(c2ccccc2)c3cc(Cl)ccc3NC1=O",
+    "iupac": "7-chloro-2-oxo-5-phenyl-1,3-dihydro-1,4-benzodiazepine-3-carboxylic acid",
+    "molecular_formula": "C16H11ClN2O3",
+    "cas": "23887-31-2"
+  },
+  "clotiazepam": {
+    "smiles": "CCc1sc2N(C)C(=O)CN=C(c3ccccc3Cl)c2c1",
+    "iupac": "5-(2-chlorophenyl)-7-ethyl-1-methyl-3H-thieno[2,3-e][1,4]diazepin-2-one",
+    "molecular_formula": "C16H15ClN2OS",
+    "cas": "33671-46-4"
+  },
+  "loprazolam": {
+    "smiles": "CN1CCN(CC1)/C=C/2N=C3CN=C(c4ccccc4Cl)c5cc(ccc5N3C2=O)[N+]([O-])=O",
+    "iupac": "(2Z)-6-(2-chlorophenyl)-2-[(4-methylpiperazin-1-yl)methylidene]-8-nitro-4H-imidazo[1,2-a][1,4]benzodiazepin-1-one",
+    "molecular_formula": "C23H21ClN6O3",
+    "cas": "61197-73-7"
+  },
+  "lorazepam": {
+    "smiles": "OC1N=C(c2ccccc2Cl)c3cc(Cl)ccc3NC1=O",
+    "iupac": "7-chloro-5-(2-chlorophenyl)-3-hydroxy-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H10Cl2N2O2",
+    "cas": "846-49-1"
+  },
+  "lormetazepam": {
+    "smiles": "CN1C(=O)C(O)N=C(c2ccccc2Cl)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-5-(2-chlorophenyl)-3-hydroxy-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H12Cl2N2O2",
+    "cas": "848-75-9"
+  },
+  "medazepam": {
+    "smiles": "CN1CCN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-1-methyl-5-phenyl-2,3-dihydro-1,4-benzodiazepine",
+    "molecular_formula": "C16H15ClN2",
+    "cas": "2898-12-6"
+  },
+  "midazolam": {
+    "smiles": "Cc1ncc2CN=C(c3ccccc3F)c4cc(Cl)ccc4n12",
+    "iupac": "8-chloro-6-(2-fluorophenyl)-1-methyl-4H-imidazo[1,5-a][1,4]benzodiazepine",
+    "molecular_formula": "C18H13ClFN3",
+    "cas": "59467-70-8"
+  },
+  "nimetazepam": {
+    "smiles": "CN1C(=O)CN=C(c2ccccc2)c3cc(ccc13)[N+]([O-])=O",
+    "iupac": "1-methyl-7-nitro-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H13N3O3",
+    "cas": "2011-67-8"
+  },
+  "nitrazepam": {
+    "smiles": "[O-][N+](=O)c1ccc2NC(=O)CN=C(c3ccccc3)c2c1",
+    "iupac": "7-nitro-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H11N3O3",
+    "cas": "146-22-5"
+  },
+  "nordazepam": {
+    "smiles": "Clc1ccc2NC(=O)CN=C(c3ccccc3)c2c1",
+    "iupac": "7-chloro-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H11ClN2O",
+    "cas": "1088-11-5"
+  },
+  "oxazepam": {
+    "smiles": "OC1N=C(c2ccccc2)c3cc(Cl)ccc3NC1=O",
+    "iupac": "7-chloro-3-hydroxy-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C15H11ClN2O2",
+    "cas": "604-75-1"
+  },
+  "oxazolam": {
+    "smiles": "C[C@@H]1CN2CC(=O)Nc3ccc(Cl)cc3[C@@]2(O1)c4ccccc4",
+    "iupac": "10-chloro-2-methyl-11b-phenyl-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "molecular_formula": "C18H17ClN2O2",
+    "cas": "24143-17-7"
+  },
+  "pinazepam": {
+    "smiles": "Clc1ccc2N(CC#C)C(=O)CN=C(c3ccccc3)c2c1",
+    "iupac": "7-chloro-5-phenyl-1-prop-2-ynyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C18H13ClN2O",
+    "cas": "52463-83-9"
+  },
+  "prazepam": {
+    "smiles": "Clc1ccc2N(CC3CC3)C(=O)CN=C(c4ccccc4)c2c1",
+    "iupac": "7-chloro-1-(cyclopropylmethyl)-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C19H17ClN2O",
+    "cas": "2955-38-6"
+  },
+  "temazepam": {
+    "smiles": "CN1C(=O)C(O)N=C(c2ccccc2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-3-hydroxy-1-methyl-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H13ClN2O2",
+    "cas": "846-50-4"
+  },
+  "tetrazepam": {
+    "smiles": "CN1C(=O)CN=C(C2=CCCCC2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-5-(cyclohexen-1-yl)-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H17ClN2O",
+    "cas": "10379-14-3"
+  },
+  "fludiazepam": {
+    "smiles": "CN1C(=O)CN=C(c2ccccc2F)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-5-(2-fluorophenyl)-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H12ClFN2O",
+    "cas": "3900-31-0"
+  },
+  "flunitrazepam": {
+    "smiles": "CN1C(=O)CN=C(c2ccccc2F)c3cc(ccc13)[N+]([O-])=O",
+    "iupac": "5-(2-fluorophenyl)-1-methyl-7-nitro-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C16H12FN3O3",
+    "cas": "1622-62-4"
+  },
+  "flurazepam": {
+    "smiles": "CCN(CC)CCN1C(=O)CN=C(c2ccccc2F)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-1-[2-(diethylamino)ethyl]-5-(2-fluorophenyl)-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C21H23ClFN3O",
+    "cas": "17617-23-1"
+  },
+  "halazepam": {
+    "smiles": "FC(F)(F)CN1C(=O)CN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "iupac": "7-chloro-5-phenyl-1-(2,2,2-trifluoroethyl)-3H-1,4-benzodiazepin-2-one",
+    "molecular_formula": "C17H12ClF3N2O",
+    "cas": "23092-17-3"
+  },
+  "estazolam": {
+    "smiles": "Clc1ccc2n3cnnc3CN=C(c4ccccc4)c2c1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "29975-16-4"
+  },
+  "ethyl loflazepate": {
+    "smiles": "CCOC(=O)C1N=C(c2ccccc2F)c3cc(Cl)ccc3NC1=O",
+    "iupac": "ethyl 7-chloro-5-(2-fluorophenyl)-2-oxo-1,3-dihydro-1,4-benzodiazepine-3-carboxylate",
+    "molecular_formula": "C18H14ClFN2O3",
+    "cas": "29177-84-2"
+  },
+  "zolpidem": {
+    "smiles": "CN(C)C(=O)Cc1n2cc(C)ccc2nc1c3ccc(C)cc3",
+    "iupac": "N,N-dimethyl-2-[6-methyl-2-(4-methylphenyl)imidazo[1,2-a]pyridin-3-yl]acetamide",
+    "molecular_formula": "C19H21N3O",
+    "cas": "82626-48-0"
+  },
+  "zopiclone": {
+    "smiles": "CN1CCN(CC1)C(=O)OC2N(C(=O)c3nccnc23)c4ccc(Cl)cn4",
+    "iupac": "[6-(5-chloro-2-pyridinyl)-5-oxo-7H-pyrrolo[3,4-b]pyrazin-7-yl] 4-methylpiperazine-1-carboxylate",
+    "molecular_formula": "C17H17ClN6O3",
+    "cas": "43200-80-2"
+  },
+  "ephedrine": {
+    "smiles": "CN[C@@H](C)[C@H](O)c1ccccc1",
+    "iupac": "(1R,2S)-2-(methylamino)-1-phenylpropan-1-ol",
+    "molecular_formula": "C10H15NO",
+    "cas": "299-42-3"
+  },
+  "pseudoephedrine": {
+    "smiles": "CN[C@@H](C)[C@@H](O)c1ccccc1",
+    "iupac": "(1S,2S)-2-(methylamino)-1-phenylpropan-1-ol",
+    "molecular_formula": "C10H15NO",
+    "cas": "90-82-4"
+  },
+  "methylephedrine": {
+    "smiles": "CC(C(O)c1ccccc1)N(C)C",
+    "iupac": "(1R,2S)-2-(dimethylamino)-1-phenylpropan-1-ol",
+    "molecular_formula": "C11H17NO",
+    "cas": "552-79-4"
+  },
+  "2-(1-phenyl-2-methylaminopropyl)amino-1-propanol": {
+    "smiles": "CNC(C)C(NC(C)CO)c1ccccc1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "propylhexedrine": {
+    "smiles": "CNC(C)CC1CCCCC1",
+    "iupac": "1-cyclohexyl-N-methylpropan-2-amine",
+    "molecular_formula": "C10H21N",
+    "cas": "101-40-6"
+  },
+  "androstenediol": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=C[C@@H](O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "iupac": "(3S,8R,9S,10R,13S,14S,17S)-10,13-dimethyl-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthrene-3,17-diol",
+    "molecular_formula": "C19H30O2",
+    "cas": "521-17-5"
+  },
+  "androstanolone": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CC[C@H]4CC(=O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "iupac": "(5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-10,13-dimethyl-1,2,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C19H30O2",
+    "cas": "521-18-6"
+  },
+  "androstenedione": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@]34C)[C@@H]1CCC2=O",
+    "iupac": "(8R,9S,10R,13S,14S)-10,13-dimethyl-2,6,7,8,9,11,12,14,15,16-decahydro-1H-cyclopenta[a]phenanthrene-3,17-dione",
+    "molecular_formula": "C19H26O2",
+    "cas": "63-05-8"
+  },
+  "clostebol": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=C(Cl)C(=O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "iupac": "(8R,9S,10R,13S,14S,17S)-4-chloro-17-hydroxy-10,13-dimethyl-1,2,6,7,8,9,11,12,14,15,16,17-dodecahydrocyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C19H27ClO2",
+    "cas": "1093-58-9"
+  },
+  "metandienone": {
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@H]3CC[C@]12C",
+    "iupac": "(8R,9S,10R,13S,14S,17S)-17-hydroxy-10,13,17-trimethyl-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C20H28O2",
+    "cas": "72-63-9"
+  },
+  "metenolone": {
+    "smiles": "CC1=CC(=O)C[C@@H]2CCC3C4CCC(O)C4(C)CCC3C12C",
+    "iupac": "(5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-1,10,13-trimethyl-4,5,6,7,8,9,11,12,14,15,16,17-dodecahydrocyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C20H30O2",
+    "cas": "153-00-4"
+  },
+  "mesterolone": {
+    "smiles": "C[C@H]1CC(=O)C[C@@H]2CC[C@H]3[C@@H]4CC[C@H](O)[C@@]4(C)CC[C@@H]3[C@@]12C",
+    "iupac": "(1S,5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-1,10,13-trimethyl-1,2,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C20H32O2",
+    "cas": "1424-00-6"
+  },
+  "nandrolone": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@H]34)[C@@H]1CC[C@@H]2O",
+    "iupac": "(8R,9S,10R,13S,14S,17S)-17-hydroxy-13-methyl-2,6,7,8,9,10,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C18H26O2",
+    "cas": "434-22-0"
+  },
+  "19-norandrostenedione": {
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@H]34)[C@@H]1CCC2=O",
+    "iupac": "(8R,9S,10R,13S,14S)-13-methyl-1,2,6,7,8,9,10,11,12,14,15,16-dodecahydrocyclopenta[a]phenanthrene-3,17-dione",
+    "molecular_formula": "C18H24O2",
+    "cas": "734-32-7"
+  },
+  "oxandrolone": {
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CC[C@H]4CC(=O)OC[C@]4(C)[C@H]3CC[C@]12C",
+    "iupac": "(1S,3aS,3bR,5aS,9aS,9bS,11aS)-1-hydroxy-1,9a,11a-trimethyl-2,3,3a,3b,4,5,5a,6,9,9b,10,11-dodecahydroindeno[4,5-h]isochromen-7-one",
+    "molecular_formula": "C19H30O3",
+    "cas": "53-39-4"
+  },
+  "stanozolol": {
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CC[C@H]4Cc5[nH]ncc5C[C@]4(C)[C@H]3CC[C@]12C",
+    "iupac": "(1S,2S,10S,13R,14S,17S,18S)-2,17,18-trimethyl-6,7-diazapentacyclo[11.7.0.02,10.04,8.014,18]icosa-4(8),5-dien-17-ol",
+    "molecular_formula": "C21H32N2O",
+    "cas": "10418-03-8"
+  },
+  "fluoxymesterone": {
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]12C",
+    "iupac": "(8S,9R,10S,11S,13S,14S,17S)-9-fluoro-11,17-dihydroxy-10,13,17-trimethyl-1,2,6,7,8,11,12,14,15,16-decahydrocyclopenta[a]phenanthren-3-one",
+    "molecular_formula": "C20H29FO3",
+    "cas": "76-43-7"
+  },
+  "benactyzine": {
+    "smiles": "[H+].[Cl-].CCN(CC)CCOC(=O)C(O)(c1ccccc1)c2ccccc2",
+    "iupac": "2-(diethylamino)ethyl 2-hydroxy-2,2-diphenylacetate",
+    "molecular_formula": "C20H25NO3",
+    "cas": "302-40-9"
+  },
+  "bromisoval": {
+    "smiles": "CC(C)C(Br)C(=O)NC(N)=O",
+    "iupac": "2-bromo-N-carbamoyl-3-methylbutanamide",
+    "molecular_formula": "C6H11BrN2O2",
+    "cas": "496-67-3"
+  },
+  "clonidine": {
+    "smiles": "Clc1cccc(Cl)c1NC2=NCCN2",
+    "iupac": "N-(2,6-dichlorophenyl)-4,5-dihydro-1H-imidazol-2-amine",
+    "molecular_formula": "C9H9Cl2N3",
+    "cas": "4205-90-7"
+  },
+  "levomepromazine": {
+    "smiles": "COc1ccc2Sc3ccccc3N(C[C@H](C)CN(C)C)c2c1",
+    "iupac": "(2R)-3-(2-methoxyphenothiazin-10-yl)-N,N,2-trimethylpropan-1-amine",
+    "molecular_formula": "C19H24N2OS",
+    "cas": "60-99-1"
+  },
+  "meprobamate": {
+    "smiles": "CCCC(C)(COC(N)=O)COC(N)=O",
+    "iupac": "[2-(carbamoyloxymethyl)-2-methylpentyl] carbamate",
+    "molecular_formula": "C9H18N2O4",
+    "cas": "57-53-4"
+  },
+  "mesocarb": {
+    "smiles": "CC(Cc1ccccc1)n2cc([N-]C(=O)Nc3ccccc3)[o+]n2",
+    "iupac": "N-phenyl-N'-[3-(1-phenylpropan-2-yl)oxadiazol-3-ium-5-yl]carbamimidate",
+    "molecular_formula": "C18H18N4O2",
+    "cas": "34262-84-5"
+  },
+  "pemoline": {
+    "smiles": "NC1=NC(=O)C(O1)c2ccccc2",
+    "iupac": "2-amino-5-phenyl-1,3-oxazol-4-one",
+    "molecular_formula": "C9H8N2O2",
+    "cas": "2152-34-3"
+  },
+  "piperidine": {
+    "smiles": "C1CCNCC1",
+    "iupac": "piperidine",
+    "molecular_formula": "C5H11N",
+    "cas": "110-89-4"
+  },
+  "pyrovalerone": {
+    "smiles": "CCCC(N1CCCC1)C(=O)c2ccc(C)cc2",
+    "iupac": "1-(4-methylphenyl)-2-pyrrolidin-1-ylpentan-1-one",
+    "molecular_formula": "C16H23NO",
+    "cas": "3563-49-3"
+  },
+  "toluene": {
+    "smiles": "Cc1ccccc1",
+    "iupac": "toluene",
+    "molecular_formula": "C7H8",
+    "cas": "108-88-3"
+  },
+  "tramadol": {
+    "smiles": "[Cl-].COc1cccc(c1)[C@@]2(O)CCCC[C@@H]2CN(C)C.[H+]",
+    "iupac": "cis-(1R,2R)-2-[(dimethylamino)methyl]-1-(3-methoxyphenyl)cyclohexan-1-ol",
+    "molecular_formula": "C16H25NO2",
+    "cas": "27203-92-5"
+  },
+  "trihexyphenidyl": {
+    "smiles": "OC(CCN1CCCCC1)(C2CCCCC2)c3ccccc3",
+    "iupac": "1-cyclohexyl-1-phenyl-3-piperidin-1-ylpropan-1-ol",
+    "molecular_formula": "C20H31NO",
+    "cas": "144-11-6"
+  },
+  "phenylpropanolamine": {
+    "smiles": "C[C@@H](N)[C@@H](O)c1ccccc1",
+    "iupac": "(1R,2S)-2-amino-1-phenylpropan-1-ol",
+    "molecular_formula": "C9H13NO",
+    "cas": "14838-15-4"
+  },
+  "fencamfamine": {
+    "smiles": "CCNC1C2CCC(C2)C1c3ccccc3",
+    "iupac": "N-ethyl-3-phenylbicyclo[2.2.1]heptan-2-amine",
+    "molecular_formula": "C15H21N",
+    "cas": "1209-98-9"
+  },
+  "phenylacetone": {
+    "smiles": "CC(=O)Cc1ccccc1",
+    "iupac": "1-phenylpropan-2-one",
+    "molecular_formula": "C9H10O",
+    "cas": "103-79-7"
+  },
+  "fenfluramine": {
+    "smiles": "CCNC(C)Cc1cccc(c1)C(F)(F)F",
+    "iupac": "N-ethyl-1-[3-(trifluoromethyl)phenyl]propan-2-amine",
+    "molecular_formula": "C12H16F3N",
+    "cas": "458-24-2"
+  },
+  "fenetylline": {
+    "smiles": "[H+].[Cl-].CC(Cc1ccccc1)NCCn2cnc3N(C)C(=O)N(C)C(=O)c23",
+    "iupac": "1,3-dimethyl-7-[2-(1-phenylpropan-2-ylamino)ethyl]purine-2,6-dione",
+    "molecular_formula": "C18H23N5O2",
+    "cas": "3736-08-1"
+  },
+  "chloroform": {
+    "smiles": "ClC(Cl)Cl",
+    "iupac": "chloroform",
+    "molecular_formula": "CHCl3",
+    "cas": "67-66-3"
+  },
+  "chloroethane": {
+    "smiles": "CCCl",
+    "iupac": "chloroethane",
+    "molecular_formula": "C2H5Cl",
+    "cas": "75-00-3"
+  },
+  "o-chlorobenzylidene malononitrile": {
+    "smiles": "Clc1ccccc1C=C(C#N)C#N",
+    "iupac": "2-[(2-chlorophenyl)methylidene]propanedinitrile",
+    "molecular_formula": "C10H5ClN2",
+    "cas": "2698-41-1"
+  },
+  "ergotamine": {
+    "smiles": "CN1C[C@@H](C=C2[C@H]1Cc3c[nH]c4cccc2c34)C(=O)N[C@]5(C)O[C@@]6(O)[C@@H]7CCCN7C(=O)[C@H](Cc8ccccc8)N6C5=O",
+    "iupac": "(6aR,9R)-N-[(1S,2S,4R,7S)-7-benzyl-2-hydroxy-4-methyl-5,8-dioxo-3-oxa-6,9-diazatricyclo[7.3.0.02,6]dodecan-4-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "molecular_formula": "C33H35N5O5",
+    "cas": "113-15-5"
+  },
+  "diethyl ether": {
+    "smiles": "CCOCC",
+    "iupac": "ethoxyethane",
+    "molecular_formula": "C4H10O",
+    "cas": "60-29-7"
+  },
+  "N-benzylpiperazine": {
+    "smiles": "C1CN(CCN1)Cc2ccccc2",
+    "iupac": "1-benzylpiperazine",
+    "molecular_formula": "C11H16N2",
+    "cas": "2759-28-6"
+  },
+  "1-(3-trifluoromethylphenyl)piperazine": {
+    "smiles": "FC(F)(F)c1cccc(c1)N2CCNCC2",
+    "iupac": "1-[3-(trifluoromethyl)phenyl]piperazine",
+    "molecular_formula": "C11H13F3N2",
+    "cas": "15532-75-9"
+  },
+  "2,5-dimethoxy-4-propylthiophenethylamine": {
+    "smiles": "CCCC1=C(OC)SC(CCN)(C1)OC",
+    "iupac": "2-(2,5-dimethoxy-4-propylsulfanylphenyl)ethanamine",
+    "molecular_formula": "C13H21NO2S",
+    "cas": "207740-26-9"
+  },
+  "amineptine": {
+    "smiles": "[Cl-].OC(=O)CCCCCC[NH2+]C1c2ccccc2CCc3ccccc13",
+    "iupac": "7-(2-tricyclo[9.4.0.03,8]pentadeca-1(15),3,5,7,11,13-hexaenylamino)heptanoic acid",
+    "molecular_formula": "C22H27NO2",
+    "cas": "57574-09-1"
+  },
+  "aconitine": {
+    "smiles": "CCN1C[C@]2(COC)[C@H](O)C[C@H](OC)[C@@]34[C@@H]5C[C@]6(O)[C@@H](OC)[C@H](O)[C@](OC(C)=O)([C@@H]([C@H](OC)[C@H]23)C14)[C@H]5[C@H]6OC(=O)c7ccccc7",
+    "iupac": "[(1S,2R,3R,4R,5R,6S,7S,8R,9R,13R,14R,16S,17S,18R)-8-acetyloxy-11-ethyl-5,7,14-trihydroxy-6,16,18-trimethoxy-13-(methoxymethyl)-11-azahexacyclo[7.7.2.12,5.01,10.03,8.013,17]nonadecan-4-yl] benzoate",
+    "molecular_formula": "C34H47NO11",
+    "cas": "302-27-2"
+  },
+  "hyoscyamine": {
+    "smiles": "CN1C2CCC1CC(C2)OC(=O)[C@H](CO)c3ccccc3",
+    "iupac": "[(1R,5S)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "molecular_formula": "C17H23NO3",
+    "cas": "101-31-5"
+  },
+  "scopolamine": {
+    "smiles": "CN1[C@@H]2CC(C[C@H]1[C@@H]3O[C@H]23)OC(=O)[C@H](CO)c4ccccc4",
+    "iupac": "[(1S,2S,4R,5R)-9-methyl-3-oxa-9-azatricyclo[3.3.1.02,4]nonan-7-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "molecular_formula": "C17H21NO4",
+    "cas": "51-34-3"
+  },
+  "strychnine": {
+    "smiles": "O=C1CC2OCC=C3CN4CCC56C4CC3C2C5N1c7ccccc67",
+    "iupac": "(4aR,5aS,8aR,13aS,15aS,15bR)-4a,5,5a,7,8,13a,15,15a,15b,16-decahydro-2H-4,6-methanoindolo[3,2,1-ij]oxepino[2,3,4-de]pyrrolo[2,3-h]quinolin-14-one",
+    "molecular_formula": "C21H22N2O2",
+    "cas": "57-24-9"
+  },
+  "cinchonine": {
+    "smiles": "O[C@H]([C@H]1C[C@@H]2CCN1C[C@@H]2C=C)c3ccnc4ccccc34",
+    "iupac": "(S)-[(2R,4S,5R)-5-ethenyl-1-azabicyclo[2.2.2]octan-2-yl]-quinolin-4-ylmethanol",
+    "molecular_formula": "C19H22N2O",
+    "cas": "118-10-5"
+  },
+  "ergonovine": {
+    "smiles": "C[C@@H](CO)NC(=O)[C@H]1CN(C)[C@@H]2Cc3c[nH]c4cccc(C2=C1)c34",
+    "iupac": "(6aR,9R)-N-[(2S)-1-hydroxypropan-2-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "molecular_formula": "C19H23N3O2",
+    "cas": "60-79-7"
+  },
+  "hydrogen cyanide": {
+    "smiles": "C#N",
+    "iupac": "formonitrile",
+    "molecular_formula": "CHN",
+    "cas": "74-90-8"
+  },
+  "potassium cyanide": {
+    "smiles": "[K+].[C-]#N",
+    "iupac": "potassium cyanide",
+    "molecular_formula": "CKN",
+    "cas": "151-50-8"
+  },
+  "cadmium cyanide": {
+    "smiles": "[Cd++].[C-]#N.[C-]#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "542-83-6"
+  },
+  "calcium cyanide": {
+    "smiles": "[Ca++].[C-]#N.[C-]#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "592-01-8"
+  },
+  "silver cyanide": {
+    "smiles": "[Ag]C#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "zinc cyanide": {
+    "smiles": "[Zn++].[C-]#N.[C-]#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "mercury": {
+    "smiles": "[Hg]",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "7439-97-6"
+  },
+  "mercury(II) chloride": {
+    "smiles": "Cl[Hg]Cl",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "mercury(II) iodide": {
+    "smiles": "I[Hg]I",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "mercury(II) oxycyanide": {
+    "smiles": "[Hg++].N#COC#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "mercury salicylate": {
+    "smiles": "[Hg+].Oc1ccccc1C([O-])=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "mercury(II) cyanide": {
+    "smiles": "N#C[Hg]C#N",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "25587-94-4"
+  },
+  "ethylmercury chloride": {
+    "smiles": "CC[Hg]Cl",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "107-27-7"
+  },
+  "arsenic trioxide": {
+    "smiles": "O=[As]O[As]=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "arsenic pentoxide": {
+    "smiles": "O=[As](=O)O[As](=O)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "12355-85-0"
+  },
+  "sodium arsenate": {
+    "smiles": "[Na+].[Na+].[Na+].[O-][As]([O-])([O-])=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "64070-83-3"
+  },
+  "sodium arsenite": {
+    "smiles": "[Na+].[Na+].[Na+].[O-][As]([O-])[O-]",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "13464-37-4"
+  },
+  "neoarsphenamine": {
+    "smiles": "[Na+].Nc1cc(ccc1O)[As]=[As]c2ccc(O)c(NC[S]([O-])=O)c2",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "457-60-3"
+  },
+  "thallium(I) sulfate": {
+    "smiles": "[Tl+].[Tl+].[O-][S]([O-])(=O)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "37333-30-5"
+  },
+  "demeton": {
+    "smiles": "CCO[P](=O)(OCC)SCCSCC.CCO[P](=S)(OCC)OCCSCC",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "8065-48-3"
+  },
+  "sarin": {
+    "smiles": "CC(C)O[P](C)(F)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "50642-23-4"
+  },
+  "N-acetylanthranilic acid": {
+    "smiles": "CC(=O)Nc1ccccc1C(O)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "89-52-1"
+  },
+  "anthranilic acid": {
+    "smiles": "Nc1ccccc1C(O)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "1321-11-5"
+  },
+  "acetic anhydride": {
+    "smiles": "CC(=O)OC(C)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "108-24-7"
+  },
+  "piperonal": {
+    "smiles": "O=Cc1ccc2OCOc2c1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "30024-74-9"
+  },
+  "safrole": {
+    "smiles": "C=CCc1ccc2OCOc2c1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "94-59-7"
+  },
+  "3,4-methylenedioxyphenylacetone": {
+    "smiles": "CC(=O)Cc1ccc2OCOc2c1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "4676-39-5"
+  },
+  "phenylacetic acid": {
+    "smiles": "OC(=O)Cc1ccccc1",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "103-82-2"
+  },
+  "aceclidine": {
+    "smiles": "CC(=O)OC1CN2CCC1CC2",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "827-61-2"
+  },
+  "aldrin": {
+    "smiles": "ClC1=C(Cl)C2(Cl)C3C4CC(C=C4)C3C1(Cl)C2(Cl)Cl",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "309-00-2"
+  },
+  "dieldrin": {
+    "smiles": "ClC1=C(Cl)C2(Cl)C3C4CC(C5OC45)C3C1(Cl)C2(Cl)Cl",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "72-20-8"
+  },
+  "carbachol": {
+    "smiles": "[Cl-].C[N+](C)(C)CCOC(N)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "51-83-2"
+  },
+  "methanol": {
+    "smiles": "CO",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "54841-71-3"
+  },
+  "chlormerodrin": {
+    "smiles": "[Cl-].COC(C[Hg+])CNC(N)=O",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "62-37-3"
+  },
+  "nickel tetracarbonyl": {
+    "smiles": "[Ni](|[C-]#[O+])(|[C-]#[O+])(|[C-]#[O+])|[C-]#[O+]",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "tetraethyllead": {
+    "smiles": "CC[Pb](CC)(CC)CC",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "78-00-2"
+  },
+  "zinc phosphide": {
+    "smiles": "[Zn](|P=[Zn])|P=[Zn]",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "1314-84-7"
+  },
+  "white phosphorus": {
+    "smiles": "P",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "29879-37-6"
+  },
+  "3-quinuclidinyl benzilate": {
+    "smiles": "OC(C(=O)OC1CN2CCC1CC2)(c3ccccc3)c4ccccc4",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "4478-53-9"
+  },
+  "chloropicrin": {
+    "smiles": "[O-][N+](=O)C(Cl)(Cl)Cl",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "76-06-2"
+  },
+  "ethanol": {
+    "smiles": "CCO",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": "121182-78-3"
+  },
+  "alprazolam": {
+    "smiles": "Cc1nnc2CN=C(c3ccccc3)c4cc(Cl)ccc4n12",
+    "iupac": "8-chloro-1-methyl-6-phenyl-4H-[1,2,4]triazolo[4,3-a][1,4]benzodiazepine",
+    "molecular_formula": "C17H13ClN4",
+    "cas": "28981-97-7"
+  },
+  "haloxazolam": {
+    "smiles": "Fc1ccccc1C23OCCN2CC(=O)Nc4ccc(Br)cc34",
+    "iupac": "10-bromo-11b-(2-fluorophenyl)-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "molecular_formula": "C17H14BrFN2O2",
+    "cas": "59128-97-1"
+  },
+  "chlordiazepoxide": {
+    "smiles": "CN=C1CN(O)C(=C2C=C(Cl)C=CC2=N1)c3ccccc3",
+    "iupac": "7-chloro-4-hydroxy-N-methyl-5-phenyl-3H-1,4-benzodiazepin-2-imine",
+    "molecular_formula": "C16H14ClN3O",
+    "cas": "58-25-3"
+  },
+  "19-norandrostenediol": {
+    "smiles": "",
+    "iupac": "(3S,8R,9S,10R,13S,14S,17S)-13-methyl-1,2,3,4,7,8,9,10,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthrene-3,17-diol",
+    "molecular_formula": "C18H28O2",
+    "cas": "25975-59-1"
+  },
+  "sydnofen": {
+    "smiles": "",
+    "iupac": "",
+    "molecular_formula": "",
+    "cas": ""
+  },
+  "sodium cyanide": {
+    "smiles": "[Na+].[C-]#N",
+    "iupac": "sodium cyanide",
+    "molecular_formula": "CNNa",
+    "cas": "143-33-9"
+  },
+  "cuprous cyanide": {
+    "smiles": "[Cu+].[C-]#N",
+    "iupac": "copper(1+) cyanide",
+    "molecular_formula": "CCuN",
+    "cas": "544-92-3"
+  },
+  "barium cyanide": {
+    "smiles": "[Ba++].[C-]#N.[C-]#N",
+    "iupac": "barium(2+) dicyanide",
+    "molecular_formula": "C2BaN2",
+    "cas": "542-62-1"
+  }
+}

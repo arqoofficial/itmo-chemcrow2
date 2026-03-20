@@ -3,12 +3,13 @@ import { Bot, Loader2 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { ConversationsService } from "@/client/chatService"
-import type { ChatMessagePublic, ToolCallInfo } from "@/client/chatTypes"
+import type { ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
 import {
   type StreamingState,
   useConversationSSE,
 } from "@/hooks/useConversationSSE"
 import { ChatInput } from "./ChatInput"
+import { HazardWarning } from "./HazardWarning"
 import { MarkdownContent } from "./MarkdownContent"
 import { MessageBubble } from "./MessageBubble"
 import { ToolCallCard } from "./ToolCallCard"
@@ -53,6 +54,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const [localMessages, setLocalMessages] = useState<ChatMessagePublic[]>([])
   const [pendingToolCalls, setPendingToolCalls] = useState<ToolCallInfo[]>([])
+  const [hazardChemicals, setHazardChemicals] = useState<HazardChemical[]>([])
   const [sseEnabled, setSseEnabled] = useState(false)
   const [isRecovering, setIsRecovering] = useState(false)
   const messageCountBeforeSend = useRef(0)
@@ -77,6 +79,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   useEffect(() => {
     setLocalMessages([])
     setPendingToolCalls([])
+    setHazardChemicals([])
     stopPolling()
   }, [conversationId, stopPolling])
 
@@ -127,6 +130,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     setPendingToolCalls((prev) => [...prev, tc])
   }, [])
 
+  const handleHazards = useCallback((chemicals: HazardChemical[]) => {
+    if (chemicals.length > 0) setHazardChemicals(chemicals)
+  }, [])
+
   const handleError = useCallback(
     (_err: string) => {
       setSseEnabled(false)
@@ -155,6 +162,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     enabled: sseEnabled,
     onMessage: handleSSEMessage,
     onToolCall: handleToolCall,
+    onHazards: handleHazards,
     onError: handleError,
   })
 
@@ -169,6 +177,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         if (prev.some((m) => m.id === userMsg.id)) return prev
         return [...prev, userMsg]
       })
+      setHazardChemicals([])
       messageCountBeforeSend.current = localMessages.length + 1
       setSseEnabled(true)
     },
@@ -189,7 +198,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     )
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="relative flex h-full flex-col">
       <div ref={scrollRef} className="flex-1 overflow-y-auto">
         {isLoading ? (
           <div className="flex h-full items-center justify-center">
@@ -228,6 +237,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       </div>
 
       <ChatInput onSend={handleSend} disabled={isWaiting} />
+
+      <HazardWarning chemicals={hazardChemicals} />
     </div>
   )
 }
