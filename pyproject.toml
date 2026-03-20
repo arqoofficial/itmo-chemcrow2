@@ -31,6 +31,12 @@ dependencies = [
     "langchain-core>=1.2.20",
 ]
 
+[tool.uv.workspace]
+members = [
+    "backend",
+    "services/ai-agent",
+]
+
 [dependency-groups]
 dev = [
     "pytest>=7.4.3,<8.0.0",
@@ -38,10 +44,6 @@ dev = [
     "ruff>=0.2.2,<1.0.0",
     "coverage>=7.4.3,<8.0.0",
     "prek>=0.2.24,<1.0.0",
-]
-
-[tool.uv.workspace]
-members = [
-    "backend",
-    "services/ai-agent",
+    "ipykernel>=7.2.0",
+    "jupyter>=1.1.1",
 ]
