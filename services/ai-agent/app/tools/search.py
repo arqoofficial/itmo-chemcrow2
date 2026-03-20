@@ -7,6 +7,7 @@ Literature search uses Semantic Scholar REST API (free, no key required).
 from __future__ import annotations
 
 import logging
+import time
 
 import molbloom
 import requests
@@ -88,12 +89,22 @@ def literature_search(query: str, max_results: int = 5) -> str:
             "limit": min(max_results, 10),
             "fields": "title,authors,abstract,year,citationCount,url",
         }
-        r = requests.get(
-            f"{_S2_API_BASE}/paper/search",
-            params=params,
-            headers=headers,
-            timeout=15,
-        )
+
+        # Retry with exponential backoff — S2 has a global rate limit (~1 req/s shared)
+        max_retries = 4
+        for attempt in range(max_retries):
+            r = requests.get(
+                f"{_S2_API_BASE}/paper/search",
+                params=params,
+                headers=headers,
+                timeout=15,
+            )
+            if r.status_code != 429:
+                break
+            wait = 2 ** attempt
+            logger.warning("Semantic Scholar 429, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
+            time.sleep(wait)
+
         r.raise_for_status()
         data = r.json()
 
