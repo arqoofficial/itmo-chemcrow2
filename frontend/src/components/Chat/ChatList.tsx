@@ -46,6 +46,7 @@ export function ChatList() {
           size="icon"
           className="h-7 w-7"
           onClick={() => setNewOpen(true)}
+          data-testid="new-chat-button"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -59,7 +60,7 @@ export function ChatList() {
             ))}
           </div>
         ) : !data?.data.length ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="empty-chat-list">
             <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">Нет диалогов</p>
             <Button
@@ -74,7 +75,7 @@ export function ChatList() {
         ) : (
           <ul className="space-y-0.5 p-2">
             {data.data.map((conv) => (
-              <li key={conv.id} className="group relative">
+              <li key={conv.id} className="group relative" data-testid="chat-list-item">
                 <Link
                   to="/chat/$conversationId"
                   params={{ conversationId: conv.id }}

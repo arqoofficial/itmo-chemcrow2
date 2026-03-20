@@ -72,6 +72,8 @@ class Settings(BaseSettings):
 
     AI_AGENT_URL: str = "http://localhost:8100"
     AI_AGENT_TIMEOUT: float = 120.0
+    CHAT_TASK_SOFT_TIME_LIMIT: int = 120
+    CHAT_TASK_HARD_TIME_LIMIT: int = 150
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False

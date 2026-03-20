@@ -1,6 +1,8 @@
+import hljs from "highlight.js"
 import { memo, useMemo } from "react"
 import ReactMarkdown, { type Components } from "react-markdown"
 import remarkGfm from "remark-gfm"
+import "highlight.js/styles/github-dark-dimmed.css"
 
 import { cn } from "@/lib/utils"
 
@@ -20,9 +22,7 @@ const mdComponents: Components = {
     <ol className="mb-2 ml-4 list-decimal last:mb-0">{children}</ol>
   ),
   li: ({ children }) => <li className="mb-0.5">{children}</li>,
-  h1: ({ children }) => (
-    <h1 className="mb-2 text-lg font-bold">{children}</h1>
-  ),
+  h1: ({ children }) => <h1 className="mb-2 text-lg font-bold">{children}</h1>,
   h2: ({ children }) => (
     <h2 className="mb-2 text-base font-bold">{children}</h2>
   ),
@@ -44,10 +44,27 @@ const mdComponents: Components = {
         </code>
       )
     }
+
+    // ReactMarkdown передаёт язык в className вида `language-js`.
+    // highlight.js вернёт HTML со span'ами и CSS-классами для темы.
+    const languageMatch = codeClassName?.match(/language-([A-Za-z0-9_-]+)/)
+    const language = languageMatch?.[1]
+    const codeText = String(children ?? "")
+
+    const highlighted =
+      language && hljs.getLanguage(language)
+        ? hljs.highlight(codeText, { language, ignoreIllegals: true }).value
+        : hljs.highlightAuto(codeText).value
+
     return (
-      <code className={cn("text-[0.85em]", codeClassName)} {...props}>
-        {children}
-      </code>
+      <code
+        className={cn("hljs text-[0.85em]", codeClassName)}
+        // Biome не может статически доказать, что highlight.js экранирует исходный код.
+        // Мы используем результат highlight.js только для подсветки fenced-блоков.
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: highlight.js highlights escaped code
+        dangerouslySetInnerHTML={{ __html: highlighted }}
+        {...props}
+      />
     )
   },
   pre: ({ children }) => (
@@ -66,13 +83,9 @@ const mdComponents: Components = {
     </div>
   ),
   th: ({ children }) => (
-    <th className="border-b px-2 py-1 text-left font-semibold">
-      {children}
-    </th>
+    <th className="border-b px-2 py-1 text-left font-semibold">{children}</th>
   ),
-  td: ({ children }) => (
-    <td className="border-b px-2 py-1">{children}</td>
-  ),
+  td: ({ children }) => <td className="border-b px-2 py-1">{children}</td>,
   a: ({ href, children }) => (
     <a
       href={href}
@@ -90,7 +103,10 @@ export const MarkdownContent = memo(function MarkdownContent({
   content,
   className,
 }: MarkdownContentProps) {
-  const wrapperClassName = useMemo(() => cn("prose-chat", className), [className])
+  const wrapperClassName = useMemo(
+    () => cn("prose-chat", className),
+    [className],
+  )
 
   return (
     <div className={wrapperClassName}>

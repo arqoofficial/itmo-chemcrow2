@@ -42,7 +42,7 @@ curl -fsSL https://bun.sh/install | bash
 
 ```bash
 git clone <URL_РЕПОЗИТОРИЯ>
-cd itmo_fatsapi
+cd itmo-chemcrow2
 
 # Создать .env из примера
 cp .env.example .env

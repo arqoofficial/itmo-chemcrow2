@@ -60,6 +60,7 @@ export function NewChatDialog({ open, onOpenChange }: NewChatDialogProps) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               autoFocus
+              data-testid="chat-title-input"
             />
           </div>
           <DialogFooter>
@@ -70,7 +71,7 @@ export function NewChatDialog({ open, onOpenChange }: NewChatDialogProps) {
             >
               Отмена
             </Button>
-            <Button type="submit" disabled={mutation.isPending}>
+            <Button type="submit" disabled={mutation.isPending} data-testid="create-chat-button">
               {mutation.isPending ? "Создаю…" : "Создать"}
             </Button>
           </DialogFooter>
