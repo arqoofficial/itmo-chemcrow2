@@ -26,3 +26,22 @@ export async function waitForToolCall(page: Page, toolName?: string, timeout = 6
     await page.getByTestId("tool-call-card").first().waitFor({ timeout })
   }
 }
+
+export async function getLastNonToolCallMessage(page: Page) {
+  // Get all bot messages, filter out tool card messages (which show JSON like "toolname{...}")
+  // and return the last actual response message
+  const allBotMessages = page.getByTestId("message-bot")
+  const count = await allBotMessages.count()
+
+  for (let i = count - 1; i >= 0; i--) {
+    const msg = allBotMessages.nth(i)
+    const text = await msg.textContent()
+    // Skip if message contains tool card pattern (JSON-like structure)
+    if (text && !text.match(/^\w+tool\s*\{/)) {
+      return msg
+    }
+  }
+
+  // Fallback to last message if all are tool cards
+  return allBotMessages.last()
+}
