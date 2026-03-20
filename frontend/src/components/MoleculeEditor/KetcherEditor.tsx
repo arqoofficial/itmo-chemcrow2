@@ -8,6 +8,7 @@ const structServiceProvider = new StandaloneStructServiceProvider()
 export default function KetcherEditor() {
   const ketcherRef = useRef<any>(null)
   const [smiles, setSmiles] = useState("")
+  const [copied, setCopied] = useState(false)
 
   const updateSmiles = useCallback(async () => {
     if (!ketcherRef.current) return
@@ -23,6 +24,8 @@ export default function KetcherEditor() {
     if (!smiles) return
     try {
       await navigator.clipboard.writeText(smiles)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
     } catch (error) {
       console.error("Failed to copy SMILES:", error)
     }
@@ -86,7 +89,7 @@ export default function KetcherEditor() {
             cursor: smiles ? "pointer" : "not-allowed",
           }}
         >
-          Copy
+          {copied ? "Copied!" : "Copy"}
         </button>
       </div>
     </div>
