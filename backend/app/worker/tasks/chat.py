@@ -115,6 +115,12 @@ def _process_streaming(
                         "output": data.get("output", ""),
                     })
 
+                elif event_type == "hazards":
+                    _publish(r, conversation_id, {
+                        "event": "hazards",
+                        "chemicals": data.get("chemicals", []),
+                    })
+
                 elif event_type == "error":
                     raise RuntimeError(data.get("error", "Unknown AI agent error"))
 

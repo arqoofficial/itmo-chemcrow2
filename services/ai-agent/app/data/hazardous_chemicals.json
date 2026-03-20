@@ -1,0 +1,4650 @@
+[
+  {
+    "id": "allobarbital",
+    "names": [
+      "Аллобарбитал",
+      "allobarbital"
+    ],
+    "iupac": "5,5-bis(prop-2-enyl)-1,3-diazinane-2,4,6-trione",
+    "smiles": "C=CCC1(CC=C)C(=O)NC(=O)NC1=O",
+    "cas": "52-43-7",
+    "molecular_formula": "C10H12N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат — угнетение ЦНС и дыхания",
+      "Риск комы при передозировке"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "barbital",
+    "names": [
+      "Барбитал (Веронал)",
+      "barbital"
+    ],
+    "iupac": "5,5-diethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(CC)C(=O)NC(=O)NC1=O",
+    "cas": "57-44-3",
+    "molecular_formula": "C8H12N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат длительного действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "barbital",
+    "names": [
+      "Барбитал натрия (Мединал)",
+      "barbital"
+    ],
+    "iupac": "5,5-diethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(CC)C(=O)NC(=O)NC1=O",
+    "cas": "57-44-3",
+    "molecular_formula": "C8H12N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат — та же токсичность, что у барбитала"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "benzobarbital",
+    "names": [
+      "Бензобарбитал (Бензонал)",
+      "benzobarbital"
+    ],
+    "iupac": "1-benzoyl-5-ethyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(C(=O)NC(=O)N(C(=O)c2ccccc2)C1=O)c3ccccc3",
+    "cas": "744-80-9",
+    "molecular_formula": "C19H16N2O4",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат, противоэпилептическое"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "butalbital",
+    "names": [
+      "Буталбитал",
+      "butalbital"
+    ],
+    "iupac": "5-(2-methylpropyl)-5-prop-2-enyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CC(C)CC1(CC=C)C(=O)NC(=O)NC1=O",
+    "cas": "77-26-9",
+    "molecular_formula": "C11H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат короткого действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "butobarbital",
+    "names": [
+      "Бутобарбитал",
+      "butobarbital"
+    ],
+    "iupac": "5-butyl-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCCCC1(CC)C(=O)NC(=O)NC1=O",
+    "cas": "77-28-1",
+    "molecular_formula": "C10H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат среднего действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "vinylbital",
+    "names": [
+      "Винилбитал",
+      "vinylbital"
+    ],
+    "iupac": "5-ethenyl-5-pentan-2-yl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCCC(C)C1(C=C)C(=O)NC(=O)NC1=O",
+    "cas": "2430-49-1",
+    "molecular_formula": "C11H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат короткого действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hexobarbital",
+    "names": [
+      "Гексобарбитал (Гексенал)",
+      "hexobarbital"
+    ],
+    "iupac": "5-(cyclohexen-1-yl)-1,5-dimethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CN1C(=O)NC(=O)C(C)(C1=O)C2=CCCCC2",
+    "cas": "56-29-1",
+    "molecular_formula": "C12H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат ультракороткого действия — только в/в наркоз",
+      "Возможна остановка дыхания"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mephobarbital",
+    "names": [
+      "Метилфенобарбитал (Мебарал)",
+      "mephobarbital"
+    ],
+    "iupac": "5-ethyl-1-methyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(C(=O)NC(=O)N(C)C1=O)c2ccccc2",
+    "cas": "115-38-8",
+    "molecular_formula": "C13H14N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат, противоэпилептическое"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "methyprylon",
+    "names": [
+      "Метилприлон (Ноктан)",
+      "methyprylon"
+    ],
+    "iupac": "3,3-diethyl-5-methylpiperidine-2,4-dione",
+    "smiles": "CCC1(CC)C(=O)NCC(C)C1=O",
+    "cas": "125-64-4",
+    "molecular_formula": "C10H17NO2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Снотворное — депрессант ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "butabarbital",
+    "names": [
+      "Секбутабарбитал",
+      "butabarbital"
+    ],
+    "iupac": "5-butan-2-yl-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC(C)C1(CC)C(=O)NC(=O)NC1=O",
+    "cas": "125-40-6",
+    "molecular_formula": "C10H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат среднего действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "secobarbital",
+    "names": [
+      "Секобарбитал (Секонал)",
+      "secobarbital"
+    ],
+    "iupac": "5-pentan-2-yl-5-prop-2-enyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCCC(C)C1(CC=C)C(=O)NC(=O)NC1=O",
+    "cas": "76-73-3",
+    "molecular_formula": "C12H18N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат короткого действия",
+      "Высокий потенциал злоупотребления"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "thiopental",
+    "names": [
+      "Тиопентал натрия (Пентотал)",
+      "thiopental"
+    ],
+    "iupac": "5-ethyl-5-pentan-2-yl-2-sulfanylidene-1,3-diazinane-4,6-dione",
+    "smiles": "CCCC(C)C1(CC)C(=O)NC(=S)NC1=O",
+    "cas": "76-75-5",
+    "molecular_formula": "C11H18N2O2S",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат ультракороткого действия — только в/в",
+      "Возможна остановка дыхания"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "phenobarbital",
+    "names": [
+      "Фенобарбитал (Люминал)",
+      "phenobarbital"
+    ],
+    "iupac": "5-ethyl-5-phenyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(C(=O)NC(=O)NC1=O)c2ccccc2",
+    "cas": "50-06-6",
+    "molecular_formula": "C12H12N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат — угнетение ЦНС",
+      "Длительное применение — зависимость и синдром отмены"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cyclobarbital",
+    "names": [
+      "Циклобарбитал",
+      "cyclobarbital"
+    ],
+    "iupac": "5-(cyclohexen-1-yl)-5-ethyl-1,3-diazinane-2,4,6-trione",
+    "smiles": "CCC1(C(=O)NC(=O)NC1=O)C2=CCCCC2",
+    "cas": "52-31-3",
+    "molecular_formula": "C12H16N2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Барбитурат среднего действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ethinamate",
+    "names": [
+      "Этинамат (Валамин)",
+      "ethinamate"
+    ],
+    "iupac": "(1-ethynylcyclohexyl) carbamate",
+    "smiles": "NC(=O)OC1(CCCCC1)C#C",
+    "cas": "126-52-3",
+    "molecular_formula": "C9H13NO2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Снотворное — потенциал злоупотребления"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ethchlorvynol",
+    "names": [
+      "Этхлорвинол (Плацидил)",
+      "ethchlorvynol"
+    ],
+    "iupac": "(E)-1-chloro-3-ethylpent-1-en-4-yn-3-ol",
+    "smiles": "CCC(O)(\\C=C\\Cl)C#C",
+    "cas": "113-18-8",
+    "molecular_formula": "C7H9ClO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Снотворное — потенциал злоупотребления"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "alprazolam",
+    "names": [
+      "Алпразолам (Ксанакс)",
+      "alprazolam"
+    ],
+    "iupac": "8-chloro-1-methyl-6-phenyl-4H-[1,2,4]triazolo[4,3-a][1,4]benzodiazepine",
+    "smiles": "Cc1nnc2CN=C(c3ccccc3)c4cc(Cl)ccc4n12",
+    "cas": "28981-97-7",
+    "molecular_formula": "C17H13ClN4",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС",
+      "Опасна комбинация с алкоголем и опиоидами"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "bromazepam",
+    "names": [
+      "Бромазепам",
+      "bromazepam"
+    ],
+    "iupac": "7-bromo-5-pyridin-2-yl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "Brc1ccc2NC(=O)CN=C(c3ccccn3)c2c1",
+    "cas": "1812-30-2",
+    "molecular_formula": "C14H10BrN3O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "brotizolam",
+    "names": [
+      "Бротизолам (Лендормин)",
+      "brotizolam"
+    ],
+    "iupac": "4-bromo-7-(2-chlorophenyl)-13-methyl-3-thia-1,8,11,12-tetrazatricyclo[8.3.0.02,6]trideca-2(6),4,7,10,12-pentaene",
+    "smiles": "Cc1nnc2CN=C(c3ccccc3Cl)c4cc(Br)sc4n12",
+    "cas": "57801-81-7",
+    "molecular_formula": "C15H10BrClN4S",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Тиенодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "delorazepam",
+    "names": [
+      "Делоразепам",
+      "delorazepam"
+    ],
+    "iupac": "7-chloro-5-(2-chlorophenyl)-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "Clc1ccc2NC(=O)CN=C(c3ccccc3Cl)c2c1",
+    "cas": "2894-67-9",
+    "molecular_formula": "C15H10Cl2N2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "diazepam",
+    "names": [
+      "Диазепам (Реланиум, Валиум)",
+      "diazepam"
+    ],
+    "iupac": "7-chloro-1-methyl-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)CN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "cas": "439-14-5",
+    "molecular_formula": "C16H13ClN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС",
+      "Опасна комбинация с алкоголем"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "camazepam",
+    "names": [
+      "Камазепам",
+      "camazepam"
+    ],
+    "iupac": "(7-chloro-1-methyl-2-oxo-5-phenyl-3H-1,4-benzodiazepin-3-yl) N,N-dimethylcarbamate",
+    "smiles": "CN(C)C(=O)OC1N=C(c2ccccc2)c3cc(Cl)ccc3N(C)C1=O",
+    "cas": "36104-80-0",
+    "molecular_formula": "C19H18ClN3O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ketazolam",
+    "names": [
+      "Кетазолам",
+      "ketazolam"
+    ],
+    "iupac": "11-chloro-2,8-dimethyl-12b-phenyl-6H-[1,3]oxazino[3,2-d][1,4]benzodiazepine-4,7-dione",
+    "smiles": "CN1C(=O)CN2C(=O)C=C(C)OC2(c3ccccc3)c4cc(Cl)ccc14",
+    "cas": "27223-35-4",
+    "molecular_formula": "C20H17ClN2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clobazam",
+    "names": [
+      "Клобазам (Фризиум)",
+      "clobazam"
+    ],
+    "iupac": "7-chloro-1-methyl-5-phenyl-1,5-benzodiazepine-2,4-dione",
+    "smiles": "CN1C(=O)CC(=O)N(c2ccccc2)c3cc(Cl)ccc13",
+    "cas": "22316-47-8",
+    "molecular_formula": "C16H13ClN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин, противоэпилептическое"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cloxazolam",
+    "names": [
+      "Клоксазолам",
+      "cloxazolam"
+    ],
+    "iupac": "10-chloro-11b-(2-chlorophenyl)-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "smiles": "Clc1ccc2NC(=O)CN3CCOC3(c4ccccc4Cl)c2c1",
+    "cas": "24166-13-0",
+    "molecular_formula": "C17H14Cl2N2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clonazepam",
+    "names": [
+      "Клоназепам (Антелепсин, Ривотрил)",
+      "clonazepam"
+    ],
+    "iupac": "5-(2-chlorophenyl)-7-nitro-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "[O-][N+](=O)c1ccc2NC(=O)CN=C(c3ccccc3Cl)c2c1",
+    "cas": "1622-61-3",
+    "molecular_formula": "C15H10ClN3O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин, противоэпилептическое"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clorazepate",
+    "names": [
+      "Клоразепат (Транксен)",
+      "clorazepate"
+    ],
+    "iupac": "7-chloro-2-oxo-5-phenyl-1,3-dihydro-1,4-benzodiazepine-3-carboxylic acid",
+    "smiles": "OC(=O)C1N=C(c2ccccc2)c3cc(Cl)ccc3NC1=O",
+    "cas": "23887-31-2",
+    "molecular_formula": "C16H11ClN2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clotiazepam",
+    "names": [
+      "Клотиазепам",
+      "clotiazepam"
+    ],
+    "iupac": "5-(2-chlorophenyl)-7-ethyl-1-methyl-3H-thieno[2,3-e][1,4]diazepin-2-one",
+    "smiles": "CCc1sc2N(C)C(=O)CN=C(c3ccccc3Cl)c2c1",
+    "cas": "33671-46-4",
+    "molecular_formula": "C16H15ClN2OS",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Тиенодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "loprazolam",
+    "names": [
+      "Лопразолам",
+      "loprazolam"
+    ],
+    "iupac": "(2Z)-6-(2-chlorophenyl)-2-[(4-methylpiperazin-1-yl)methylidene]-8-nitro-4H-imidazo[1,2-a][1,4]benzodiazepin-1-one",
+    "smiles": "CN1CCN(CC1)/C=C/2N=C3CN=C(c4ccccc4Cl)c5cc(ccc5N3C2=O)[N+]([O-])=O",
+    "cas": "61197-73-7",
+    "molecular_formula": "C23H21ClN6O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "lorazepam",
+    "names": [
+      "Лоразепам (Ативан)",
+      "lorazepam"
+    ],
+    "iupac": "7-chloro-5-(2-chlorophenyl)-3-hydroxy-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "OC1N=C(c2ccccc2Cl)c3cc(Cl)ccc3NC1=O",
+    "cas": "846-49-1",
+    "molecular_formula": "C15H10Cl2N2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС",
+      "Высокий потенциал зависимости"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "lormetazepam",
+    "names": [
+      "Лорметазепам",
+      "lormetazepam"
+    ],
+    "iupac": "7-chloro-5-(2-chlorophenyl)-3-hydroxy-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)C(O)N=C(c2ccccc2Cl)c3cc(Cl)ccc13",
+    "cas": "848-75-9",
+    "molecular_formula": "C16H12Cl2N2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "medazepam",
+    "names": [
+      "Медазепам (Рудотель)",
+      "medazepam"
+    ],
+    "iupac": "7-chloro-1-methyl-5-phenyl-2,3-dihydro-1,4-benzodiazepine",
+    "smiles": "CN1CCN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "cas": "2898-12-6",
+    "molecular_formula": "C16H15ClN2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "midazolam",
+    "names": [
+      "Мидазолам (Дормикум)",
+      "midazolam"
+    ],
+    "iupac": "8-chloro-6-(2-fluorophenyl)-1-methyl-4H-imidazo[1,5-a][1,4]benzodiazepine",
+    "smiles": "Cc1ncc2CN=C(c3ccccc3F)c4cc(Cl)ccc4n12",
+    "cas": "59467-70-8",
+    "molecular_formula": "C18H13ClFN3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин короткого действия — только в/в седация",
+      "Возможна остановка дыхания"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "nimetazepam",
+    "names": [
+      "Ниметазепам",
+      "nimetazepam"
+    ],
+    "iupac": "1-methyl-7-nitro-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)CN=C(c2ccccc2)c3cc(ccc13)[N+]([O-])=O",
+    "cas": "2011-67-8",
+    "molecular_formula": "C16H13N3O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "nitrazepam",
+    "names": [
+      "Нитразепам (Радедорм, Эуноктин)",
+      "nitrazepam"
+    ],
+    "iupac": "7-nitro-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "[O-][N+](=O)c1ccc2NC(=O)CN=C(c3ccccc3)c2c1",
+    "cas": "146-22-5",
+    "molecular_formula": "C15H11N3O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "nordazepam",
+    "names": [
+      "Нордазепам",
+      "nordazepam"
+    ],
+    "iupac": "7-chloro-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "Clc1ccc2NC(=O)CN=C(c3ccccc3)c2c1",
+    "cas": "1088-11-5",
+    "molecular_formula": "C15H11ClN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Активный метаболит многих бензодиазепинов — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "oxazepam",
+    "names": [
+      "Оксазепам (Тазепам, Нозепам)",
+      "oxazepam"
+    ],
+    "iupac": "7-chloro-3-hydroxy-5-phenyl-1,3-dihydro-1,4-benzodiazepin-2-one",
+    "smiles": "OC1N=C(c2ccccc2)c3cc(Cl)ccc3NC1=O",
+    "cas": "604-75-1",
+    "molecular_formula": "C15H11ClN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "oxazolam",
+    "names": [
+      "Оксазолам",
+      "oxazolam"
+    ],
+    "iupac": "10-chloro-2-methyl-11b-phenyl-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "smiles": "C[C@@H]1CN2CC(=O)Nc3ccc(Cl)cc3[C@@]2(O1)c4ccccc4",
+    "cas": "24143-17-7",
+    "molecular_formula": "C18H17ClN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "pinazepam",
+    "names": [
+      "Пиназепам",
+      "pinazepam"
+    ],
+    "iupac": "7-chloro-5-phenyl-1-prop-2-ynyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "Clc1ccc2N(CC#C)C(=O)CN=C(c3ccccc3)c2c1",
+    "cas": "52463-83-9",
+    "molecular_formula": "C18H13ClN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "prazepam",
+    "names": [
+      "Празепам",
+      "prazepam"
+    ],
+    "iupac": "7-chloro-1-(cyclopropylmethyl)-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "Clc1ccc2N(CC3CC3)C(=O)CN=C(c4ccccc4)c2c1",
+    "cas": "2955-38-6",
+    "molecular_formula": "C19H17ClN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "temazepam",
+    "names": [
+      "Темазепам (Сигнопам)",
+      "temazepam"
+    ],
+    "iupac": "7-chloro-3-hydroxy-1-methyl-5-phenyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)C(O)N=C(c2ccccc2)c3cc(Cl)ccc13",
+    "cas": "846-50-4",
+    "molecular_formula": "C16H13ClN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "tetrazepam",
+    "names": [
+      "Тетразепам (Миоластан)",
+      "tetrazepam"
+    ],
+    "iupac": "7-chloro-5-(cyclohexen-1-yl)-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)CN=C(C2=CCCCC2)c3cc(Cl)ccc13",
+    "cas": "10379-14-3",
+    "molecular_formula": "C16H17ClN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — миорелаксант"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fludiazepam",
+    "names": [
+      "Флудиазепам",
+      "fludiazepam"
+    ],
+    "iupac": "7-chloro-5-(2-fluorophenyl)-1-methyl-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)CN=C(c2ccccc2F)c3cc(Cl)ccc13",
+    "cas": "3900-31-0",
+    "molecular_formula": "C16H12ClFN2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "flunitrazepam",
+    "names": [
+      "Флунитразепам (Рогипнол)",
+      "flunitrazepam"
+    ],
+    "iupac": "5-(2-fluorophenyl)-1-methyl-7-nitro-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CN1C(=O)CN=C(c2ccccc2F)c3cc(ccc13)[N+]([O-])=O",
+    "cas": "1622-62-4",
+    "molecular_formula": "C16H12FN3O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — высокий потенциал злоупотребления",
+      "Используется как «клофелин» (date rape drug)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "flurazepam",
+    "names": [
+      "Флуразепам",
+      "flurazepam"
+    ],
+    "iupac": "7-chloro-1-[2-(diethylamino)ethyl]-5-(2-fluorophenyl)-3H-1,4-benzodiazepin-2-one",
+    "smiles": "CCN(CC)CCN1C(=O)CN=C(c2ccccc2F)c3cc(Cl)ccc13",
+    "cas": "17617-23-1",
+    "molecular_formula": "C21H23ClFN3O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное длительного действия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "halazepam",
+    "names": [
+      "Халазепам",
+      "halazepam"
+    ],
+    "iupac": "7-chloro-5-phenyl-1-(2,2,2-trifluoroethyl)-3H-1,4-benzodiazepin-2-one",
+    "smiles": "FC(F)(F)CN1C(=O)CN=C(c2ccccc2)c3cc(Cl)ccc13",
+    "cas": "23092-17-3",
+    "molecular_formula": "C17H12ClF3N2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "haloxazolam",
+    "names": [
+      "Халоксазолам",
+      "haloxazolam"
+    ],
+    "iupac": "10-bromo-11b-(2-fluorophenyl)-2,3,5,7-tetrahydro-[1,3]oxazolo[3,2-d][1,4]benzodiazepin-6-one",
+    "smiles": "Fc1ccccc1C23OCCN2CC(=O)Nc4ccc(Br)cc34",
+    "cas": "59128-97-1",
+    "molecular_formula": "C17H14BrFN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chlordiazepoxide",
+    "names": [
+      "Хлордиазепоксид (Элениум, Либриум)",
+      "chlordiazepoxide"
+    ],
+    "iupac": "7-chloro-4-hydroxy-N-methyl-5-phenyl-3H-1,4-benzodiazepin-2-imine",
+    "smiles": "CN=C1CN(O)C(=C2C=C(Cl)C=CC2=N1)c3ccccc3",
+    "cas": "58-25-3",
+    "molecular_formula": "C16H14ClN3O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Первый бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "estazolam",
+    "names": [
+      "Эстазолам",
+      "estazolam"
+    ],
+    "iupac": "",
+    "smiles": "Clc1ccc2n3cnnc3CN=C(c4ccccc4)c2c1",
+    "cas": "29975-16-4",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ethyl_loflazepate",
+    "names": [
+      "Этил лофлазепат",
+      "ethyl loflazepate"
+    ],
+    "iupac": "ethyl 7-chloro-5-(2-fluorophenyl)-2-oxo-1,3-dihydro-1,4-benzodiazepine-3-carboxylate",
+    "smiles": "CCOC(=O)C1N=C(c2ccccc2F)c3cc(Cl)ccc3NC1=O",
+    "cas": "29177-84-2",
+    "molecular_formula": "C18H14ClFN2O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бензодиазепин — угнетение ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "zolpidem",
+    "names": [
+      "Золпидем (Санвал, Ивадал, Гипноген)",
+      "zolpidem"
+    ],
+    "iupac": "N,N-dimethyl-2-[6-methyl-2-(4-methylphenyl)imidazo[1,2-a]pyridin-3-yl]acetamide",
+    "smiles": "CN(C)C(=O)Cc1n2cc(C)ccc2nc1c3ccc(C)cc3",
+    "cas": "82626-48-0",
+    "molecular_formula": "C19H21N3O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Z-препарат — снотворное",
+      "Опасны амнезия и паразомнии (хождение во сне)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "zopiclone",
+    "names": [
+      "Зопиклон (Имован, Сомнол)",
+      "zopiclone"
+    ],
+    "iupac": "[6-(5-chloro-2-pyridinyl)-5-oxo-7H-pyrrolo[3,4-b]pyrazin-7-yl] 4-methylpiperazine-1-carboxylate",
+    "smiles": "CN1CCN(CC1)C(=O)OC2N(C(=O)c3nccnc23)c4ccc(Cl)cn4",
+    "cas": "43200-80-2",
+    "molecular_formula": "C17H17ClN6O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Z-препарат — снотворное"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ephedrine",
+    "names": [
+      "Эфедрин и его соли",
+      "ephedrine"
+    ],
+    "iupac": "(1R,2S)-2-(methylamino)-1-phenylpropan-1-ol",
+    "smiles": "CN[C@@H](C)[C@H](O)c1ccccc1",
+    "cas": "299-42-3",
+    "molecular_formula": "C10H15NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик — тахикардия, гипертония",
+      "Прекурсор метамфетамина — контроль оборота"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "pseudoephedrine",
+    "names": [
+      "Псевдоэфедрин",
+      "pseudoephedrine"
+    ],
+    "iupac": "(1S,2S)-2-(methylamino)-1-phenylpropan-1-ol",
+    "smiles": "CN[C@@H](C)[C@@H](O)c1ccccc1",
+    "cas": "90-82-4",
+    "molecular_formula": "C10H15NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик",
+      "Прекурсор метамфетамина — строгий учёт и отпуск по рецепту"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "methylephedrine",
+    "names": [
+      "Метилэфедрин",
+      "methylephedrine"
+    ],
+    "iupac": "(1R,2S)-2-(dimethylamino)-1-phenylpropan-1-ol",
+    "smiles": "CC(C(O)c1ccccc1)N(C)C",
+    "cas": "552-79-4",
+    "molecular_formula": "C11H17NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик — тахикардия"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "2_1_phenyl_2_methylaminopropyl_amino_1_propanol",
+    "names": [
+      "Цефедрин",
+      "2-(1-phenyl-2-methylaminopropyl)amino-1-propanol"
+    ],
+    "iupac": "",
+    "smiles": "CNC(C)C(NC(C)CO)c1ccccc1",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "propylhexedrine",
+    "names": [
+      "Пропилгекседрил",
+      "propylhexedrine"
+    ],
+    "iupac": "1-cyclohexyl-N-methylpropan-2-amine",
+    "smiles": "CNC(C)CC1CCCCC1",
+    "cas": "101-40-6",
+    "molecular_formula": "C10H21N",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик — злоупотребление при ингаляции (кардиотоксичность)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "androstenediol",
+    "names": [
+      "Андростенедиол и его эфиры (в т.ч. дипропионат)",
+      "androstenediol"
+    ],
+    "iupac": "(3S,8R,9S,10R,13S,14S,17S)-10,13-dimethyl-2,3,4,7,8,9,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthrene-3,17-diol",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=C[C@@H](O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "cas": "521-17-5",
+    "molecular_formula": "C19H30O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид — нарушение гормонального баланса",
+      "Контролируемое вещество"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "androstanolone",
+    "names": [
+      "Андростанолон (Дигидротестостерон, Станолон)",
+      "androstanolone"
+    ],
+    "iupac": "(5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-10,13-dimethyl-1,2,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CC[C@H]4CC(=O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "cas": "521-18-6",
+    "molecular_formula": "C19H30O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Андроген — подавление собственной выработки тестостерона"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "androstenedione",
+    "names": [
+      "Андростенедион",
+      "androstenedione"
+    ],
+    "iupac": "(8R,9S,10R,13S,14S)-10,13-dimethyl-2,6,7,8,9,11,12,14,15,16-decahydro-1H-cyclopenta[a]phenanthrene-3,17-dione",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@]34C)[C@@H]1CCC2=O",
+    "cas": "63-05-8",
+    "molecular_formula": "C19H26O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Прогормон — анаболические и андрогенные эффекты"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clostebol",
+    "names": [
+      "Клостебол и его эфиры (в т.ч. ацетат)",
+      "clostebol"
+    ],
+    "iupac": "(8R,9S,10R,13S,14S,17S)-4-chloro-17-hydroxy-10,13-dimethyl-1,2,6,7,8,9,11,12,14,15,16,17-dodecahydrocyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=C(Cl)C(=O)CC[C@]34C)[C@@H]1CC[C@@H]2O",
+    "cas": "1093-58-9",
+    "molecular_formula": "C19H27ClO2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "metandienone",
+    "names": [
+      "Метандиенон (Метандростенолон, Данабол)",
+      "metandienone"
+    ],
+    "iupac": "(8R,9S,10R,13S,14S,17S)-17-hydroxy-10,13,17-trimethyl-7,8,9,11,12,14,15,16-octahydro-6H-cyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CCC4=CC(=O)C=C[C@]4(C)[C@H]3CC[C@]12C",
+    "cas": "72-63-9",
+    "molecular_formula": "C20H28O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид — гепатотоксичность при длительном применении"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "metenolone",
+    "names": [
+      "Метенолон и его эфиры (Примоболан)",
+      "metenolone"
+    ],
+    "iupac": "(5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-1,10,13-trimethyl-4,5,6,7,8,9,11,12,14,15,16,17-dodecahydrocyclopenta[a]phenanthren-3-one",
+    "smiles": "CC1=CC(=O)C[C@@H]2CCC3C4CCC(O)C4(C)CCC3C12C",
+    "cas": "153-00-4",
+    "molecular_formula": "C20H30O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mesterolone",
+    "names": [
+      "Местеролон (Провирон)",
+      "mesterolone"
+    ],
+    "iupac": "(1S,5S,8R,9S,10S,13S,14S,17S)-17-hydroxy-1,10,13-trimethyl-1,2,4,5,6,7,8,9,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@H]1CC(=O)C[C@@H]2CC[C@H]3[C@@H]4CC[C@H](O)[C@@]4(C)CC[C@@H]3[C@@]12C",
+    "cas": "1424-00-6",
+    "molecular_formula": "C20H32O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Андроген — подавление гипоталамо-гипофизарной оси"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "nandrolone",
+    "names": [
+      "Нандролон и его эфиры (Ретаболил, Дека-Дураболин)",
+      "nandrolone"
+    ],
+    "iupac": "(8R,9S,10R,13S,14S,17S)-17-hydroxy-13-methyl-2,6,7,8,9,10,11,12,14,15,16,17-dodecahydro-1H-cyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@H]34)[C@@H]1CC[C@@H]2O",
+    "cas": "434-22-0",
+    "molecular_formula": "C18H26O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "19_norandrostenediol",
+    "names": [
+      "19-Норандростенедиол",
+      "19-norandrostenediol"
+    ],
+    "iupac": "(3S,8R,9S,10R,13S,14S,17S)-13-methyl-1,2,3,4,7,8,9,10,11,12,14,15,16,17-tetradecahydrocyclopenta[a]phenanthrene-3,17-diol",
+    "smiles": "",
+    "cas": "25975-59-1",
+    "molecular_formula": "C18H28O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Прогормон нандролона — анаболические эффекты"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "19_norandrostenedione",
+    "names": [
+      "19-Норандростенедион",
+      "19-norandrostenedione"
+    ],
+    "iupac": "(8R,9S,10R,13S,14S)-13-methyl-1,2,6,7,8,9,10,11,12,14,15,16-dodecahydrocyclopenta[a]phenanthrene-3,17-dione",
+    "smiles": "C[C@]12CC[C@H]3[C@@H](CCC4=CC(=O)CC[C@H]34)[C@@H]1CCC2=O",
+    "cas": "734-32-7",
+    "molecular_formula": "C18H24O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Прогормон нандролона — анаболические эффекты"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "oxandrolone",
+    "names": [
+      "Оксандролон (Анавар)",
+      "oxandrolone"
+    ],
+    "iupac": "(1S,3aS,3bR,5aS,9aS,9bS,11aS)-1-hydroxy-1,9a,11a-trimethyl-2,3,3a,3b,4,5,5a,6,9,9b,10,11-dodecahydroindeno[4,5-h]isochromen-7-one",
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CC[C@H]4CC(=O)OC[C@]4(C)[C@H]3CC[C@]12C",
+    "cas": "53-39-4",
+    "molecular_formula": "C19H30O3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид — гепатотоксичность (оральная форма)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "stanozolol",
+    "names": [
+      "Станозолол (Стромба, Винстрол)",
+      "stanozolol"
+    ],
+    "iupac": "(1S,2S,10S,13R,14S,17S,18S)-2,17,18-trimethyl-6,7-diazapentacyclo[11.7.0.02,10.04,8.014,18]icosa-4(8),5-dien-17-ol",
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CC[C@H]4Cc5[nH]ncc5C[C@]4(C)[C@H]3CC[C@]12C",
+    "cas": "10418-03-8",
+    "molecular_formula": "C21H32N2O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид — выраженная гепатотоксичность"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fluoxymesterone",
+    "names": [
+      "Флуоксиместерон (Халотестин)",
+      "fluoxymesterone"
+    ],
+    "iupac": "(8S,9R,10S,11S,13S,14S,17S)-9-fluoro-11,17-dihydroxy-10,13,17-trimethyl-1,2,6,7,8,11,12,14,15,16-decahydrocyclopenta[a]phenanthren-3-one",
+    "smiles": "C[C@]1(O)CC[C@H]2[C@@H]3CCC4=CC(=O)CC[C@]4(C)[C@@]3(F)[C@@H](O)C[C@]12C",
+    "cas": "76-43-7",
+    "molecular_formula": "C20H29FO3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анаболический стероид — высокая гепатотоксичность"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "benactyzine",
+    "names": [
+      "Бенактизин (Амизил)",
+      "benactyzine"
+    ],
+    "iupac": "2-(diethylamino)ethyl 2-hydroxy-2,2-diphenylacetate",
+    "smiles": "[H+].[Cl-].CCN(CC)CCOC(=O)C(O)(c1ccccc1)c2ccccc2",
+    "cas": "302-40-9",
+    "molecular_formula": "C20H25NO3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "CHEMICAL_WEAPON"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Холинолитик — галлюцинации при передозировке",
+      "Структурный аналог BZ (химическое оружие)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "bromisoval",
+    "names": [
+      "Бромизовал (Бромурал)",
+      "bromisoval"
+    ],
+    "iupac": "2-bromo-N-carbamoyl-3-methylbutanamide",
+    "smiles": "CC(C)C(Br)C(=O)NC(N)=O",
+    "cas": "496-67-3",
+    "molecular_formula": "C6H11BrN2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Бромурат — снотворное-седативное",
+      "Накопление брома при длительном применении"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "clonidine",
+    "names": [
+      "Клонидин (Клофелин, Гемитон, Катапрес)",
+      "clonidine"
+    ],
+    "iupac": "N-(2,6-dichlorophenyl)-4,5-dihydro-1H-imidazol-2-amine",
+    "smiles": "Clc1cccc(Cl)c1NC2=NCCN2",
+    "cas": "4205-90-7",
+    "molecular_formula": "C9H9Cl2N3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "α2-агонист — резкое снижение АД и ЧСС",
+      "Опасен для детей даже в малых дозах",
+      "Использовался для криминального отравления"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "levomepromazine",
+    "names": [
+      "Левомепромазин (Тизерцин)",
+      "levomepromazine"
+    ],
+    "iupac": "(2R)-3-(2-methoxyphenothiazin-10-yl)-N,N,2-trimethylpropan-1-amine",
+    "smiles": "COc1ccc2Sc3ccccc3N(C[C@H](C)CN(C)C)c2c1",
+    "cas": "60-99-1",
+    "molecular_formula": "C19H24N2OS",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Антипсихотик — нейролептический синдром при передозировке",
+      "Сильная ортостатическая гипотония"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "meprobamate",
+    "names": [
+      "Мепробамат (Мепротан)",
+      "meprobamate"
+    ],
+    "iupac": "[2-(carbamoyloxymethyl)-2-methylpentyl] carbamate",
+    "smiles": "CCCC(C)(COC(N)=O)COC(N)=O",
+    "cas": "57-53-4",
+    "molecular_formula": "C9H18N2O4",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Транквилизатор — депрессия ЦНС и дыхания",
+      "Потенциал зависимости"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mesocarb",
+    "names": [
+      "Мезокарб (Сиднокарб)",
+      "mesocarb"
+    ],
+    "iupac": "N-phenyl-N'-[3-(1-phenylpropan-2-yl)oxadiazol-3-ium-5-yl]carbamimidate",
+    "smiles": "CC(Cc1ccccc1)n2cc([N-]C(=O)Nc3ccccc3)[o+]n2",
+    "cas": "34262-84-5",
+    "molecular_formula": "C18H18N4O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Психостимулятор — нарушения сердечного ритма при передозировке"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sydnofen",
+    "names": [
+      "Сиднофен",
+      "sydnofen"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Психостимулятор и ИМАО — гипертонические кризы",
+      "Несовместим с тирамин-содержащими продуктами"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "pemoline",
+    "names": [
+      "Пемолин",
+      "pemoline"
+    ],
+    "iupac": "2-amino-5-phenyl-1,3-oxazol-4-one",
+    "smiles": "NC1=NC(=O)C(O1)c2ccccc2",
+    "cas": "2152-34-3",
+    "molecular_formula": "C9H8N2O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Стимулятор ЦНС — гепатотоксичность (снят с рынка в США)",
+      "Контроль функции печени"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "piperidine",
+    "names": [
+      "Пиперидин",
+      "piperidine"
+    ],
+    "iupac": "piperidine",
+    "smiles": "C1CCNCC1",
+    "cas": "110-89-4",
+    "molecular_formula": "C5H11N",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Прекурсор наркотических веществ — строгий контроль оборота",
+      "Едкая жидкость: раздражает кожу и слизистые",
+      "Работать только под тягой"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "pyrovalerone",
+    "names": [
+      "Пировалерон",
+      "pyrovalerone"
+    ],
+    "iupac": "1-(4-methylphenyl)-2-pyrrolidin-1-ylpentan-1-one",
+    "smiles": "CCCC(N1CCCC1)C(=O)c2ccc(C)cc2",
+    "cas": "3563-49-3",
+    "molecular_formula": "C16H23NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Психостимулятор — нарушения сердечного ритма, зависимость"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "toluene",
+    "names": [
+      "Толуол",
+      "toluene"
+    ],
+    "iupac": "toluene",
+    "smiles": "Cc1ccccc1",
+    "cas": "108-88-3",
+    "molecular_formula": "C7H8",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "CARCINOGEN",
+      "NEUROTOXIN"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Нейротоксин при вдыхании паров — хронические нарушения ЦНС",
+      "Работать только под тягой",
+      "Канцероген 3 (IARC)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "tramadol",
+    "names": [
+      "Трамадол (Трамал, Маброн)",
+      "tramadol"
+    ],
+    "iupac": "cis-(1R,2R)-2-[(dimethylamino)methyl]-1-(3-methoxyphenyl)cyclohexan-1-ol",
+    "smiles": "[Cl-].COc1cccc(c1)[C@@]2(O)CCCC[C@@H]2CN(C)C.[H+]",
+    "cas": "27203-92-5",
+    "molecular_formula": "C16H25NO2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Опиоидный анальгетик — угнетение дыхания",
+      "Риск эпилептических приступов",
+      "Серотониновый синдром при комбинации с СИОЗС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "trihexyphenidyl",
+    "names": [
+      "Тригексифенидил (Циклодол, Артан, Паркопан)",
+      "trihexyphenidyl"
+    ],
+    "iupac": "1-cyclohexyl-1-phenyl-3-piperidin-1-ylpropan-1-ol",
+    "smiles": "OC(CCN1CCCCC1)(C2CCCCC2)c3ccccc3",
+    "cas": "144-11-6",
+    "molecular_formula": "C20H31NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Холинолитик — психоз при передозировке",
+      "Злоупотребление для галлюциногенного эффекта"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "phenylpropanolamine",
+    "names": [
+      "Фенилпропаноламин (норэфедрин)",
+      "phenylpropanolamine"
+    ],
+    "iupac": "(1R,2S)-2-amino-1-phenylpropan-1-ol",
+    "smiles": "C[C@@H](N)[C@@H](O)c1ccccc1",
+    "cas": "14838-15-4",
+    "molecular_formula": "C9H13NO",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Симпатомиметик — геморрагический инсульт при передозировке",
+      "Снят с рынка во многих странах"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fencamfamine",
+    "names": [
+      "Фенкамфамин",
+      "fencamfamine"
+    ],
+    "iupac": "N-ethyl-3-phenylbicyclo[2.2.1]heptan-2-amine",
+    "smiles": "CCNC1C2CCC(C2)C1c3ccccc3",
+    "cas": "1209-98-9",
+    "molecular_formula": "C15H21N",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Стимулятор ЦНС"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "phenylacetone",
+    "names": [
+      "1-Фенил-2-пропанон (фенилацетон, P2P)",
+      "phenylacetone"
+    ],
+    "iupac": "1-phenylpropan-2-one",
+    "smiles": "CC(=O)Cc1ccccc1",
+    "cas": "103-79-7",
+    "molecular_formula": "C9H10O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Прекурсор амфетамина и метамфетамина — строжайший контроль оборота",
+      "Хранение и перемещение без лицензии уголовно наказуемо"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fenfluramine",
+    "names": [
+      "Фенфлурамин",
+      "fenfluramine"
+    ],
+    "iupac": "N-ethyl-1-[3-(trifluoromethyl)phenyl]propan-2-amine",
+    "smiles": "CCNC(C)Cc1cccc(c1)C(F)(F)F",
+    "cas": "458-24-2",
+    "molecular_formula": "C12H16F3N",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анорексигенное — поражение сердечных клапанов и лёгочная гипертензия",
+      "Снят с рынка"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fenetylline",
+    "names": [
+      "Фенэтиллин (Каптагон)",
+      "fenetylline"
+    ],
+    "iupac": "1,3-dimethyl-7-[2-(1-phenylpropan-2-ylamino)ethyl]purine-2,6-dione",
+    "smiles": "[H+].[Cl-].CC(Cc1ccccc1)NCCn2cnc3N(C)C(=O)N(C)C(=O)c23",
+    "cas": "3736-08-1",
+    "molecular_formula": "C18H23N5O2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Психостимулятор — сердечно-сосудистые осложнения",
+      "Запрещён в большинстве стран"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chloroform",
+    "names": [
+      "Хлороформ (трихлорметан)",
+      "chloroform"
+    ],
+    "iupac": "chloroform",
+    "smiles": "ClC(Cl)Cl",
+    "cas": "67-66-3",
+    "molecular_formula": "CHCl3",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "CARCINOGEN"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "При хранении на свету образует фосген — проверять стабилизатор",
+      "Канцероген 2А (IARC)",
+      "Гепатотоксин и нефротоксин",
+      "Работать только под тягой"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chloroethane",
+    "names": [
+      "Хлорэтил (этилхлорид)",
+      "chloroethane"
+    ],
+    "iupac": "chloroethane",
+    "smiles": "CCCl",
+    "cas": "75-00-3",
+    "molecular_formula": "C2H5Cl",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "NEUROTOXIN"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анестетик — нейротоксин при вдыхании",
+      "Высокогорючий газ при н.у."
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "o_chlorobenzylidene_malononitrile",
+    "names": [
+      "о-Хлорбензилиденмалонодинитрил (CS-газ)",
+      "o-chlorobenzylidene malononitrile"
+    ],
+    "iupac": "2-[(2-chlorophenyl)methylidene]propanedinitrile",
+    "smiles": "Clc1ccccc1C=C(C#N)C#N",
+    "cas": "2698-41-1",
+    "molecular_formula": "C10H5ClN2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Лакриматор — слёзоточивый газ",
+      "Сильный раздражитель кожи, глаз и дыхательных путей",
+      "Применяется как нелетальное оружие — без дозированных форм в списке"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergotamine",
+    "names": [
+      "Эрготал (смесь алкалоидов спорыньи)",
+      "ergotamine"
+    ],
+    "iupac": "(6aR,9R)-N-[(1S,2S,4R,7S)-7-benzyl-2-hydroxy-4-methyl-5,8-dioxo-3-oxa-6,9-diazatricyclo[7.3.0.02,6]dodecan-4-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "smiles": "CN1C[C@@H](C=C2[C@H]1Cc3c[nH]c4cccc2c34)C(=O)N[C@]5(C)O[C@@]6(O)[C@@H]7CCCN7C(=O)[C@H](Cc8ccccc8)N6C5=O",
+    "cas": "113-15-5",
+    "molecular_formula": "C33H35N5O5",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Алкалоид спорыньи — выраженная вазоконстрикция",
+      "Эрготизм при передозировке: гангрена конечностей"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "diethyl_ether",
+    "names": [
+      "Этиловый эфир (диэтиловый эфир)",
+      "diethyl ether"
+    ],
+    "iupac": "ethoxyethane",
+    "smiles": "CCOCC",
+    "cas": "60-29-7",
+    "molecular_formula": "C4H10O",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "FLAMMABLE"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Крайне легковоспламеняющийся (тВсп = −45°C)",
+      "Образует взрывчатые пероксиды при хранении — проверять регулярно",
+      "Наркоз при вдыхании"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "n_benzylpiperazine",
+    "names": [
+      "N-Бензилпиперазин (BZP)",
+      "N-benzylpiperazine"
+    ],
+    "iupac": "1-benzylpiperazine",
+    "smiles": "C1CN(CCN1)Cc2ccccc2",
+    "cas": "2759-28-6",
+    "molecular_formula": "C11H16N2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Дизайнерский стимулятор — галлюцинации, эпилептические приступы"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "1_3_trifluoromethylphenyl_piperazine",
+    "names": [
+      "1-(3-Трифторметилфенил)пиперазин (TFMPP)",
+      "1-(3-trifluoromethylphenyl)piperazine"
+    ],
+    "iupac": "1-[3-(trifluoromethyl)phenyl]piperazine",
+    "smiles": "FC(F)(F)c1cccc(c1)N2CCNCC2",
+    "cas": "15532-75-9",
+    "molecular_formula": "C11H13F3N2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Серотонинергический агент — серотониновый синдром в комбинации с BZP"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "2_5_dimethoxy_4_propylthiophenethylamine",
+    "names": [
+      "2,5-Диметокси-4-н-пропилтиофенэтиламин (2C-T-7)",
+      "2,5-dimethoxy-4-propylthiophenethylamine"
+    ],
+    "iupac": "2-(2,5-dimethoxy-4-propylsulfanylphenyl)ethanamine",
+    "smiles": "CCCC1=C(OC)SC(CCN)(C1)OC",
+    "cas": "207740-26-9",
+    "molecular_formula": "C13H21NO2S",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Психоделик — смертельные случаи при сочетании с MDMA и алкоголем"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "amineptine",
+    "names": [
+      "Аминептин",
+      "amineptine"
+    ],
+    "iupac": "7-(2-tricyclo[9.4.0.03,8]pentadeca-1(15),3,5,7,11,13-hexaenylamino)heptanoic acid",
+    "smiles": "[Cl-].OC(=O)CCCCCC[NH2+]C1c2ccccc2CCc3ccccc13",
+    "cas": "57574-09-1",
+    "molecular_formula": "C22H27NO2",
+    "pkkn_list": "potent",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Атипичный антидепрессант — высокий потенциал злоупотребления",
+      "Гепатотоксичность"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "diphenhydramine_ephedrine",
+    "names": [
+      "Димедрол с эфедрином",
+      "diphenhydramine + ephedrine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация антигистаминного и симпатомиметика",
+      "Риск сердечно-сосудистых осложнений",
+      "Состав: Комбинированный препарат: дифенгидрамин + эфедрин"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "diphenhydramine_pseudoephedrine",
+    "names": [
+      "Димедрол с псевдоэфедрином",
+      "diphenhydramine + pseudoephedrine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация антигистаминного и симпатомиметика",
+      "Состав: Комбинированный препарат: дифенгидрамин + псевдоэфедрин"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "phentermine_diazepam_combination",
+    "names": [
+      "Тайские таблетки (комбинации для коррекции веса)",
+      "phentermine diazepam combination"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Незаконные комбинации: фентермин/диазепам/фенфлурамин/амфепрамон",
+      "Опасны для жизни",
+      "Состав: Таблетки/капсулы с фентермином, диазепамом, фенфлурамином, амфепраноном, алпразоламом и др."
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergotamine",
+    "names": [
+      "Рожки спорыньи (эрготаминовый штамм)",
+      "ergotamine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Растительное сырьё — алкалоиды спорыньи",
+      "Эрготизм: спазм сосудов, гангрена конечностей",
+      "Состав: Растительное сырьё Secale cornutum (спорынья), эрготаминовый штамм"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergotoxine",
+    "names": [
+      "Рожки спорыньи (эрготоксиновый штамм)",
+      "ergotoxine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Растительное сырьё — алкалоиды спорыньи",
+      "Эрготизм: спазм сосудов, гангрена конечностей",
+      "Состав: Растительное сырьё Secale cornutum (спорынья), эрготоксиновый штамм"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cyclobarbital_diazepam",
+    "names": [
+      "Реладорм (таблетки)",
+      "cyclobarbital + diazepam"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация барбитурата и бензодиазепина — резкое угнетение ЦНС",
+      "Состав: Таблетки: циклобарбитал 100 мг + диазепам 10 мг"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "solutan_mixture",
+    "names": [
+      "Солутан (раствор)",
+      "solutan mixture"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Смесь: эфедрин + натрия йодид + прокаин + радобелин",
+      "Высокое содержание эфедрина",
+      "Состав: 50 мл раствора: эфедрина HCl 875 мг, натрия йодид 5 г, прокаина HCl 200 мг и др."
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "propyphenazone_phenobarbital_combination",
+    "names": [
+      "Спазмовералгин / Спазмовералгин-НЕО",
+      "propyphenazone phenobarbital combination"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация: пропифеназон + фенобарбитал + папаверин + кодеин + эфедрин + атропин",
+      "Состав: Пропифеназон 150 мг, фенобарбитал 20 мг, папаверина HCl 30 мг, кодеин 15 мг, эфедрина HCl 5 мг, атропина метобромид 0.5 мг"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "theophylline_ephedrine_phenobarbital_combination",
+    "names": [
+      "Теофедрин / Теофедрин-Н / Нео-Теофедрин",
+      "theophylline ephedrine phenobarbital combination"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация теофиллина, эфедрина, фенобарбитала — опасна при передозировке",
+      "Состав: Теофиллин + теобромин + кофеин + эфедрина HCl + фенобарбитал + экстракт красавки"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "fali_lepsin",
+    "names": [
+      "Фали-Лепсин",
+      "fali-lepsin"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Противоэпилептическое комбинированное средство с фенобарбиталом",
+      "Состав: Комбинированный препарат с фенобарбиталом"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "t_fedrine_combination",
+    "names": [
+      "Т-Федрин",
+      "t-fedrine combination"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация: эфедрин + фенобарбитал + теофиллин",
+      "Состав: Эфедрина HCl 12 мг, фенобарбитал 10 мг, теофиллин 100 мг"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ephedrine",
+    "names": [
+      "Трава эфедры (Ephedra equisetina)",
+      "ephedrine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Растительное сырьё с высоким содержанием эфедрина",
+      "Прекурсор метамфетамина — строгий контроль",
+      "Состав: Растительное сырьё Ephedra equisetina Bge., содержит эфедрин и псевдоэфедрин"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "toluene_acetone_mixture",
+    "names": [
+      "Толуол + ацетон (смесь)",
+      "toluene acetone mixture"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Смесь растворителей — токсична при вдыхании",
+      "Работать только под тягой",
+      "Огнеопасна",
+      "Состав: Смесь толуола и ацетона"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "kavain",
+    "names": [
+      "Перец опьяняющий (Кава-кава) и вещества, входящие в него",
+      "kavain"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Гепатотоксичность — описаны случаи острой печёночной недостаточности",
+      "Запрещён в ряде стран ЕС",
+      "Состав: Растительное сырьё Piper methysticum, содержит кавалактоны (кавин, метистицин и др.)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ephedrine_supplement",
+    "names": [
+      "Пищевые добавки (БАДы) с эфедрином или псевдоэфедрином",
+      "ephedrine supplement"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "БАД с контролируемыми симпатомиметиками — тахикардия, инсульт",
+      "Состав: Пищевые добавки, содержащие эфедрина HCl, псевдоэфедрин или их сочетание"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "kava_supplement",
+    "names": [
+      "Пищевые добавки (БАДы) с кава-кавой",
+      "kava supplement"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Гепатотоксичность при систематическом приёме",
+      "Состав: Пищевые добавки с экстрактом Piper methysticum"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sibutramine",
+    "names": [
+      "Пищевые добавки (БАДы) с сибутрамином",
+      "sibutramine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Анорексигенное — инфаркт и инсульт при сердечно-сосудистых заболеваниях",
+      "Снят с рынка в РФ и ЕС",
+      "Состав: Пищевые добавки с сибутрамином (часто незаконно)"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chlordiazepoxide_amitriptyline",
+    "names": [
+      "Хлордиазепоксид с амитриптиллином",
+      "chlordiazepoxide + amitriptyline"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Комбинация бензодиазепина и ТЦА — резкое угнетение ЦНС",
+      "Состав: Таблетки: хлордиазепоксид + амитриптиллина HCl в разных дозировках"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "diethyl_ether",
+    "names": [
+      "Эфир для наркоза (стабилизированный / нестабилизированный / медицинский)",
+      "diethyl ether"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "potent",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "FLAMMABLE"
+    ],
+    "severity": "high",
+    "safety_warnings": [
+      "Носить перчатки и защитные очки",
+      "Вещество из Списка №1 сильнодействующих веществ ПККН",
+      "Соблюдать предписанный порядок хранения и учёта",
+      "Крайне легковоспламеняющийся",
+      "Образует взрывчатые пероксиды при хранении — регулярно проверять",
+      "Состав: Диэтиловый эфир медицинской/наркозной степени очистки; SMILES см. запись 'Этиловый эфир'"
+    ],
+    "description": "Вещество из Списка №1 сильнодействующих веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "aconitine",
+    "names": [
+      "Аконит (Aconitum) — растение",
+      "aconitine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Растение содержит аконитин — смертельная доза ~2 мг",
+      "Всасывается через кожу и слизистые",
+      "Состав: Растительное сырьё рода Aconitum; активный токсин — аконитин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "aconitine",
+    "names": [
+      "Аконитин",
+      "aconitine"
+    ],
+    "iupac": "[(1S,2R,3R,4R,5R,6S,7S,8R,9R,13R,14R,16S,17S,18R)-8-acetyloxy-11-ethyl-5,7,14-trihydroxy-6,16,18-trimethoxy-13-(methoxymethyl)-11-azahexacyclo[7.7.2.12,5.01,10.03,8.013,17]nonadecan-4-yl] benzoate",
+    "smiles": "CCN1C[C@]2(COC)[C@H](O)C[C@H](OC)[C@@]34[C@@H]5C[C@]6(O)[C@@H](OC)[C@H](O)[C@](OC(C)=O)([C@@H]([C@H](OC)[C@H]23)C14)[C@H]5[C@H]6OC(=O)c7ccccc7",
+    "cas": "302-27-2",
+    "molecular_formula": "C34H47NO11",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Алкалоид аконита — смертельная доза ~2 мг",
+      "Всасывается через кожу",
+      "Антидот отсутствует"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hyoscyamine",
+    "names": [
+      "Гиосциамин основание",
+      "hyoscyamine"
+    ],
+    "iupac": "[(1R,5S)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "smiles": "CN1C2CCC1CC(C2)OC(=O)[C@H](CO)c3ccccc3",
+    "cas": "101-31-5",
+    "molecular_formula": "C17H23NO3",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холинолитик из белладонны — сухость, тахикардия, галлюцинации",
+      "Токсическая доза у детей очень низкая"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hyoscyamine",
+    "names": [
+      "Гиосциамина камфорат",
+      "hyoscyamine"
+    ],
+    "iupac": "[(1R,5S)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "smiles": "CN1C2CCC1CC(C2)OC(=O)[C@H](CO)c3ccccc3",
+    "cas": "101-31-5",
+    "molecular_formula": "C17H23NO3",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холинолитик — см. гиосциамин основание"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hyoscyamine",
+    "names": [
+      "Гиосциамина сульфат",
+      "hyoscyamine"
+    ],
+    "iupac": "[(1R,5S)-8-methyl-8-azabicyclo[3.2.1]octan-3-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "smiles": "CN1C2CCC1CC(C2)OC(=O)[C@H](CO)c3ccccc3",
+    "cas": "101-31-5",
+    "molecular_formula": "C17H23NO3",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холинолитик — узкое терапевтическое окно"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "scopolamine",
+    "names": [
+      "Скополамина гидробромид",
+      "scopolamine"
+    ],
+    "iupac": "[(1S,2S,4R,5R)-9-methyl-3-oxa-9-azatricyclo[3.3.1.02,4]nonan-7-yl] (2S)-3-hydroxy-2-phenylpropanoate",
+    "smiles": "CN1[C@@H]2CC(C[C@H]1[C@@H]3O[C@H]23)OC(=O)[C@H](CO)c4ccccc4",
+    "cas": "51-34-3",
+    "molecular_formula": "C17H21NO4",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холинолитик — галлюцинации, амнезия",
+      "Использовался для криминального отравления («клофелин»)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "strychnine",
+    "names": [
+      "Стрихнина нитрат",
+      "strychnine"
+    ],
+    "iupac": "(4aR,5aS,8aR,13aS,15aS,15bR)-4a,5,5a,7,8,13a,15,15a,15b,16-decahydro-2H-4,6-methanoindolo[3,2,1-ij]oxepino[2,3,4-de]pyrrolo[2,3-h]quinolin-14-one",
+    "smiles": "O=C1CC2OCC=C3CN4CCC56C4CC3C2C5N1c7ccccc67",
+    "cas": "57-24-9",
+    "molecular_formula": "C21H22N2O2",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Алкалоид чилибухи — смертельная доза ~1–2 мг/кг",
+      "Судороги; антидот: диазепам"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "atropine",
+    "names": [
+      "Сумма алкалоидов красавки",
+      "atropine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Смесь алкалоидов белладонны (атропин, скополамин, гиосциамин)",
+      "Сильный холинолитик",
+      "Состав: Суммарный экстракт алкалоидов Atropa belladonna"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "aconitine",
+    "names": [
+      "Трава аконита джунгарского свежая",
+      "aconitine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Свежее растение особенно опасно — высокое содержание аконитина",
+      "Всасывается через кожу",
+      "Состав: Свежее растение Aconitum soongaricum"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "strychnine",
+    "names": [
+      "Экстракт чилибухи (Strychnos nux-vomica)",
+      "strychnine"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Содержит стрихнин и бруцин",
+      "Смертельная доза стрихнина ~1–2 мг/кг",
+      "Состав: Экстракт семян Strychnos nux-vomica; активные токсины — стрихнин и бруцин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cinchonine",
+    "names": [
+      "Цинхонин",
+      "cinchonine"
+    ],
+    "iupac": "(S)-[(2R,4S,5R)-5-ethenyl-1-azabicyclo[2.2.2]octan-2-yl]-quinolin-4-ylmethanol",
+    "smiles": "O[C@H]([C@H]1C[C@@H]2CCN1C[C@@H]2C=C)c3ccnc4ccccc34",
+    "cas": "118-10-5",
+    "molecular_formula": "C19H22N2O",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Алкалоид хинного дерева — кардиотоксичность (удлинение QT)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergonovine",
+    "names": [
+      "Эргометрин (Эрноновин)",
+      "ergonovine"
+    ],
+    "iupac": "(6aR,9R)-N-[(2S)-1-hydroxypropan-2-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "smiles": "C[C@@H](CO)NC(=O)[C@H]1CN(C)[C@@H]2Cc3c[nH]c4cccc(C2=C1)c34",
+    "cas": "60-79-7",
+    "molecular_formula": "C19H23N3O2",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Алкалоид спорыньи — вазоконстрикция, утеротонический",
+      "Противопоказан при беременности (кроме акушерства под контролем)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergonovine",
+    "names": [
+      "Эргометрина малеат",
+      "ergonovine"
+    ],
+    "iupac": "(6aR,9R)-N-[(2S)-1-hydroxypropan-2-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "smiles": "C[C@@H](CO)NC(=O)[C@H]1CN(C)[C@@H]2Cc3c[nH]c4cccc(C2=C1)c34",
+    "cas": "60-79-7",
+    "molecular_formula": "C19H23N3O2",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Соль эргометрина — та же токсичность"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergotamine",
+    "names": [
+      "Эрготамин",
+      "ergotamine"
+    ],
+    "iupac": "(6aR,9R)-N-[(1S,2S,4R,7S)-7-benzyl-2-hydroxy-4-methyl-5,8-dioxo-3-oxa-6,9-diazatricyclo[7.3.0.02,6]dodecan-4-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "smiles": "CN1C[C@@H](C=C2[C@H]1Cc3c[nH]c4cccc2c34)C(=O)N[C@]5(C)O[C@@]6(O)[C@@H]7CCCN7C(=O)[C@H](Cc8ccccc8)N6C5=O",
+    "cas": "113-15-5",
+    "molecular_formula": "C33H35N5O5",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Алкалоид спорыньи — выраженная вазоконстрикция",
+      "Хронический приём → эрготизм: гангрена"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ergotamine",
+    "names": [
+      "Эрготамина тартрат",
+      "ergotamine"
+    ],
+    "iupac": "(6aR,9R)-N-[(1S,2S,4R,7S)-7-benzyl-2-hydroxy-4-methyl-5,8-dioxo-3-oxa-6,9-diazatricyclo[7.3.0.02,6]dodecan-4-yl]-7-methyl-6,6a,8,9-tetrahydro-4H-indolo[4,3-fg]quinoline-9-carboxamide",
+    "smiles": "CN1C[C@@H](C=C2[C@H]1Cc3c[nH]c4cccc2c34)C(=O)N[C@]5(C)O[C@@]6(O)[C@@H]7CCCN7C(=O)[C@H](Cc8ccccc8)N6C5=O",
+    "cas": "113-15-5",
+    "molecular_formula": "C33H35N5O5",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Соль эрготамина — та же токсичность"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hydrogen_cyanide",
+    "names": [
+      "Синильная кислота (цианистый водород)",
+      "hydrogen cyanide"
+    ],
+    "iupac": "formonitrile",
+    "smiles": "C#N",
+    "cas": "74-90-8",
+    "molecular_formula": "CHN",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "LD50 (крыса, инг.) 140 мг/м³",
+      "Антидот: амилнитрит + тиосульфат натрия",
+      "Держать антидотную аптечку в зоне работы",
+      "Газ при н.у. — контролировать утечки"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "potassium_cyanide",
+    "names": [
+      "Цианистый калий",
+      "potassium cyanide"
+    ],
+    "iupac": "potassium cyanide",
+    "smiles": "[K+].[C-]#N",
+    "cas": "151-50-8",
+    "molecular_formula": "CKN",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "При контакте с кислотой выделяет HCN",
+      "Антидот: амилнитрит",
+      "LD50 (крыса) ~5 мг/кг"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sodium_cyanide",
+    "names": [
+      "Цианистый натрий",
+      "sodium cyanide"
+    ],
+    "iupac": "sodium cyanide",
+    "smiles": "[Na+].[C-]#N",
+    "cas": "143-33-9",
+    "molecular_formula": "CNNa",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "При контакте с кислотой выделяет HCN",
+      "LD50 (крыса) ~6.4 мг/кг"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cuprous_cyanide",
+    "names": [
+      "Цианистая медь",
+      "cuprous cyanide"
+    ],
+    "iupac": "copper(1+) cyanide",
+    "smiles": "[Cu+].[C-]#N",
+    "cas": "544-92-3",
+    "molecular_formula": "CCuN",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Токсичен для водных организмов и человека"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "barium_cyanide",
+    "names": [
+      "Барий цианистый",
+      "barium cyanide"
+    ],
+    "iupac": "barium(2+) dicyanide",
+    "smiles": "[Ba++].[C-]#N.[C-]#N",
+    "cas": "542-62-1",
+    "molecular_formula": "C2BaN2",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Двойная токсичность: цианид + ион бария (Ca-антагонист)",
+      "Антидот: для бария — сульфат натрия; для CN — стандартный"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cadmium_cyanide",
+    "names": [
+      "Кадмий цианистый",
+      "cadmium cyanide"
+    ],
+    "iupac": "",
+    "smiles": "[Cd++].[C-]#N.[C-]#N",
+    "cas": "542-83-6",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Канцероген 1А (кадмий) + цианидная токсичность"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "calcium_cyanide",
+    "names": [
+      "Кальций цианистый",
+      "calcium cyanide"
+    ],
+    "iupac": "",
+    "smiles": "[Ca++].[C-]#N.[C-]#N",
+    "cas": "592-01-8",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "При контакте с влагой выделяет HCN"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "silver_cyanide",
+    "names": [
+      "Серебро цианистое",
+      "silver cyanide"
+    ],
+    "iupac": "",
+    "smiles": "[Ag]C#N",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Нерастворим, но токсичен; при нагреве выделяет HCN"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "zinc_cyanide",
+    "names": [
+      "Цинк цианистый",
+      "zinc cyanide"
+    ],
+    "iupac": "",
+    "smiles": "[Zn++].[C-]#N.[C-]#N",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "При контакте с кислотами выделяет HCN"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "potassium_cyanide",
+    "names": [
+      "Цианплав (смесь цианидов)",
+      "potassium cyanide"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Техническая смесь цианидов — высокая токсичность",
+      "Состав: Промышленная смесь цианидов натрия и кальция"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "hydrogen_cyanide",
+    "names": [
+      "Циклон (Zyklon B)",
+      "hydrogen cyanide"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CHEMICAL_WEAPON"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Цианистый водород на инертном носителе",
+      "Применялся как химическое оружие",
+      "Состав: HCN, адсорбированный на гранулах; SMILES см. 'Синильная кислота'"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury",
+    "names": [
+      "Ртуть металлическая",
+      "mercury"
+    ],
+    "iupac": "",
+    "smiles": "[Hg]",
+    "cas": "7439-97-6",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Пары нейротоксичны — хроническое отравление",
+      "При разливе немедленно собрать; не использовать пылесос",
+      "ПДК паров ртути = 0.01 мг/м³"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury_ii_chloride",
+    "names": [
+      "Ртути дихлорид (сулема, HgCl₂)",
+      "mercury(II) chloride"
+    ],
+    "iupac": "",
+    "smiles": "Cl[Hg]Cl",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "LD50 (крыса) ~1 мг/кг",
+      "Нейротоксин и нефротоксин",
+      "Нельзя сливать в канализацию"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury_ii_iodide",
+    "names": [
+      "Ртути дийодид",
+      "mercury(II) iodide"
+    ],
+    "iupac": "",
+    "smiles": "I[Hg]I",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Токсичен — нейро- и нефротоксин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury_ii_oxycyanide",
+    "names": [
+      "Ртути оксицианид",
+      "mercury(II) oxycyanide"
+    ],
+    "iupac": "",
+    "smiles": "[Hg++].N#COC#N",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Двойная токсичность: ртуть + цианид"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury_salicylate",
+    "names": [
+      "Ртути салицилат",
+      "mercury salicylate"
+    ],
+    "iupac": "",
+    "smiles": "[Hg+].Oc1ccccc1C([O-])=O",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Органическое соединение ртути — нейро- и нефротоксин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "mercury_ii_cyanide",
+    "names": [
+      "Ртути цианид",
+      "mercury(II) cyanide"
+    ],
+    "iupac": "",
+    "smiles": "N#C[Hg]C#N",
+    "cas": "25587-94-4",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Двойная токсичность: ртуть + цианид"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ethylmercury_chloride",
+    "names": [
+      "Этилмеркурхлорид",
+      "ethylmercury chloride"
+    ],
+    "iupac": "",
+    "smiles": "CC[Hg]Cl",
+    "cas": "107-27-7",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Органическое соединение ртути — нейротоксин",
+      "Хорошо всасывается через кожу"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "arsenic_trioxide",
+    "names": [
+      "Мышьяковистый ангидрид (белый мышьяк, As₂O₃) и его производные",
+      "arsenic trioxide"
+    ],
+    "iupac": "",
+    "smiles": "O=[As]O[As]=O",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Канцероген 1А (IARC)",
+      "Не вдыхать пыль",
+      "LD50 (крыса) ~14 мг/кг"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "arsenic_pentoxide",
+    "names": [
+      "Мышьяковый ангидрид (As₂O₅) и его производные",
+      "arsenic pentoxide"
+    ],
+    "iupac": "",
+    "smiles": "O=[As](=O)O[As](=O)=O",
+    "cas": "12355-85-0",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Канцероген 1А (IARC)",
+      "Сильный окислитель — пожароопасен при контакте с горючими"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sodium_arsenate",
+    "names": [
+      "Натрия арсенат и его лекарственные формы",
+      "sodium arsenate"
+    ],
+    "iupac": "",
+    "smiles": "[Na+].[Na+].[Na+].[O-][As]([O-])([O-])=O",
+    "cas": "64070-83-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Канцероген 1А (IARC)",
+      "Гепатотоксин и нефротоксин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sodium_arsenite",
+    "names": [
+      "Натрия арсенит и его лекарственные формы",
+      "sodium arsenite"
+    ],
+    "iupac": "",
+    "smiles": "[Na+].[Na+].[Na+].[O-][As]([O-])[O-]",
+    "cas": "13464-37-4",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Высокотоксичен — LD50 (крыса) ~41 мг/кг",
+      "Канцероген 1А (IARC)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "neoarsphenamine",
+    "names": [
+      "Новарсенол (Неосальварсан)",
+      "neoarsphenamine"
+    ],
+    "iupac": "",
+    "smiles": "[Na+].Nc1cc(ccc1O)[As]=[As]c2ccc(O)c(NC[S]([O-])=O)c2",
+    "cas": "457-60-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Органическое соединение мышьяка — нейротоксин и гепатотоксин",
+      "Устаревший противосифилисный препарат"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "thallium_i_sulfate",
+    "names": [
+      "Таллий, таллия хлорид и другие соли таллия",
+      "thallium(I) sulfate"
+    ],
+    "iupac": "",
+    "smiles": "[Tl+].[Tl+].[O-][S]([O-])(=O)=O",
+    "cas": "37333-30-5",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Нейротоксин — кумулятивный яд",
+      "Без цвета, запаха и вкуса — коварность отравления",
+      "Антидот: берлинская лазурь (Prussian blue)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "demeton",
+    "names": [
+      "Меркаптофос (демeтон, Тиофос)",
+      "demeton"
+    ],
+    "iupac": "",
+    "smiles": "CCO[P](=O)(OCC)SCCSCC.CCO[P](=S)(OCC)OCCSCC",
+    "cas": "8065-48-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "ФОС-пестицид — ингибитор холинэстеразы",
+      "Антидот: атропин + пралидоксим",
+      "Запрещён во многих странах"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "sarin",
+    "names": [
+      "Зарин",
+      "sarin"
+    ],
+    "iupac": "",
+    "smiles": "CC(C)O[P](C)(F)=O",
+    "cas": "50642-23-4",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CHEMICAL_WEAPON"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Боевое отравляющее вещество (нервно-паралитическое)",
+      "Запрещён Конвенцией о химическом оружии",
+      "Антидот: атропин + пралидоксим — немедленно"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "n_acetylanthranilic_acid",
+    "names": [
+      "N-Ацетилантраниловая кислота",
+      "N-acetylanthranilic acid"
+    ],
+    "iupac": "",
+    "smiles": "CC(=O)Nc1ccccc1C(O)=O",
+    "cas": "89-52-1",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор метаквалона — строгий контроль оборота"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "anthranilic_acid",
+    "names": [
+      "Антраниловая кислота",
+      "anthranilic acid"
+    ],
+    "iupac": "",
+    "smiles": "Nc1ccccc1C(O)=O",
+    "cas": "1321-11-5",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор метаквалона и других наркотических веществ"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "acetic_anhydride",
+    "names": [
+      "Ангидрид уксусной кислоты",
+      "acetic anhydride"
+    ],
+    "iupac": "",
+    "smiles": "CC(=O)OC(C)=O",
+    "cas": "108-24-7",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CORROSIVE",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор героина — строгий учёт",
+      "Вызывает тяжёлые ожоги кожи и слизистых",
+      "Работать только под тягой"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "piperonal",
+    "names": [
+      "Пиперональ",
+      "piperonal"
+    ],
+    "iupac": "",
+    "smiles": "O=Cc1ccc2OCOc2c1",
+    "cas": "30024-74-9",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор MDA и MDMA — строгий контроль оборота"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "safrole",
+    "names": [
+      "Сафрол и изосафрол",
+      "safrole"
+    ],
+    "iupac": "",
+    "smiles": "C=CCc1ccc2OCOc2c1",
+    "cas": "94-59-7",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор MDMA — строгий контроль",
+      "Канцероген 2В (IARC)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "3_4_methylenedioxyphenylacetone",
+    "names": [
+      "3,4-Метилендиоксифенил-2-пропанон (PMK, MDP2P)",
+      "3,4-methylenedioxyphenylacetone"
+    ],
+    "iupac": "",
+    "smiles": "CC(=O)Cc1ccc2OCOc2c1",
+    "cas": "4676-39-5",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор MDMA — строжайший контроль оборота"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "phenylacetic_acid",
+    "names": [
+      "Фенилуксусная кислота",
+      "phenylacetic acid"
+    ],
+    "iupac": "",
+    "smiles": "OC(=O)Cc1ccccc1",
+    "cas": "103-82-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "PRECURSOR_CONTROLLED"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Прекурсор амфетамина (через P2P) — строгий учёт"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "aceclidine",
+    "names": [
+      "Ацеклидин (Глаустат, Глаудин)",
+      "aceclidine"
+    ],
+    "iupac": "",
+    "smiles": "CC(=O)OC1CN2CCC1CC2",
+    "cas": "827-61-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холиномиметик — бронхоспазм, брадикардия",
+      "Антидот: атропин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "aldrin",
+    "names": [
+      "Альдрин",
+      "aldrin"
+    ],
+    "iupac": "",
+    "smiles": "ClC1=C(Cl)C2(Cl)C3C4CC(C=C4)C3C1(Cl)C2(Cl)Cl",
+    "cas": "309-00-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Запрещённый хлорорганический пестицид (СОЗ)",
+      "Канцероген, накапливается в жировой ткани",
+      "Стойкий органический загрязнитель (Стокгольмская конвенция)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "dieldrin",
+    "names": [
+      "Дильдрин",
+      "dieldrin"
+    ],
+    "iupac": "",
+    "smiles": "ClC1=C(Cl)C2(Cl)C3C4CC(C5OC45)C3C1(Cl)C2(Cl)Cl",
+    "cas": "72-20-8",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Запрещённый хлорорганический пестицид (СОЗ)",
+      "Нейротоксин — судорожный синдром"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "carbachol",
+    "names": [
+      "Карбахолин (Карбахол)",
+      "carbachol"
+    ],
+    "iupac": "",
+    "smiles": "[Cl-].C[N+](C)(C)CCOC(N)=O",
+    "cas": "51-83-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Холиномиметик — бронхоспазм, брадикардия, гипотония",
+      "Антидот: атропин"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "methanol",
+    "names": [
+      "Метиловый спирт (метанол)",
+      "methanol"
+    ],
+    "iupac": "",
+    "smiles": "CO",
+    "cas": "54841-71-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Метаболизируется до формальдегида и муравьиной кислоты — слепота и смерть",
+      "Смертельная доза ~10–30 мл",
+      "Антидот: этанол или фомепизол",
+      "Не путать с этанолом!"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chlormerodrin",
+    "names": [
+      "Промеран (хлормеродрин) и его лекарственные формы",
+      "chlormerodrin"
+    ],
+    "iupac": "",
+    "smiles": "[Cl-].COC(C[Hg+])CNC(N)=O",
+    "cas": "62-37-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Органическое соединение ртути — нефротоксин",
+      "Устаревшее диуретическое"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "nickel_tetracarbonyl",
+    "names": [
+      "Тетракарбонил никеля",
+      "nickel tetracarbonyl"
+    ],
+    "iupac": "",
+    "smiles": "[Ni](|[C-]#[O+])(|[C-]#[O+])(|[C-]#[O+])|[C-]#[O+]",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CARCINOGEN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Летучее ОВ — канцероген (рак лёгких и носовых пазух)",
+      "Крайне токсичен при вдыхании — LC50 (крыса) ~3 ppm / 30 мин",
+      "Работать только под вытяжкой с угольным фильтром"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "tetraethyllead",
+    "names": [
+      "Тетраэтилсвинец и его смеси (этиловая жидкость)",
+      "tetraethyllead"
+    ],
+    "iupac": "",
+    "smiles": "CC[Pb](CC)(CC)CC",
+    "cas": "78-00-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Хорошо всасывается через кожу — нейротоксин",
+      "Запрещён как топливная добавка",
+      "Поражает ЦНС"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "zinc_phosphide",
+    "names": [
+      "Фосфид цинка",
+      "zinc phosphide"
+    ],
+    "iupac": "",
+    "smiles": "[Zn](|P=[Zn])|P=[Zn]",
+    "cas": "1314-84-7",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "При контакте с водой и кислотами выделяет фосфин PH₃",
+      "Никогда не смешивать с водой!",
+      "LC50 (крыса) ~11.9 мг/м³ (PH₃)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "white_phosphorus",
+    "names": [
+      "Фосфор жёлтый (белый фосфор)",
+      "white phosphorus"
+    ],
+    "iupac": "",
+    "smiles": "P",
+    "cas": "29879-37-6",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "EXPLOSIVE",
+      "CORROSIVE"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Самовозгорается на воздухе — хранить под водой",
+      "Вызывает глубокие ожоги при контакте с кожей",
+      "Гепатотоксин при системном отравлении"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "3_quinuclidinyl_benzilate",
+    "names": [
+      "Хинуклидин-3-бензилат (BZ)",
+      "3-quinuclidinyl benzilate"
+    ],
+    "iupac": "",
+    "smiles": "OC(C(=O)OC1CN2CCC1CC2)(c3ccccc3)c4ccccc4",
+    "cas": "4478-53-9",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CHEMICAL_WEAPON"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Инкапаситирующее химическое оружие (психотомиметик)",
+      "Запрещён Конвенцией о химическом оружии"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "chloropicrin",
+    "names": [
+      "Хлорпикрин",
+      "chloropicrin"
+    ],
+    "iupac": "",
+    "smiles": "[O-][N+](=O)C(Cl)(Cl)Cl",
+    "cas": "76-06-2",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "CHEMICAL_WEAPON"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Лакриматор + лёгочный токсин",
+      "Применялся как боевое отравляющее вещество",
+      "Работать только под тягой"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "ethanol",
+    "names": [
+      "Спирт этиловый синтетический (гидролизный, сульфитный)",
+      "ethanol"
+    ],
+    "iupac": "",
+    "smiles": "CCO",
+    "cas": "121182-78-3",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": false,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Технический спирт содержит примеси (метанол, альдегиды) — смертельно опасен при употреблении внутрь"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "melittin",
+    "names": [
+      "Пчелиный яд очищенный",
+      "melittin"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Смесь пептидов: мелиттин, апамин — анафилаксия",
+      "Иметь антигистаминные препараты и адреналин",
+      "Состав: Смесь пептидов и ферментов (мелиттин ~50%, фосфолипаза А₂ ~12% и др.)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "cobra_venom",
+    "names": [
+      "Змеиный яд",
+      "cobra venom"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Смесь нейротоксинов, гемотоксинов и цитотоксинов",
+      "Антисыворотка — единственный антидот",
+      "Хранить при +4°C",
+      "Состав: Сложная смесь полипептидов, ферментов и токсинов в зависимости от вида змеи"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "uranyl_nitrate",
+    "names": [
+      "Жидкость, содержащая хлорид натрия, нитрат уранила, 4-хлорбензальдегид",
+      "uranyl nitrate"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Смесь с радиоактивным уранилом — радиационная и химическая токсичность",
+      "Состав: Жидкость: NaCl + UO₂(NO₃)₂ + 4-ClC₆H₄CHO"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "1_3_difluoro_2_propanol",
+    "names": [
+      "Глифтор",
+      "1,3-difluoro-2-propanol"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS",
+      "NEUROTOXIN"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Фторсодержащий пестицид — нейротоксин",
+      "Метаболизируется до фторуксусной кислоты",
+      "Состав: Смесь: 1,3-дифторпропанол-2 (70–75%) + 1-фтор-3-хлорпропанол-2 (10–20%)"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  },
+  {
+    "id": "methanol_ethylene_glycol_monoethyl_ether_mixture",
+    "names": [
+      "Жидкость И-М",
+      "methanol ethylene glycol monoethyl ether mixture"
+    ],
+    "iupac": "",
+    "smiles": "",
+    "cas": "",
+    "molecular_formula": "",
+    "pkkn_list": "poisonous",
+    "is_combination": true,
+    "hazard_categories": [
+      "ACUTELY_TOXIC",
+      "ENVIRONMENTALLY_HAZARDOUS"
+    ],
+    "severity": "critical",
+    "safety_warnings": [
+      "Работать только под тягой",
+      "Носить нитриловые перчатки и защитные очки",
+      "Вещество из Списка №2 ядовитых веществ ПККН — строгий учёт",
+      "Смесь метанола и этилцеллозольва — высокотоксична при вдыхании и кожном всасывании",
+      "Состав: Этилцеллозольв (этиленгликоля моноэтиловый эфир) 50% + метанол 50%"
+    ],
+    "description": "Вещество из Списка №2 ядовитых веществ ПККН (ред. 16.03.2006)."
+  }
+]
