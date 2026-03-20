@@ -10,6 +10,7 @@ from sse_starlette import EventSourceResponse
 
 from app.agent import convert_messages, get_agent
 from app.config import settings
+from app.hazard_checker import find_hazards
 from app.schemas import ChatRequest, ChatResponse
 
 logger = logging.getLogger(__name__)
@@ -77,6 +78,8 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
 
     async def event_generator():
         try:
+            full_content: list[str] = []
+
             async for event in agent.astream_events(
                 {"messages": langchain_messages},
                 version="v2",
@@ -86,6 +89,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 if kind == "on_chat_model_stream":
                     chunk = event.get("data", {}).get("chunk")
                     if chunk and hasattr(chunk, "content") and chunk.content:
+                        full_content.append(chunk.content)
                         yield {
                             "event": "token",
                             "data": json.dumps({"content": chunk.content}),
@@ -108,6 +112,15 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                             "output": str(event.get("data", {}).get("output", "")),
                         }),
                     }
+
+            # Check assembled response for hazardous chemicals
+            assembled = "".join(full_content)
+            hazards = find_hazards(assembled)
+            if hazards:
+                yield {
+                    "event": "hazards",
+                    "data": json.dumps({"chemicals": hazards}),
+                }
 
             yield {"event": "done", "data": json.dumps({"status": "completed"})}
 
