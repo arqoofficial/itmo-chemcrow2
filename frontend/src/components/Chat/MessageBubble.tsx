@@ -29,6 +29,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
         "flex gap-3 px-4 py-3",
         isUser ? "flex-row-reverse" : "flex-row",
       )}
+      data-testid={isUser ? "message-user" : "message-bot"}
     >
       <Avatar className="h-8 w-8 shrink-0">
         <AvatarFallback

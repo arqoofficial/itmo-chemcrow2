@@ -164,6 +164,32 @@ services:
       timeout: 5s
       retries: 5
 
+  reaction-predict:
+    build:
+      context: ./services/reaction-predict
+    restart: unless-stopped
+    profiles: ["reaction"]
+    ports:
+      - "8051:8051"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8051/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  retrosynthesis:
+    build:
+      context: ./services/retrosynthesis
+    restart: unless-stopped
+    profiles: ["reaction"]
+    ports:
+      - "8052:8052"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8052/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   mailcatcher:
     image: schickling/mailcatcher
     restart: unless-stopped
