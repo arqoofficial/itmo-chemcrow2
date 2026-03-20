@@ -165,8 +165,10 @@ services:
       retries: 5
 
   reaction-predict:
-    image: doncamilom/rxnpred:latest
+    build:
+      context: ./services/reaction-predict
     restart: unless-stopped
+    profiles: ["reaction"]
     ports:
       - "8051:8051"
     healthcheck:
@@ -176,8 +178,10 @@ services:
       retries: 5
 
   retrosynthesis:
-    image: doncamilom/retrosynthesis:latest
+    build:
+      context: ./services/retrosynthesis
     restart: unless-stopped
+    profiles: ["reaction"]
     ports:
       - "8052:8052"
     healthcheck:
