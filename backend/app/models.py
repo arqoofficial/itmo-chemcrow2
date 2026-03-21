@@ -203,6 +203,8 @@ class ChatMessagesPublic(SQLModel):
 class TaskJobCreate(SQLModel):
     task_type: str = Field(max_length=50)
     input_data: str
+    source: str = Field(default="manual", max_length=20)
+    conversation_id: uuid.UUID | None = None
 
 
 class TaskJob(SQLModel, table=True):
@@ -212,6 +214,14 @@ class TaskJob(SQLModel, table=True):
     )
     task_type: str = Field(max_length=50)
     status: str = Field(default="pending", max_length=20, index=True)
+    source: str = Field(default="manual", max_length=20)
+    conversation_id: uuid.UUID | None = Field(
+        default=None,
+        foreign_key="conversation.id",
+        nullable=True,
+        ondelete="SET NULL",
+        index=True,
+    )
     input_data: str = Field(sa_type=Text())  # type: ignore
     result_data: str | None = Field(default=None, sa_type=Text())  # type: ignore
     error: str | None = Field(default=None, sa_type=Text())  # type: ignore
@@ -232,6 +242,8 @@ class TaskJobPublic(SQLModel):
     user_id: uuid.UUID
     task_type: str
     status: str
+    source: str
+    conversation_id: uuid.UUID | None = None
     input_data: str
     result_data: str | None = None
     error: str | None = None

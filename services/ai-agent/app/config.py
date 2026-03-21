@@ -58,5 +58,10 @@ class Settings(BaseSettings):
     RAG_DENSE_WEIGHT: float = 1.0
     RAG_CANDIDATE_K: int = 20
 
+    # Langfuse observability (optional)
+    LANGFUSE_PUBLIC_KEY: str = ""
+    LANGFUSE_SECRET_KEY: str = ""
+    LANGFUSE_HOST: str = "https://cloud.langfuse.com"
+
 
 settings = Settings()  # type: ignore
