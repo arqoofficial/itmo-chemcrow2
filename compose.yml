@@ -211,36 +211,44 @@ services:
   langfuse-db:
     image: postgres:17
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: langfuse
-      POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD}
-      POSTGRES_DB: langfuse
-      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
-      - langfuse-db-data:/var/lib/postgresql/data/pgdata
+      - langfuse-db-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
-      interval: 5s
-      retries: 5
-      start_period: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   langfuse-clickhouse:
     image: clickhouse/clickhouse-server:24.12
     restart: unless-stopped
+    user: "101:101"
     environment:
       CLICKHOUSE_DB: default
       CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_PASSWORD: clickhouse
     volumes:
       - langfuse-clickhouse-data:/var/lib/clickhouse
+      - langfuse-clickhouse-logs:/var/log/clickhouse-server
     healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "localhost:8123/ping"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
       interval: 5s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 1s
+
+  langfuse-cache:
+    image: redis:7
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
 
   langfuse-server:
     image: langfuse/langfuse:3
@@ -250,17 +258,21 @@ services:
         condition: service_healthy
       langfuse-clickhouse:
         condition: service_healthy
+      langfuse-cache:
+        condition: service_healthy
     ports:
       - "3000:3000"
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD}@langfuse-db:5432/langfuse
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-db:5432/postgres
       CLICKHOUSE_URL: http://langfuse-clickhouse:8123
       CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
       CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
-      REDIS_URL: redis://redis:6379/1
+      CLICKHOUSE_PASSWORD: clickhouse
+      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379
+      LANGFUSE_CACHE_ENABLED: "true"
+      NEXTAUTH_URL: http://localhost:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
       interval: 10s
@@ -276,15 +288,18 @@ services:
         condition: service_healthy
       langfuse-clickhouse:
         condition: service_healthy
+      langfuse-cache:
+        condition: service_healthy
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD}@langfuse-db:5432/langfuse
+      DATABASE_URL: postgresql://postgres:postgres@langfuse-db:5432/postgres
       CLICKHOUSE_URL: http://langfuse-clickhouse:8123
       CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
       CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
-      REDIS_URL: redis://redis:6379/1
+      CLICKHOUSE_PASSWORD: clickhouse
+      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379
+      LANGFUSE_CACHE_ENABLED: "true"
 
   mailcatcher:
     image: schickling/mailcatcher
@@ -315,3 +330,4 @@ volumes:
   redis-data:
   langfuse-db-data:
   langfuse-clickhouse-data:
+  langfuse-clickhouse-logs:
