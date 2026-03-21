@@ -106,3 +106,19 @@ class ProtocolReviewResponse(BaseModel):
     warnings: List[str] = Field(default_factory=list)
     error: Optional[ErrorInfo] = None
     meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+
+
+class SMIRKSToProtocolRequest(BaseModel):
+    smirks: str = Field(default="")
+
+
+class SMIRKSToProtocolResponse(BaseModel):
+    success: bool
+    input_smirks: str
+    protocol_markdown: Optional[str] = None
+    chairman_reasoning: Optional[str] = None
+    uncertainty: Optional[str] = None
+    error: Optional[ErrorInfo] = None
+    meta: Dict[str, Any]

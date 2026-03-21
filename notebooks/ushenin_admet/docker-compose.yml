@@ -10,6 +10,12 @@ services:
       ADMET_APP_NAME: "ADMET Microservice"
       ADMET_MAX_HEAVY_ATOMS: "200"
       ADMET_ALLOW_EXPLICIT_H: "false"
+
+      LANGFUSE_SECRET_KEY: "sk-lf-2764005f-46c1-4b68-9201-ff35f3dc023a"
+      LANGFUSE_PUBLIC_KEY: "pk-lf-87d55a55-7754-47ee-a8b8-9e1150c08d46"
+      LANGFUSE_BASE_URL: "http://host.docker.internal:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "uv", "run", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8144/healthz').read()"]
       interval: 30s

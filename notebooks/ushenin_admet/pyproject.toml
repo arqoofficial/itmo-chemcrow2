@@ -9,8 +9,10 @@ dependencies = [
   "uvicorn[standard]>=0.32.0",
   "rdkit>=2024.9.6",
   "pydantic>=2.10.0",
-    "langgraph",
-    "langchain_openai"
+  "langgraph",
+  "langchain_openai",
+  "langfuse>=4.0.1",
+  "langchain>=1.2.13",
 ]
 
 [project.optional-dependencies]

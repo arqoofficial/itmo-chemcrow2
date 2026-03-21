@@ -11,6 +11,8 @@ from typing_extensions import TypedDict
 from langgraph.graph import END, START, StateGraph
 from langchain_openai import ChatOpenAI
 
+
+load_dotenv()
 # Optional Langfuse support
 try:
     from langfuse import Langfuse
@@ -22,8 +24,6 @@ except Exception:  # pragma: no cover
     CallbackHandler = None
     _LANGFUSE_AVAILABLE = False
 
-
-load_dotenv()
 
 
 class ProtocolReviewError(ValueError):
