@@ -5,6 +5,7 @@ import asyncio
 import importlib
 import json
 import math
+import os
 import sys
 import time
 from dataclasses import asdict, dataclass
@@ -18,6 +19,28 @@ from langchain_core.messages import HumanMessage
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+# Load repo-root .env before importing app.config so that OPENAI_API_KEY,
+# OPENAI_BASE_URL, ANTHROPIC_API_KEY etc. are available to pydantic-settings.
+# config.py declares env_file="../.env" which resolves relative to CWD, so it
+# only works when running from exactly the right directory. Loading explicitly
+# here makes the script location-independent.
+_REPO_ENV = PROJECT_ROOT.parents[1] / ".env"  # ai-agent -> services -> repo root
+if _REPO_ENV.exists():
+    with _REPO_ENV.open("r", encoding="utf-8") as _efp:
+        for _raw in _efp:
+            _raw = _raw.strip()
+            if not _raw or _raw.startswith("#") or "=" not in _raw:
+                continue
+            _ekey, _, _eval = _raw.partition("=")
+            _ekey = _ekey.strip()
+            _eval = _eval.strip()
+            # Strip surrounding quotes if present
+            if len(_eval) >= 2 and _eval[0] in ('"', "'") and _eval[-1] == _eval[0]:
+                _eval = _eval[1:-1]
+            # Shell-level env vars take precedence over .env file
+            if _ekey and _ekey not in os.environ:
+                os.environ[_ekey] = _eval
 
 from app.config import settings  # noqa: E402
 from app.llm_providers import get_llm  # noqa: E402
@@ -422,7 +445,9 @@ async def main() -> None:
     args.raw_output.parent.mkdir(parents=True, exist_ok=True)
     args.raw_output.write_text(json.dumps(raw_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    ragas_payload = _evaluate_with_ragas(rows, judge_provider=judge_provider)
+    # Run RAGAS in a thread so it can create its own event loop without
+    # conflicting with the asyncio.run() that drives this function.
+    ragas_payload = await asyncio.to_thread(_evaluate_with_ragas, rows, judge_provider)
     summary_payload = {
         "meta": raw_payload["meta"],
         "raw_summary": _summarize_raw(rows),
