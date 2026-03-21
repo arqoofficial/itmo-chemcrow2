@@ -48,7 +48,7 @@ def test_rag_search_empty_query(monkeypatch):
 def test_rag_search_happy_path_and_top_k_clamp(monkeypatch):
     monkeypatch.setattr(settings, "RAG_ENABLED", True)
     fake = _FakeRetriever()
-    monkeypatch.setattr(rag, "_get_hybrid_retriever", lambda: fake)
+    monkeypatch.setattr(rag, "_get_retriever_for_scope", lambda scope="default": fake)
 
     result = rag.rag_search.invoke({"query": "amide coupling", "top_k": 999})
 
@@ -62,13 +62,13 @@ def test_rag_search_happy_path_and_top_k_clamp(monkeypatch):
 def test_literature_citation_search_formats_structured_citations(monkeypatch):
     monkeypatch.setattr(settings, "RAG_ENABLED", True)
     fake = _FakeRetriever()
-    monkeypatch.setattr(rag, "_get_hybrid_retriever", lambda: fake)
+    monkeypatch.setattr(rag, "_get_retriever_for_scope", lambda scope="default": fake)
 
     result = rag.literature_citation_search.invoke({"topic": "solvent selection"})
 
     assert "Citation candidates from local literature corpus:" in result
     assert "title=chapter_01" in result
-    assert "source=app/data-rag/corpus_raw/chapter_01.md" in result
+    assert "source=(unknown source for chapter_01)" in result
     assert fake.last_query == "solvent selection"
     assert fake.last_top_k == 5
 
@@ -84,11 +84,50 @@ def test_literature_citation_search_empty_topic(monkeypatch):
 def test_rag_search_missing_data(monkeypatch):
     monkeypatch.setattr(settings, "RAG_ENABLED", True)
 
-    def _raise_missing():
-        raise FileNotFoundError("app/data-rag/corpus_raw")
+    def _raise_missing(scope="default"):
+        raise FileNotFoundError("app/data-rag/sources/default")
 
-    monkeypatch.setattr(rag, "_get_hybrid_retriever", _raise_missing)
+    monkeypatch.setattr(rag, "_get_retriever_for_scope", _raise_missing)
 
     result = rag.rag_search.invoke({"query": "aldol condensation"})
 
     assert "RAG data is not initialized correctly." in result
+
+
+def test_bm25_dense_rrf_retrieve_forwards_doc_metadata():
+    """retrieve() must forward raw_source from document resolver into RetrievalResult.metadata."""
+    from app.tools.rag import (
+        BM25DenseRankFusionRetriever,
+        BM25Retriever,
+        NomicDenseRetriever,
+        Document,
+    )
+
+    class _StubBM25:
+        def retrieve_ids(self, query, top_k=5):
+            return [("doc_01", 0.9)]
+
+        def build_or_load(self, docs, force_rebuild=False):
+            pass
+
+    class _StubDense:
+        def retrieve_ids(self, query, top_k=5):
+            return [("doc_01", 0.8)]
+
+        def build_or_load(self, docs, force_rebuild=False):
+            pass
+
+    def resolver(doc_id):
+        return ("some text about chemistry", {"raw_source": "app/data-rag/sources/default/corpus_raw/doc_01.md"})
+
+    retriever = BM25DenseRankFusionRetriever(
+        bm25_retriever=_StubBM25(),
+        dense_retriever=_StubDense(),
+        document_resolver=resolver,
+    )
+    results = retriever.retrieve("test query", top_k=1)
+
+    assert len(results) == 1
+    assert results[0].text == "some text about chemistry"
+    assert results[0].metadata["raw_source"] == "app/data-rag/sources/default/corpus_raw/doc_01.md"
+    assert results[0].metadata["retriever"] == "bm25_dense_rrf"

@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 _TOKEN_RE = re.compile(r"[A-Za-zА-Яа-яЁё0-9_]+")
 _HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*$", re.MULTILINE)
-_RETRIEVER_LOCK = Lock()
-_HYBRID_RETRIEVER: BM25DenseRankFusionRetriever | None = None
+_RETRIEVER_REGISTRY: dict[str, BM25DenseRankFusionRetriever] = {}
+_REGISTRY_LOCK = Lock()
 
 
 @dataclass(slots=True)
@@ -47,7 +47,7 @@ class RetrievalResult:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-DocumentResolver = Callable[[str], str | None]
+DocumentResolver = Callable[[str], tuple[str, dict[str, Any]] | None]
 
 
 class BM25SparseEmbedder:
@@ -460,16 +460,18 @@ class BM25DenseRankFusionRetriever:
         results: list[RetrievalResult] = []
         for doc_id, score in ranked_ids:
             text = ""
+            doc_meta: dict[str, Any] = {}
             if self._document_resolver is not None:
                 resolved = self._document_resolver(doc_id)
                 if resolved is not None:
-                    text = resolved
+                    text, doc_meta = resolved
             results.append(
                 RetrievalResult(
                     doc_id=doc_id,
                     score=float(score),
                     text=text,
                     metadata={
+                        **doc_meta,
                         "retriever": "bm25_dense_rrf",
                         "rrf_k": self.rrf_k,
                         "bm25_weight": self.bm25_weight,
@@ -551,24 +553,27 @@ def _load_dual_corpus_documents(
 
 
 def _build_raw_document_resolver(raw_docs_by_id: dict[str, Document]) -> DocumentResolver:
-    def _resolve(doc_id: str) -> str | None:
+    def _resolve(doc_id: str) -> tuple[str, dict[str, Any]] | None:
         doc = raw_docs_by_id.get(doc_id)
-        return doc.text if doc is not None else None
+        if doc is None:
+            return None
+        return (doc.text, {"raw_source": doc.metadata["source"]})
 
     return _resolve
 
 
-def _build_hybrid_retriever() -> BM25DenseRankFusionRetriever:
+def _build_hybrid_retriever(scope: str = "default") -> BM25DenseRankFusionRetriever:
     from app.config import settings
 
-    data_dir = Path(settings.RAG_DATA_DIR)
-    raw_corpus_dir = Path(settings.RAG_CORPUS_RAW_DIR)
-    processed_corpus_dir = Path(settings.RAG_CORPUS_PROCESSED_DIR)
-    bm25_index_path = Path(settings.RAG_BM25_INDEX_PATH)
-    dense_index_dir = Path(settings.RAG_DENSE_INDEX_DIR)
+    source_dir = Path(settings.RAG_SOURCES_DIR) / scope
+    if not source_dir.exists():
+        raise FileNotFoundError(f"RAG source directory not found: {source_dir}")
 
-    if not data_dir.exists():
-        raise FileNotFoundError(f"RAG data directory not found: {data_dir}")
+    raw_corpus_dir = source_dir / "corpus_raw"
+    processed_corpus_dir = source_dir / "corpus_processed"
+    bm25_index_path = source_dir / "indexes" / "bm25_index.json"
+    dense_index_dir = source_dir / "indexes" / "nomic_dense"
+
     if not raw_corpus_dir.exists():
         raise FileNotFoundError(f"RAG raw corpus directory not found: {raw_corpus_dir}")
 
@@ -604,15 +609,11 @@ def _build_hybrid_retriever() -> BM25DenseRankFusionRetriever:
     )
 
 
-def _get_hybrid_retriever() -> BM25DenseRankFusionRetriever:
-    global _HYBRID_RETRIEVER
-    if _HYBRID_RETRIEVER is not None:
-        return _HYBRID_RETRIEVER
-
-    with _RETRIEVER_LOCK:
-        if _HYBRID_RETRIEVER is None:
-            _HYBRID_RETRIEVER = _build_hybrid_retriever()
-    return _HYBRID_RETRIEVER
+def _get_retriever_for_scope(scope: str = "default") -> BM25DenseRankFusionRetriever:
+    with _REGISTRY_LOCK:
+        if scope not in _RETRIEVER_REGISTRY:
+            _RETRIEVER_REGISTRY[scope] = _build_hybrid_retriever(scope)
+    return _RETRIEVER_REGISTRY[scope]
 
 
 def _format_retrieval_results(results: list[RetrievalResult]) -> str:
@@ -647,7 +648,7 @@ def _format_citation_results(results: list[RetrievalResult]) -> str:
         if len(snippet) > 320:
             snippet = snippet[:320].rstrip() + "..."
         title = _extract_title_from_text(hit.text, hit.doc_id)
-        source = f"app/data-rag/corpus_raw/{hit.doc_id}.md"
+        source = hit.metadata.get("raw_source") or f"(unknown source for {hit.doc_id})"
         lines.append(
             f"{idx}. doc_id={hit.doc_id}; title={title}; source={source}; "
             f"score={hit.score:.4f}; excerpt={snippet}"
@@ -665,7 +666,7 @@ def _run_rag_query(query: str, top_k: int, *, citation_mode: bool) -> str:
 
     safe_top_k = min(max(int(top_k), 1), 10)
     try:
-        retriever = _get_hybrid_retriever()
+        retriever = _get_retriever_for_scope(settings.RAG_DEFAULT_SOURCE)
         results = retriever.retrieve(query.strip(), top_k=safe_top_k)
         if citation_mode:
             return _format_citation_results(results)
