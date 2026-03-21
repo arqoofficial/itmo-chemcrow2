@@ -211,7 +211,6 @@ services:
   langfuse-db:
     image: postgres:17
     restart: unless-stopped
-    profiles: ["langfuse"]
     environment:
       POSTGRES_USER: langfuse
       POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD}
@@ -228,7 +227,6 @@ services:
   langfuse-server:
     image: langfuse/langfuse:latest
     restart: unless-stopped
-    profiles: ["langfuse"]
     depends_on:
       langfuse-db:
         condition: service_healthy
