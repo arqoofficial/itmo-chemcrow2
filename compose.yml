@@ -214,7 +214,7 @@ services:
     profiles: ["langfuse"]
     environment:
       POSTGRES_USER: langfuse
-      POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD:-changeme}
+      POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD}
       POSTGRES_DB: langfuse
     volumes:
       - langfuse-db-data:/var/lib/postgresql/data/pgdata
@@ -234,12 +234,10 @@ services:
         condition: service_healthy
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
-      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD:-changeme}@langfuse-db:5432/langfuse
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-to-a-random-32-char-secret}
-      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
-      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
-      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD}@langfuse-db:5432/langfuse
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
       interval: 10s
