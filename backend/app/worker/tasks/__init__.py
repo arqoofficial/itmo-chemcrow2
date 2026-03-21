@@ -22,10 +22,11 @@ logger = logging.getLogger(__name__)
 TASK_REGISTRY: dict[str, str] = {
     "example": "tasks.example_long_task",
     "chat": "tasks.process_chat_message",
+    "retrosynthesis_multi_step": "tasks.retrosynthesis_multi_step",
 }
 
 TASK_QUEUES: dict[str, str] = {
-    "retrosynthesis": "gpu",
+    "retrosynthesis_multi_step": "default",
     "chat": "chat",
 }
 

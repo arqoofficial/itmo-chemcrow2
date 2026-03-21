@@ -20,7 +20,7 @@ interface ChatWindowProps {
 
 function ThinkingIndicator({ toolCalls = [] }: { toolCalls?: ToolCallInfo[] }) {
   return (
-    <div className="flex gap-3 px-4 py-3">
+    <div className="flex gap-3 py-3">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600">
         <Bot className="h-4 w-4 text-white" />
       </div>
@@ -49,7 +49,7 @@ function StreamingBubble({
   toolCalls?: ToolCallInfo[]
 }) {
   return (
-    <div className="flex gap-3 px-4 py-3">
+    <div className="flex gap-3 py-3">
       <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600">
         <Bot className="h-4 w-4 text-white" />
       </div>

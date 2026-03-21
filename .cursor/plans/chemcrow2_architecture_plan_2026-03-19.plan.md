@@ -25,7 +25,7 @@ todos:
     status: completed
   - id: phase3-retrosynthesis
     content: "Фаза 3.1: Микросервис ретросинтеза (services/retrosynthesis/) + Celery-задача + GPU Dockerfile"
-    status: pending
+    status: completed
   - id: phase3-mcp-tools
     content: "Фаза 3.2: MCP-сервер химических инструментов (services/chem-tools/) с mcp SDK"
     status: pending

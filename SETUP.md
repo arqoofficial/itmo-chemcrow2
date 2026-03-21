@@ -5,10 +5,12 @@
 - [Пререквизиты](#пререквизиты)
 - [Настройка окружения](#настройка-окружения)
 - [Вариант A: Локально с Docker](#вариант-a-локально-с-docker)
+- [Сборка Docker без кэша](#сборка-образов-без-кэша)
 - [Вариант B: Локально без Docker](#вариант-b-локально-без-docker)
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
 - [Полезные ссылки после запуска](#полезные-ссылки-после-запуска)
 - [Перезапуск конкретного сервиса](#перезапуск-конкретного-сервиса)
+- [Данные RetroCast и AiZynthFinder](#данные-retrocast-и-aizynthfinder)
 - [Частые проблемы](#частые-проблемы)
 
 ---
@@ -83,6 +85,33 @@ docker compose up --build -d
 >
 > Для обычной работы достаточно `docker compose stop` / `start` или просто
 > `docker compose up --build -d` — Docker Compose сам пересоздаст только изменившиеся контейнеры.
+
+### Сборка образов без кэша
+
+Обычно **не нужно**: `docker compose up --build -d` переиспользует слои и собирает быстрее.
+
+**Имеет смысл собрать без кэша** (`--no-cache`), если:
+
+- меняли **Dockerfile** или шаги установки зависимостей, а в контейнере всё ещё старые пакеты;
+- обновили **базовый образ** (`FROM ...`) и хотите гарантированно перетянуть свежие слои;
+- после `git pull` сборка «ломается странно» — часто помогает чистая пересборка;
+- отлаживаете CI/образ и нужно исключить влияние локального build cache.
+
+**Все сервисы с пересборкой без кэша:**
+
+```bash
+docker compose build --no-cache
+docker compose up -d
+```
+
+**Один сервис** (остальные не трогаются):
+
+```bash
+docker compose build --no-cache backend
+docker compose up -d backend
+```
+
+То же для frontend или любого другого сервиса из `compose.yml`, у которого есть `build:`.
 
 ### Перезапуск конкретного сервиса
 
@@ -282,6 +311,15 @@ git pull
 docker compose -f compose.production.yml up -d --build
 ```
 
+Если после обновления на сервере образы ведут себя некорректно (зависимости, Dockerfile), пересоберите **без кэша** и поднимите стек:
+
+```bash
+docker compose -f compose.production.yml build --no-cache
+docker compose -f compose.production.yml up -d
+```
+
+Смысл тот же, что в [сборке без кэша для локального Docker](#сборка-образов-без-кэша): принудительно выполнить все шаги Dockerfile заново, не опираясь на старые слои.
+
 ### Доступные сервисы
 
 | Сервис | URL |
@@ -289,6 +327,26 @@ docker compose -f compose.production.yml up -d --build
 | Frontend + API | http://<IP_СЕРВЕРА> |
 | Swagger UI | http://<IP_СЕРВЕРА>/docs |
 | Adminer (БД) | http://<IP_СЕРВЕРА>:8080 |
+
+---
+
+## Данные RetroCast и AiZynthFinder
+
+Большие наборы для бенчмарков/ретросинтеза (не в git) скачиваются отдельно.
+
+**RetroCast (Project Procrustes)** — **[docs/data-retrocast.md](./docs/data-retrocast.md)**. Кратко:
+
+```bash
+bash scripts/get-data-project-procrustes.sh all
+```
+
+**AiZynthFinder (USPTO: модели, шаблоны, ZINC stock)** — **[docs/data-aizynthfinder.md](./docs/data-aizynthfinder.md)**. Кратко:
+
+```bash
+uv run python scripts/download_public_data.py
+```
+
+Файлы по умолчанию: `data/retrocast` и `data/aizynthfinder` соответственно.
 
 ---
 

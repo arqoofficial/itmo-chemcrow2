@@ -26,7 +26,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
   return (
     <div
       className={cn(
-        "flex gap-3 px-4 py-3",
+          "flex gap-3 py-3",
         isUser ? "flex-row-reverse" : "flex-row",
       )}
       data-testid={isUser ? "message-user" : "message-bot"}

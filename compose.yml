@@ -93,6 +93,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
       - SMTP_HOST=mailcatcher
       - SMTP_PORT=1025
       - SMTP_TLS=false
@@ -133,6 +134,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
 
   ai-agent:
     build:
@@ -158,6 +160,8 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - BACKEND_URL=http://backend:8000
+      - REACTION_PREDICT_URL=http://reaction-predict:8051
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
@@ -181,9 +185,23 @@ services:
     build:
       context: ./services/retrosynthesis
     restart: unless-stopped
-    profiles: ["reaction"]
     ports:
       - "8052:8052"
+    volumes:
+      - ./data/aizynthfinder:/data/aizynthfinder:ro
+    env_file:
+      - .env
+    environment:
+      - AZF_CONFIG_PATH=/data/aizynthfinder/config.yml
+    develop:
+      watch:
+        - path: ./services/retrosynthesis
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/retrosynthesis/pyproject.toml
+          action: rebuild
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8052/health"]
       interval: 30s

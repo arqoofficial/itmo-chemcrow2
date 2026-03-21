@@ -96,7 +96,8 @@ def reaction_retrosynthesis(smiles: str) -> str:
             timeout=120,
         )
         response.raise_for_status()
-        paths = response.json()
+        data = response.json()
+        paths = data.get("routes", data) if isinstance(data, dict) else data
         return _format_synthesis_steps(paths)
     except Exception:
         logger.exception("Retrosynthesis error")

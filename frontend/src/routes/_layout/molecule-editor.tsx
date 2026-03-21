@@ -17,7 +17,7 @@ function MoleculeEditor() {
   return (
     <div
       className="flex flex-col overflow-hidden"
-      style={{ height: "calc(100dvh - 185px)" }}
+      style={{ height: "calc(100dvh - 120px)" }}
     >
       <div className="shrink-0 pb-4">
         <h1 className="text-2xl font-bold tracking-tight">Molecule Editor</h1>

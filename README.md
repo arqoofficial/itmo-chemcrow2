@@ -40,4 +40,4 @@ itmo_fatsapi/
 
 ## Установка
 
-Рекомендации по установке и запуску — в [SETUP.md](./SETUP.md).
+Рекомендации по установке и запуску — в [SETUP.md](./SETUP.md). Внешние данные: RetroCast — [docs/data-retrocast.md](./docs/data-retrocast.md), AiZynthFinder — [docs/data-aizynthfinder.md](./docs/data-aizynthfinder.md).
