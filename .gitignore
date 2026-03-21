@@ -1,6 +1,7 @@
 .DS_Store
 data/*
 !data/*.md
+__pycache__
 
 
 # fatsapi-fullstack
@@ -14,3 +15,6 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+*.pyc
+.playwright-mcp/*

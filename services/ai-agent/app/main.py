@@ -12,6 +12,7 @@ from app.agent import convert_messages, get_agent
 from app.config import settings
 from app.hazard_checker import find_hazards
 from app.schemas import ChatRequest, ChatResponse
+from app.tracing import check_langfuse_auth, get_langfuse_config
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("AI Agent service starting (env=%s)", settings.ENVIRONMENT)
+    check_langfuse_auth()
     yield
     logger.info("AI Agent service shutting down")
 
@@ -43,7 +45,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     agent = get_agent(request.provider)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
-    result = await agent.ainvoke({"messages": langchain_messages})
+    lf_config = get_langfuse_config()
+    result = await agent.ainvoke({"messages": langchain_messages}, config=lf_config)
+    for cb in lf_config.get("callbacks", []):
+        if hasattr(cb, "flush"):
+            cb.flush()
 
     final_messages = result["messages"]
     last_ai = None
@@ -76,12 +82,15 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
     agent = get_agent(request.provider)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
 
+    lf_config = get_langfuse_config()
+
     async def event_generator():
         try:
             full_content: list[str] = []
 
             async for event in agent.astream_events(
                 {"messages": langchain_messages},
+                config=lf_config,
                 version="v2",
             ):
                 kind = event.get("event", "")
@@ -136,6 +145,10 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 "event": "error",
                 "data": json.dumps({"error": str(exc)}),
             }
+        finally:
+            for cb in lf_config.get("callbacks", []):
+                if hasattr(cb, "flush"):
+                    cb.flush()
 
     return EventSourceResponse(
         event_generator(),

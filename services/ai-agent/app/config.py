@@ -46,7 +46,7 @@ class Settings(BaseSettings):
     # Langfuse observability (optional)
     LANGFUSE_PUBLIC_KEY: str = ""
     LANGFUSE_SECRET_KEY: str = ""
-    LANGFUSE_HOST: str = "https://cloud.langfuse.com"
+    LANGFUSE_HOST: str = "http://langfuse-server:3000"
 
 
 settings = Settings()  # type: ignore
