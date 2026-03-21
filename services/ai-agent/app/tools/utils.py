@@ -90,10 +90,11 @@ def pubchem_query2smiles(
         )
     if url is None:
         url = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{}/{}"
-    r = requests.get(url.format(query, "property/IsomericSMILES/JSON"))
+    r = requests.get(url.format(query, "property/IsomericSMILES/JSON"), timeout=60)
     data = r.json()
     try:
-        smi = data["PropertyTable"]["Properties"][0]["IsomericSMILES"]
+        props = data["PropertyTable"]["Properties"][0]
+        smi = props.get("IsomericSMILES") or props.get("SMILES")
     except KeyError:
         return (
             "Could not find a molecule matching the text. "
@@ -114,9 +115,9 @@ def query2cas(query: str, url_cid: str, url_data: str) -> str:
                 )
             mode = "smiles"
         url_cid = url_cid.format(mode, query)
-        cid = requests.get(url_cid).json()["IdentifierList"]["CID"][0]
+        cid = requests.get(url_cid, timeout=60).json()["IdentifierList"]["CID"][0]
         url_data = url_data.format(cid)
-        data = requests.get(url_data).json()
+        data = requests.get(url_data, timeout=60).json()
     except (requests.exceptions.RequestException, KeyError):
         raise ValueError("Invalid molecule input, no Pubchem entry")
 
@@ -145,7 +146,8 @@ def smiles2name(smi: str, single_name: bool = True) -> str:
     r = requests.get(
         "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/smiles/"
         + smi
-        + "/synonyms/JSON"
+        + "/synonyms/JSON",
+        timeout=60,
     )
     data = r.json()
     try:
