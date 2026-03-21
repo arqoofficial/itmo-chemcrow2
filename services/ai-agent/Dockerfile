@@ -16,6 +16,9 @@ COPY services/ai-agent/pyproject.toml .
 COPY services/ai-agent/app ./app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
+
+RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system .
 
 EXPOSE 8100

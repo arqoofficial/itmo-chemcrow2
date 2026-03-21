@@ -10,15 +10,28 @@ from sse_starlette import EventSourceResponse
 
 from app.agent import convert_messages, get_agent
 from app.config import settings
+from app.guard import scan_input, scan_output
 from app.hazard_checker import find_hazards
 from app.schemas import ChatRequest, ChatResponse
 
 logger = logging.getLogger(__name__)
 
 
+async def _warmup_guard():
+    import asyncio
+    try:
+        await asyncio.to_thread(scan_input, "warmup")
+        await asyncio.to_thread(scan_output, "warmup", "warmup")
+        logger.info("LLM Guard scanners warmed up")
+    except Exception:
+        logger.exception("LLM Guard warmup failed — scans will be skipped")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import asyncio
     logger.info("AI Agent service starting (env=%s)", settings.ENVIRONMENT)
+    asyncio.create_task(_warmup_guard())
     yield
     logger.info("AI Agent service shutting down")
 
@@ -41,8 +54,20 @@ async def chat(request: ChatRequest) -> ChatResponse:
     Synchronous chat: send messages, get a complete response.
     Used by Celery workers for non-streaming processing.
     """
+    import asyncio
+
+    messages_raw = [m.model_dump() for m in request.messages]
+    user_text = ""
+    for m in reversed(langchain_messages):
+        if hasattr(m, "type") and m.type == "human":
+            user_text = m.content or ""
+            break
+    _, failed_input = await asyncio.to_thread(scan_input, user_text)
+    if failed_input:
+        logger.warning("Input blocked by LLM Guard (sync): %s", failed_input)
+        return ChatResponse(content="Недопустимый запрос.")
+
     agent = get_agent(request.provider)
-    langchain_messages = convert_messages([m.model_dump() for m in request.messages])
     result = await agent.ainvoke({"messages": langchain_messages})
 
     final_messages = result["messages"]
@@ -78,6 +103,23 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
 
     async def event_generator():
         try:
+            # ── Input scan ────────────────────────────────────────────────
+            import asyncio
+            user_text = ""
+            for m in reversed(langchain_messages):
+                if hasattr(m, "type") and m.type == "human":
+                    user_text = m.content or ""
+                    break
+            _, failed_input = await asyncio.to_thread(scan_input, user_text)
+            if failed_input:
+                logger.warning("Input blocked by LLM Guard: %s", failed_input)
+                yield {
+                    "event": "token",
+                    "data": json.dumps({"content": "Недопустимый запрос."}),
+                }
+                yield {"event": "done", "data": json.dumps({"status": "completed"})}
+                return
+
             full_content: list[str] = []
 
             async for event in agent.astream_events(
@@ -137,8 +179,13 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                         }),
                     }
 
-            # Check assembled response for hazardous chemicals
+            # ── Output scan ───────────────────────────────────────────────
             assembled = "".join(full_content)
+            assembled, failed_output = await asyncio.to_thread(scan_output, user_text, assembled)
+            if failed_output:
+                logger.warning("Output flagged by LLM Guard: %s", failed_output)
+
+            # Check assembled response for hazardous chemicals
             hazards = find_hazards(assembled)
             if hazards:
                 yield {
