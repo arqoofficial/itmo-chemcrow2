@@ -1,5 +1,23 @@
 ---
 
+### `scripts/download_public_data.py` — Модели и stock AiZynthFinder (USPTO)
+
+Скачивает с Zenodo / figshare ONNX-модели политик (expansion, filter, ringbreaker), шаблоны реакций в `.csv.gz` и сток `zinc_stock.hdf5`, затем генерирует **`config.yml`** с абсолютными путями — минимальный конфиг для AiZynthFinder.
+
+**По умолчанию** файлы пишутся в **`data/aizynthfinder`** (относительно текущей директории).
+
+```bash
+# из корня репозитория
+uv run python scripts/download_public_data.py
+
+# другой каталог
+uv run python scripts/download_public_data.py /path/to/dir
+```
+
+Зависимости: `requests`, `tqdm`. Подробнее: [docs/data-aizynthfinder.md](../docs/data-aizynthfinder.md).
+
+---
+
 ### `scripts/get-data-project-procrustes.sh` — Синхронизация данных RetroCast с CDN
 
 Скачивает файлы по манифесту `SHA256SUMS` с `files.ischemist.com`, проверяет SHA-256, умеет докачивать только недостающее или повреждённое.

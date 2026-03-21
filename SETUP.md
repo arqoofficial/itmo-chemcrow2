@@ -9,7 +9,7 @@
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
 - [Полезные ссылки после запуска](#полезные-ссылки-после-запуска)
 - [Перезапуск конкретного сервиса](#перезапуск-конкретного-сервиса)
-- [Данные RetroCast](#данные-retrocast)
+- [Данные RetroCast и AiZynthFinder](#данные-retrocast-и-aizynthfinder)
 - [Частые проблемы](#частые-проблемы)
 
 ---
@@ -293,15 +293,23 @@ docker compose -f compose.production.yml up -d --build
 
 ---
 
-## Данные RetroCast
+## Данные RetroCast и AiZynthFinder
 
-Большие наборы для бенчмарков/ретросинтеза (не в git) скачиваются отдельно. Подробно: **[docs/data-retrocast.md](./docs/data-retrocast.md)**.
+Большие наборы для бенчмарков/ретросинтеза (не в git) скачиваются отдельно.
 
-Кратко — всё одной командой из корня репозитория:
+**RetroCast (Project Procrustes)** — **[docs/data-retrocast.md](./docs/data-retrocast.md)**. Кратко:
 
 ```bash
 bash scripts/get-data-project-procrustes.sh all
 ```
+
+**AiZynthFinder (USPTO: модели, шаблоны, ZINC stock)** — **[docs/data-aizynthfinder.md](./docs/data-aizynthfinder.md)**. Кратко:
+
+```bash
+uv run python scripts/download_public_data.py
+```
+
+Файлы по умолчанию: `data/retrocast` и `data/aizynthfinder` соответственно.
 
 ---
 

@@ -83,3 +83,5 @@ curl -fsSL https://example.com/get-data-project-procrustes.sh | bash -s -- all -
 ```
 
 (В репозитории используйте локальный путь `bash scripts/...`, как выше.)
+
+См. также: модели AiZynthFinder — [data-aizynthfinder.md](./data-aizynthfinder.md).
