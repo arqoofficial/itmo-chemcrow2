@@ -137,6 +137,49 @@ def query2cas(query: str, url_cid: str, url_data: str) -> str:
     raise ValueError("CAS number not found")
 
 
+# Matches bare DOI strings, e.g. 10.1234/something
+# Trailing punctuation characters are stripped separately after matching.
+_DOI_RE = re.compile(r'\b(10\.\d{4,}/[^\s"\'<>]+)')
+
+
+def _scrape_doi_from_url(url: str) -> str | None:
+    """Fetch an article page and extract its DOI.
+
+    Tries (in order):
+    1. ``<meta name="citation_doi">`` tag — used by most publishers
+    2. ``doi.org`` hyperlink anywhere in the page
+    3. Any bare DOI pattern (``10.xxxx/...``) in the HTML
+    """
+    try:
+        resp = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        if not resp.ok:
+            return None
+        html = resp.text
+
+        # citation_doi meta tag — content attr can appear before or after name attr
+        for pattern in (
+            r'<meta[^>]+name=["\']citation_doi["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']citation_doi["\']',
+        ):
+            m = re.search(pattern, html, re.IGNORECASE)
+            if m:
+                return m.group(1).strip()
+
+        # doi.org hyperlink
+        m = re.search(r'https?://doi\.org/(10\.\d{4,}/[^\s"\'<>]+)', html)
+        if m:
+            return m.group(1).strip()
+
+        # Bare DOI anywhere in the page; strip trailing punctuation
+        m = _DOI_RE.search(html)
+        if m:
+            return m.group(1).rstrip(".,;)")
+
+    except Exception:
+        logger.exception("DOI scraping failed for %s", url)
+    return None
+
+
 def smiles2name(smi: str, single_name: bool = True) -> str:
     """Query PubChem for molecule name by SMILES."""
     try:
