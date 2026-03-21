@@ -157,8 +157,8 @@ def test_literature_search_doi_not_available(mock_get):
         ]
     }
 
-    html_resp = MagicMock(ok=True, text="<html>No DOI here</html>")
-    mock_get.side_effect = [mock_resp, html_resp]
+    mock_get.return_value = mock_resp
 
     result = literature_search.invoke("obscure topic")
     assert "DOI: N/A" in result
+    mock_get.assert_called_once()
