@@ -147,7 +147,13 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      # WORKDIR=/app, app code at /app/app/ → data-rag resolves to /app/app/data-rag
+      # Bind-mount the RAG data directory into the container.
+      # Path math: the Dockerfile sets WORKDIR=/app, and the application code
+      # is copied to /app/app/ (COPY services/ai-agent/app ./app).  Therefore
+      # the relative path "app/data-rag" used in config.py resolves to
+      # /app/app/data-rag inside the container.  The bind mount makes corpus
+      # files and persisted index files visible at that exact path without
+      # baking volatile data into the image layer.
       - ./services/ai-agent/app/data-rag:/app/app/data-rag
     develop:
       watch:
