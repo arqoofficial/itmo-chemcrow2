@@ -19,3 +19,6 @@ node_modules/
 notebooks/karimov/.rag_index/
 notebooks/karimov/rag_mvp/__pycache__/
 *.pyc
+
+# RAG index files (auto-generated, do not commit)
+services/ai-agent/app/data-rag/sources/*/indexes/
