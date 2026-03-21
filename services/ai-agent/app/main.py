@@ -145,6 +145,10 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 "event": "error",
                 "data": json.dumps({"error": str(exc)}),
             }
+        finally:
+            for cb in lf_config.get("callbacks", []):
+                if hasattr(cb, "flush"):
+                    cb.flush()
 
     return EventSourceResponse(
         event_generator(),
