@@ -53,3 +53,29 @@ python ../.venv/Scripts/python.exe scripts/evaluate_rag.py --top-k 5 --max-queri
 
 The script compares BM25, dense (Nomic), and fusion (RRF), and writes a JSON report to
 `app/data-rag/benchmarks/latest_eval_results.json`.
+
+## Query fused retrieval manually
+Use `query_fused_rag.py` to run one-off hybrid retrieval and inspect top sources.
+
+Run from `services/ai-agent`:
+
+```bash
+python ../.venv/Scripts/python.exe scripts/query_fused_rag.py "best solvent for SN2" --top-k 3
+```
+
+If you omit the query argument, the script will prompt interactively.
+
+## Preflight corpus validation
+Use `preflight_rag_corpus.py` before starting the service to validate chunk pairs and index presence.
+
+Run from `services/ai-agent`:
+
+```bash
+python ../.venv/Scripts/python.exe scripts/preflight_rag_corpus.py --scope default
+```
+
+Strict mode treats warnings (for example, orphan BM25 folders) as errors:
+
+```bash
+python ../.venv/Scripts/python.exe scripts/preflight_rag_corpus.py --scope default --strict
+```
