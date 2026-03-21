@@ -59,27 +59,6 @@ def test_rag_search_happy_path_and_top_k_clamp(monkeypatch):
     assert fake.last_top_k == 10
 
 
-def test_literature_citation_search_formats_structured_citations(monkeypatch):
-    monkeypatch.setattr(settings, "RAG_ENABLED", True)
-    fake = _FakeRetriever()
-    monkeypatch.setattr(rag, "_get_retriever_for_scope", lambda scope="default": fake)
-
-    result = rag.literature_citation_search.invoke({"topic": "solvent selection"})
-
-    assert "Citation candidates from local literature corpus:" in result
-    assert "title=chapter_01" in result
-    assert "source=(unknown source for chapter_01)" in result
-    assert fake.last_query == "solvent selection"
-    assert fake.last_top_k == 5
-
-
-def test_literature_citation_search_empty_topic(monkeypatch):
-    monkeypatch.setattr(settings, "RAG_ENABLED", True)
-
-    result = rag.literature_citation_search.invoke({"topic": "   "})
-
-    assert result == "Query must be a non-empty string."
-
 
 def test_rag_search_missing_data(monkeypatch):
     monkeypatch.setattr(settings, "RAG_ENABLED", True)

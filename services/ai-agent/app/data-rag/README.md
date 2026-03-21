@@ -26,13 +26,11 @@ Production RAG assets for `services/ai-agent`.
   - `paper_01_bm25_chunks/chunk_000.txt`
 
 ## Agent literature workflow
-- Primary citation tool: `literature_citation_search` (local RAG corpus).
-- General retrieval tool: `rag_search` (same local hybrid retriever).
+- Local retrieval tool: `rag_search` (hybrid BM25+dense search over local corpus).
 - External fallback: `literature_search` (Semantic Scholar API).
 
 Routing policy in agent prompt:
-1. If user asks for literature references/citations on a topic, call
-  `literature_citation_search` first.
+1. If user asks for literature references/citations on a topic, call `rag_search` first.
 2. If local corpus has no/weak coverage, fallback to `literature_search`.
 3. Final answer should clearly cite source origin (local corpus vs external papers).
 

@@ -10,7 +10,7 @@ const statusIcon = {
   failed: <XCircle className="h-3.5 w-3.5 text-destructive" />,
 } as const
 
-const RAG_TOOL_NAMES = new Set(["rag_search", "literature_citation_search"])
+const RAG_TOOL_NAMES = new Set(["rag_search"])
 
 interface ToolCallCardProps {
   toolCall: ToolCallInfo
