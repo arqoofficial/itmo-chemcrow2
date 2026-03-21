@@ -215,7 +215,27 @@ def _instantiate_ragas_metrics(metric_names: list[str], judge_llm: Any) -> list[
     return result
 
 
-def _evaluate_with_ragas(rows: list[PipelineRunRow], judge_provider: str | None) -> dict[str, Any]:
+def _build_judge_llm(judge_provider: str | None, judge_max_tokens: int | None, judge_temperature: float) -> Any:
+    judge_llm = get_llm(judge_provider)
+
+    # Bind inference-time kwargs for judge calls. This allows rerunning RAGAS
+    # without changing runtime agent configs.
+    bind_kwargs: dict[str, Any] = {}
+    if judge_max_tokens and judge_max_tokens > 0:
+        bind_kwargs["max_tokens"] = judge_max_tokens
+    bind_kwargs["temperature"] = judge_temperature
+
+    if bind_kwargs:
+        judge_llm = judge_llm.bind(**bind_kwargs)
+    return judge_llm
+
+
+def _evaluate_with_ragas(
+    rows: list[PipelineRunRow],
+    judge_provider: str | None,
+    judge_max_tokens: int | None,
+    judge_temperature: float,
+) -> dict[str, Any]:
     try:
         ragas_module = importlib.import_module("ragas")
         evaluate_fn = ragas_module.evaluate
@@ -229,7 +249,7 @@ def _evaluate_with_ragas(rows: list[PipelineRunRow], judge_provider: str | None)
             "hint": "Install ragas in ai-agent environment: uv add ragas",
         }
 
-    judge_llm = get_llm(judge_provider)
+    judge_llm = _build_judge_llm(judge_provider, judge_max_tokens, judge_temperature)
     metric_candidates = [
         "ResponseRelevancy",
         "AnswerCorrectness",
@@ -312,6 +332,31 @@ def _evaluate_with_ragas(rows: list[PipelineRunRow], judge_provider: str | None)
     return results
 
 
+def _rows_from_raw_payload(raw_payload: dict[str, Any]) -> list[PipelineRunRow]:
+    rows_data = raw_payload.get("rows")
+    if not isinstance(rows_data, list):
+        raise ValueError("raw payload must include 'rows' list")
+
+    rows: list[PipelineRunRow] = []
+    for idx, item in enumerate(rows_data, start=1):
+        if not isinstance(item, dict):
+            raise ValueError(f"raw row #{idx} must be an object")
+        rows.append(
+            PipelineRunRow(
+                question_id=str(item.get("question_id", "")),
+                user_question=str(item.get("user_question", "")),
+                pipeline_type=str(item.get("pipeline_type", "")),
+                answer=str(item.get("answer", "")),
+                reference_answer=str(item.get("reference_answer", "")),
+                retrieved_contexts=list(item.get("retrieved_contexts") or []),
+                latency_ms=int(item.get("latency_ms") or 0),
+                error=item.get("error"),
+                run_timestamp=str(item.get("run_timestamp", "")),
+            )
+        )
+    return rows
+
+
 def _summarize_raw(rows: list[PipelineRunRow]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for pipeline_type in ["multi_agent", "direct_llm"]:
@@ -379,80 +424,114 @@ async def main() -> None:
         default=Path(settings.RAG_DATA_DIR) / "benchmarks" / "pipeline_eval_summary.json",
         help="Path to save summary with RAGAS metrics.",
     )
+    parser.add_argument(
+        "--judge-only",
+        action="store_true",
+        help="Skip generation and recompute only RAGAS from --raw-output.",
+    )
+    parser.add_argument(
+        "--judge-max-tokens",
+        type=int,
+        default=2048,
+        help="Max tokens for RAGAS judge model calls.",
+    )
+    parser.add_argument(
+        "--judge-temperature",
+        type=float,
+        default=0.0,
+        help="Temperature for RAGAS judge model calls.",
+    )
     args = parser.parse_args()
 
-    samples = _load_eval_set(args.eval_set, max_questions=args.max_questions)
     judge_provider = args.judge_provider or args.provider
-    run_timestamp = datetime.now(UTC).isoformat()
+    if args.judge_only:
+        if not args.raw_output.exists():
+            raise FileNotFoundError(f"--judge-only requested but raw output not found: {args.raw_output}")
+        raw_payload = json.loads(args.raw_output.read_text(encoding="utf-8"))
+        rows = _rows_from_raw_payload(raw_payload)
+    else:
+        samples = _load_eval_set(args.eval_set, max_questions=args.max_questions)
+        run_timestamp = datetime.now(UTC).isoformat()
 
-    llm = get_llm(args.provider)
-    rows: list[PipelineRunRow] = []
+        llm = get_llm(args.provider)
+        rows = []
 
-    async with httpx.AsyncClient(timeout=args.timeout_seconds) as client:
-        for idx, sample in enumerate(samples, start=1):
-            ma_answer, ma_latency, ma_error = await _run_multi_agent_answer(
-                client=client,
-                chat_url=args.agent_url,
-                question=sample.user_question,
-                provider=args.provider,
-            )
-            rows.append(
-                PipelineRunRow(
-                    question_id=sample.question_id,
-                    user_question=sample.user_question,
-                    pipeline_type="multi_agent",
-                    answer=ma_answer,
-                    reference_answer=sample.reference_answer,
-                    retrieved_contexts=[],
-                    latency_ms=ma_latency,
-                    error=ma_error,
-                    run_timestamp=run_timestamp,
+        async with httpx.AsyncClient(timeout=args.timeout_seconds) as client:
+            for idx, sample in enumerate(samples, start=1):
+                ma_answer, ma_latency, ma_error = await _run_multi_agent_answer(
+                    client=client,
+                    chat_url=args.agent_url,
+                    question=sample.user_question,
+                    provider=args.provider,
                 )
-            )
-
-            direct_answer, direct_latency, direct_error = await _run_direct_llm_answer(
-                question=sample.user_question,
-                llm=llm,
-            )
-            rows.append(
-                PipelineRunRow(
-                    question_id=sample.question_id,
-                    user_question=sample.user_question,
-                    pipeline_type="direct_llm",
-                    answer=direct_answer,
-                    reference_answer=sample.reference_answer,
-                    retrieved_contexts=[],
-                    latency_ms=direct_latency,
-                    error=direct_error,
-                    run_timestamp=run_timestamp,
+                rows.append(
+                    PipelineRunRow(
+                        question_id=sample.question_id,
+                        user_question=sample.user_question,
+                        pipeline_type="multi_agent",
+                        answer=ma_answer,
+                        reference_answer=sample.reference_answer,
+                        retrieved_contexts=[],
+                        latency_ms=ma_latency,
+                        error=ma_error,
+                        run_timestamp=run_timestamp,
+                    )
                 )
-            )
 
-            print(f"[{idx}/{len(samples)}] completed question_id={sample.question_id}")
+                direct_answer, direct_latency, direct_error = await _run_direct_llm_answer(
+                    question=sample.user_question,
+                    llm=llm,
+                )
+                rows.append(
+                    PipelineRunRow(
+                        question_id=sample.question_id,
+                        user_question=sample.user_question,
+                        pipeline_type="direct_llm",
+                        answer=direct_answer,
+                        reference_answer=sample.reference_answer,
+                        retrieved_contexts=[],
+                        latency_ms=direct_latency,
+                        error=direct_error,
+                        run_timestamp=run_timestamp,
+                    )
+                )
 
-    raw_payload = {
-        "meta": {
-            "run_timestamp": run_timestamp,
-            "agent_url": args.agent_url,
-            "provider": args.provider or settings.DEFAULT_LLM_PROVIDER,
-            "judge_provider": judge_provider or settings.DEFAULT_LLM_PROVIDER,
-            "eval_set": str(args.eval_set),
-            "question_count": len(samples),
-        },
-        "rows": [asdict(row) for row in rows],
-    }
+                print(f"[{idx}/{len(samples)}] completed question_id={sample.question_id}")
 
-    args.raw_output.parent.mkdir(parents=True, exist_ok=True)
-    args.raw_output.write_text(json.dumps(raw_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        raw_payload = {
+            "meta": {
+                "run_timestamp": run_timestamp,
+                "agent_url": args.agent_url,
+                "provider": args.provider or settings.DEFAULT_LLM_PROVIDER,
+                "judge_provider": judge_provider or settings.DEFAULT_LLM_PROVIDER,
+                "eval_set": str(args.eval_set),
+                "question_count": len(samples),
+            },
+            "rows": [asdict(row) for row in rows],
+        }
+
+        args.raw_output.parent.mkdir(parents=True, exist_ok=True)
+        args.raw_output.write_text(json.dumps(raw_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # Run RAGAS in a thread so it can create its own event loop without
     # conflicting with the asyncio.run() that drives this function.
-    ragas_payload = await asyncio.to_thread(_evaluate_with_ragas, rows, judge_provider)
+    ragas_payload = await asyncio.to_thread(
+        _evaluate_with_ragas,
+        rows,
+        judge_provider,
+        args.judge_max_tokens,
+        args.judge_temperature,
+    )
     summary_payload = {
         "meta": raw_payload["meta"],
         "raw_summary": _summarize_raw(rows),
         "ragas": ragas_payload,
     }
+
+    if isinstance(summary_payload["meta"], dict):
+        summary_payload["meta"]["judge_only"] = bool(args.judge_only)
+        summary_payload["meta"]["judge_max_tokens"] = args.judge_max_tokens
+        summary_payload["meta"]["judge_temperature"] = args.judge_temperature
 
     args.summary_output.parent.mkdir(parents=True, exist_ok=True)
     args.summary_output.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -1,0 +1,101 @@
+[{
+    "question_id": "q-0001",
+    "question": "Predict the product of the esterification reaction between salicylic acid and acetic anhydride. Provide its SMILES and CAS number. Then check whether this product or acetic anhydride is a controlled chemical, and evaluate the explosiveness of the product.",
+    "reference_answer": "The product of the reaction between salicylic acid and acetic anhydride is acetylsalicylic acid (Aspirin). SMILES: CC(=O)Oc1ccccc1C(=O)O. Aspirin CAS number: 50-78-2. The status check shows that aspirin itself is not a controlled narcotic substance; however, acetic anhydride (CAS 108-24-7) is strictly controlled as a precursor (List II/III depending on the country) for heroin synthesis. The explosiveness check confirms that acetylsalicylic acid does not have explosive properties."
+  },
+  {
+    "question_id": "q-0002",
+    "question": "Calculate the Tanimoto similarity coefficient between the molecules 'Fentanyl' and 'Sufentanil'. Generate an ADMET profile for 'Sufentanil', highlighting its lipophilicity, and check if this structure is protected by active patents.",
+    "reference_answer": "The Tanimoto similarity between fentanyl and sufentanil is approximately 0.65-0.75 (depending on the fingerprints used, e.g., Morgan). The ADMET profile of sufentanil demonstrates high lipophilicity (LogP ~ 3.5 - 4.0), which contributes to its rapid penetration across the blood-brain barrier and extreme analgesic activity. The patent check reveals that the core structure of sufentanil appears in patent databases, but the primary patents for the substance itself expired long ago."
+  },
+  {
+    "question_id": "q-0003",
+    "question": "Construct a retrosynthetic route for the Ibuprofen molecule. For the first step (the immediate precursor to the target molecule), conduct a literature search in Semantic Scholar (up to 3 results) to find articles describing methods for carrying out this specific reaction.",
+    "reference_answer": "One of the classical retrosynthetic routes for ibuprofen involves breaking a C-C bond, leading to 1-(4-isobutylphenyl)ethanol, which is then oxidized/carbonylated (e.g., the BHC/Hoechst Celanese process). A literature search on the synthesis of ibuprofen from 1-(4-isobutylphenyl)ethanol via carbonylation yields articles describing the use of palladium catalysts (e.g., papers by Elango et al., 1991, focusing on the 'green synthesis' of ibuprofen). The abstracts confirm the high efficiency and atom economy of this method."
+  },
+  {
+    "question_id": "q-0004",
+    "question": "Analyze the following laboratory protocol: 'Place 10 g of toluene into a round-bottom flask. Slowly add a mixture of concentrated nitric (HNO3) and sulfuric (H2SO4) acids in a 3:1 molar excess with constant heating to 110°C for several hours. Cool and filter the yellow precipitate.' Conduct a safety review of the protocol, determine the CAS of the expected final product, and check it against the explosive substances database.",
+    "reference_answer": "The protocol review identifies critical safety risks: an exhaustive nitration of toluene is described without temperature control in the early stages, which can lead to thermal runaway. The expected final product is 2,4,6-trinitrotoluene (TNT). CAS number: 118-96-7. Checking against the explosive substances database unequivocally classifies CAS 118-96-7 as a powerful secondary high explosive. Conducting this reaction requires blast shields, specialized cooling, and strict safety measures."
+  },
+  {
+    "question_id": "q-0005",
+    "question": "Using parallel tool execution, find the molecular weight, list of functional groups, and ADMET predictions for three molecules: 'Paracetamol', 'Ibuprofen', and 'Diclofenac'. Compare the presence of halogens in their functional groups.",
+    "reference_answer": "Molecular weights: Paracetamol (~151.16 g/mol), Ibuprofen (~206.28 g/mol), Diclofenac (~296.15 g/mol). Functional groups: Paracetamol contains a phenolic hydroxyl and an amide; Ibuprofen contains a carboxyl group and an alkyl radical (isobutyl); Diclofenac contains a secondary amine, a carboxyl group, and chlorine atoms on the aromatic ring. Halogen comparison: Halogens (chlorine) are present only in the structure of Diclofenac, which is also reflected in its ADMET profile by increased lipophilicity and altered metabolic parameters compared to paracetamol and ibuprofen."
+  },
+  {
+    "question_id": "q-0006",
+    "question": "Predict the product of the reaction between 1-phenyl-2-propanone (P2P) and methylamine under reductive amination conditions. Convert the obtained product into SMILES, check its exact status as a controlled chemical, and evaluate its structural similarity to stimulants (similarity to controlled chemicals).",
+    "reference_answer": "The product of the reductive amination of P2P and methylamine is methamphetamine. SMILES: CC(CC1=CC=CC=C1)NC. The status check (control_chem_check) confirms that methamphetamine is strictly controlled (Schedule II in the US, List I/II in other jurisdictions). The structural similarity evaluation (similar_control_chem_check) shows a 100% match with methamphetamine in the database and high similarity (Tanimoto > 0.8) to amphetamine, ephedrine, and MDMA. P2P is also a strictly controlled precursor."
+  },
+  {
+    "question_id": "q-0007",
+    "question": "Identify the substance by the SMILES 'CC(=O)NC1=CC=C(O)C=C1'. Convert it to its common name and find its CAS number. List all its functional groups and calculate the exact molecular weight.",
+    "reference_answer": "The given SMILES 'CC(=O)NC1=CC=C(O)C=C1' corresponds to Paracetamol (Acetaminophen). CAS number: 103-90-2. The functional group search tool highlights two key groups: a phenolic hydroxyl group (-OH attached to the benzene ring) and an acetamide group (N-aryl amide). The exact molecular weight calculated by the tool is 151.16 g/mol."
+  },
+  {
+    "question_id": "q-0008",
+    "question": "Determine whether the structure of 'Imatinib' is patented. Generate an ADMET profile for it and use the functional group search tool to check if it contains structural alerts characteristic of explosives (e.g., nitro groups or azides).",
+    "reference_answer": "The patent check confirms that Imatinib was widely patented as an active pharmaceutical ingredient (the original drug Gleevec by Novartis, patent EP0564409A1, and equivalents, most of which have now expired). The ADMET profile indicates good oral bioavailability, moderate lipophilicity, and its status as a tyrosine kinase inhibitor. Functional group analysis reveals the presence of pyrimidine, pyridine rings, a piperazine moiety, and a secondary amide. Nitro groups (-NO2), azides (-N3), or peroxides are absent; the substance shows no signs of explosiveness."
+  },
+  {
+    "question_id": "q-0009",
+    "question": "Perform a literature search using the query 'synthesis of novel MDMA analogues'. Extract the base SMILES for MDMA and compare it using the Tanimoto coefficient with the molecules 'MDA' and 'Methylone'. Which of the analogues is structurally closer to MDMA?",
+    "reference_answer": "The literature search provides recent articles on the synthesis of empathogens and methylenedioxymethamphetamine analogues. The base SMILES for MDMA is CNC(C)Cc1ccc2c(c1)OCO2. When calculating the Tanimoto coefficient with MDA (SMILES: CC(N)Cc1ccc2c(c1)OCO2), the similarity reaches ~0.85-0.90 (differing only by the absence of a methyl group on the nitrogen atom). The similarity with Methylone (SMILES: CNC(C)C(=O)c1ccc2c(c1)OCO2) is about ~0.75-0.80 (differing by the presence of a ketone group). Therefore, MDA is structurally closer to MDMA than Methylone."
+  },
+  {
+    "question_id": "q-0010",
+    "question": "Propose a retrosynthetic route for the drug 'Sildenafil'. Extract the first key precursor prior to final assembly (e.g., a piperazine derivative or sulfonyl chloride) and check it for patentability and toxicity (ADMET).",
+    "reference_answer": "The retrosynthesis of Sildenafil typically involves a final step reacting 1-methylpiperazine with the corresponding sulfonyl chloride (e.g., 4-ethoxy-3-(1-methyl-7-oxo-3-propyl-6,7-dihydro-1H-pyrazolo[4,3-d]pyrimidin-5-yl)benzenesulfonyl chloride). The patent check shows that these intermediate compounds were protected by Pfizer patents as part of the overarching application for sildenafil synthesis. The ADMET profile of the sulfonyl chloride precursor predicts high reactivity, potential dermal toxicity, and irritating effects (typical of sulfonyl chlorides), as well as low metabolic stability in vivo prior to the formation of the final amide."
+  },
+  {
+    "question_id": "q-0011",
+    "question": "Predict the products for two different reactions: 1) Bromobenzene + Phenylboronic acid (under Suzuki cross-coupling conditions); 2) Bromobenzene + Styrene (under Heck reaction conditions). Convert the products into SMILES and calculate their molecular weights in parallel.",
+    "reference_answer": "1) The product of the Suzuki reaction between bromobenzene and phenylboronic acid is biphenyl. SMILES: c1ccc(-c2ccccc2)cc1. 2) The product of the Heck reaction between bromobenzene and styrene is trans-stilbene. SMILES: C(=C/c1ccccc1)\\c2ccccc2. Parallel molecular weight calculation shows that the mass of biphenyl is 154.21 g/mol, and the mass of trans-stilbene is 180.25 g/mol."
+  },
+  {
+    "question_id": "q-0012",
+    "question": "Find the CAS numbers for the names 'Picric acid', 'RDX', and 'Urea'. Use the explosive check tool for each CAS and compare their molecular weights.",
+    "reference_answer": "CAS numbers: Picric acid — 88-89-1; RDX (Cyclonite) — 121-82-4; Urea — 57-13-6. Molecular weights: Picric acid ~229.10 g/mol, RDX ~222.12 g/mol, Urea ~60.06 g/mol. The explosiveness check (explosive_check) confirms that Picric acid (trinitrophenol) and RDX (cyclotrimethylenetrinitramine) are classified as powerful high explosives. Urea is not explosive, although it is used as a precursor for urea nitrate."
+  },
+  {
+    "question_id": "q-0013",
+    "question": "Convert the name 'LSD' into SMILES. Find a substance structurally similar to it (via similar_control_chem_check). Draft a protocol (minimum 40 characters) for the extraction of any ergot alkaloid and run it through the laboratory protocol review for precursors and risks.",
+    "reference_answer": "SMILES for LSD: CCN(CC)C(=O)[C@H]1CN(C)[C@@H]2Cc3c[nH]c4cccc(c34)C2=C1. The structural similarity tool finds similar controlled substances, such as Ergotamine, Ergometrine, or ALD-52. Draft protocol: 'Crushed ergot sclerotia are extracted with a mixture of methanol and ammonia. The extract is filtered, evaporated under vacuum, and the residue is recrystallized to isolate the alkaloids.' The protocol review (protocol_review) notes that ergot alkaloids (ergotamine/ergometrine) are strictly controlled Schedule I precursors for LSD synthesis. Risks include high toxicity of the alkaloids (ergotism) and the use of toxic and highly flammable methanol."
+  },
+  {
+    "question_id": "q-0014",
+    "question": "The police seized a powder with the SMILES 'CCC(C)C(N)C1=CC=CC=C1'. Convert the SMILES into a name and CAS number. Check if it is directly a controlled substance, and evaluate its Tanimoto similarity to 'Cathinone'.",
+    "reference_answer": "The SMILES 'CCC(C)C(N)C1=CC=CC=C1' (depending on stereochemistry) corresponds to alpha-ethylphenethylamine (or similar homologues, such as the structural isomer/precursor aminopentanophenones). For the isomer 1-phenyl-2-pentanamine (propylamphetamine), the control_chem_check database indicates a status as a controlled amphetamine analogue. The Tanimoto coefficient with Cathinone (SMILES: CC(N)C(=O)c1ccccc1) shows moderate similarity (~0.5 - 0.6), as the seized powder molecule lacks the beta-ketone group characteristic of cathinones and differs in alkyl chain length."
+  },
+  {
+    "question_id": "q-0015",
+    "question": "Starting with 'Benzene', predict a nitration reaction (with HNO3/H2SO4), then predict the reduction reaction of the resulting nitro product (with H2/Pd). Obtain the SMILES for the final product, list its functional groups, and calculate its exact molecular weight.",
+    "reference_answer": "The first reaction (nitration) of benzene yields nitrobenzene (SMILES: O=[N+]([O-])c1ccccc1). The second reaction (reduction) of nitrobenzene yields aniline. SMILES of the final product: Nc1ccccc1. Functional groups of aniline: primary aromatic amine (amino group attached to a benzene ring). The molecular weight of aniline, calculated by the tool, is 93.13 g/mol."
+  },
+  {
+    "question_id": "q-0016",
+    "question": "Given the reaction mixture: 'C1=CC=C(C=C1)C(=O)O.C1=CC=C(C=C1)O'. Separate the molecules (Benzoic acid and Phenol), and in parallel calculate the ADMET and molecular weight for each, as well as check both for patentability.",
+    "reference_answer": "The mixture is successfully separated into benzoic acid (SMILES: O=C(O)c1ccccc1) and phenol (SMILES: Oc1ccccc1). Parallel calculations show: Benzoic acid has a mass of 122.12 g/mol; Phenol has a mass of 94.11 g/mol. ADMET predictions: Benzoic acid exhibits good solubility, low toxicity, and rapid clearance; Phenol shows high tissue permeability but significant cellular toxicity (corrosive/toxic effects). The patent check reveals that both molecules are basic chemicals long known in the prior art (unpatentable on their own currently)."
+  },
+  {
+    "question_id": "q-0017",
+    "question": "Identify the molecule by CAS 50-00-0. Obtain its SMILES. Generate a set of RDKit descriptors (via the ADMET tool). Then check if this structure is mentioned in patents using the patent search.",
+    "reference_answer": "CAS 50-00-0 corresponds to formaldehyde. SMILES: C=O. The ADMET tool (generating RDKit descriptors) calculates an extremely low molecular weight (30.03 g/mol) for formaldehyde, a topological polar surface area (TPSA = 17.07), and a LogP near 0. The patent search confirms that formaldehyde is mentioned in millions of patents, especially those related to polymer synthesis (e.g., phenol-formaldehyde resins, melamine resins) and preservatives."
+  },
+  {
+    "question_id": "q-0018",
+    "question": "Request a retrosynthesis for Acetaminophen (Paracetamol). Select the classic two-step route from the suggestions, extract the SMILES of all starting reagents for this route, and calculate their total molecular weight.",
+    "reference_answer": "The retrosynthesis tool suggests a classic route for producing paracetamol: acetylation of p-aminophenol with acetic anhydride. Starting reagents: p-aminophenol (SMILES: Nc1ccc(O)cc1) and acetic anhydride (SMILES: CC(=O)OC(C)=O). The mass calculation tool outputs: p-aminophenol = 109.13 g/mol, acetic anhydride = 102.09 g/mol. The total molecular weight of the starting reagents is 211.22 g/mol."
+  },
+  {
+    "question_id": "q-0019",
+    "question": "Given the text: 'Dissolve 5 g of cocaine hydrochloride in 50 mL of water, add ammonia solution until precipitation ceases, and extract with diethyl ether.' Conduct a review of this protocol. Extract the SMILES of the target product (Cocaine freebase), check its controlled substance status, and find its Tanimoto similarity to 'Lidocaine'.",
+    "reference_answer": "Protocol review: The process describes converting a cocaine salt into a freebase ('crack'). The procedure carries legal risks (handling Schedule I/II narcotics) and physical risks (using highly flammable diethyl ether). SMILES of cocaine freebase: CN1C2CCC1C(C(=O)OC)C(OC(=O)c3ccccc3)C2. Status: strictly controlled substance in all jurisdictions. The Tanimoto similarity to Lidocaine (SMILES: CCN(CC)CC(=O)Nc1c(C)cccc1C) is about 0.3 - 0.4. Despite similar local anesthetic effects, their chemical structures (tropane alkaloid vs. amide) differ significantly."
+  },
+  {
+    "question_id": "q-0020",
+    "question": "Plan the synthesis of 'Aspirin' starting from 'Phenol'. Predict the necessary sequential reactions (first with NaOH/CO2 to obtain salicylic acid, then acetylation). For the final product (Aspirin), obtain the CAS, check patents, evaluate ADMET (including lipophilicity), and conduct a literature search for 'Aspirin synthesis optimization' (up to 2 articles).",
+    "reference_answer": "1) The reaction of phenol with NaOH and CO2 (Kolbe-Schmitt reaction) predicts the formation of salicylic acid (SMILES: O=C(O)c1ccccc1O). 2) The reaction of salicylic acid with acetic anhydride predicts the formation of aspirin (SMILES: CC(=O)Oc1ccccc1C(=O)O). Aspirin CAS: 50-78-2. Patent search: Aspirin has no active patents on the molecule itself (first patented by Bayer in 1899). ADMET profile: moderate lipophilicity (LogP ~ 1.19), high GI absorption, potential for gastric mucosal irritation. The literature search yields relevant articles, for instance, those focusing on the use of microwave irradiation or eco-friendly solid acid catalysts to optimize aspirin yield."
+  }
+]

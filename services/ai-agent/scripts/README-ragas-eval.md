@@ -42,6 +42,18 @@ uv run python scripts/evaluate_pipeline_ragas.py \
   --max-questions 2
 ```
 
+Re-run only RAGAS judge on existing raw generations:
+
+```bash
+uv run python scripts/evaluate_pipeline_ragas.py \
+  --judge-only \
+  --raw-output app/data-rag/benchmarks/pipeline_eval_raw.json \
+  --summary-output app/data-rag/benchmarks/pipeline_eval_summary.json \
+  --judge-provider openai \
+  --judge-max-tokens 4096 \
+  --judge-temperature 0
+```
+
 ## Outputs
 
 Default outputs:
@@ -54,3 +66,4 @@ Default outputs:
 - If `ragas` is not installed, script still writes raw outputs and summary marks RAGAS section as skipped.
 - For fair comparison, both branches use the same provider (`--provider`) unless overridden.
 - This flow is intentionally isolated from runtime to avoid changes in [app/main.py](app/main.py).
+- Re-scoring with `--judge-only` does not call pipeline endpoints and reuses generations from `--raw-output`.
