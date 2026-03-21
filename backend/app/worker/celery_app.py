@@ -9,6 +9,7 @@ celery_app = Celery(
     include=[
         "app.worker.tasks.chat",
         "app.worker.tasks.example",
+        "app.worker.tasks.retrosynthesis",
     ],
 )
 

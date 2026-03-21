@@ -1,4 +1,7 @@
 .DS_Store
+data/*
+!data/*.md
+
 
 # fatsapi-fullstack
 .venv

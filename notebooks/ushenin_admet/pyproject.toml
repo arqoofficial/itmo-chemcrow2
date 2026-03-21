@@ -1,0 +1,30 @@
+[project]
+name = "admet-microservice"
+version = "0.1.0"
+description = "FastAPI microservice for descriptor-based ADMET proxy prediction from SMILES"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.32.0",
+  "rdkit>=2024.9.6",
+  "pydantic>=2.10.0",
+]
+
+[project.optional-dependencies]
+demo = [
+  "httpx>=0.28.1",
+  "langchain>=0.3.27",
+  "langchain-openai>=0.3.35",
+  "langfuse>=3.9.0",
+]
+
+[project.scripts]
+admet-agent-demo = "demo.agent_demo:main"
+
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+package = false

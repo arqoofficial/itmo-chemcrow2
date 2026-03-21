@@ -75,6 +75,9 @@ class Settings(BaseSettings):
     CHAT_TASK_SOFT_TIME_LIMIT: int = 120
     CHAT_TASK_HARD_TIME_LIMIT: int = 150
 
+    RETROSYNTHESIS_URL: str = "http://localhost:8052"
+    RETROSYNTHESIS_TIMEOUT: float = 150.0
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587
