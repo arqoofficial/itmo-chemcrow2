@@ -110,7 +110,7 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: celery -A app.worker.celery_app worker -l info -c 2 -Q default,chat,gpu
+    command: celery -A app.worker.celery_app worker -l info -c 2 -Q default,chat
     depends_on:
       redis:
         condition: service_healthy
@@ -183,7 +183,6 @@ services:
     build:
       context: ./services/retrosynthesis
     restart: unless-stopped
-    profiles: ["reaction"]
     ports:
       - "8052:8052"
     volumes:

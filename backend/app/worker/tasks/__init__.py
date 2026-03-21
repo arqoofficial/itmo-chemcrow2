@@ -26,7 +26,7 @@ TASK_REGISTRY: dict[str, str] = {
 }
 
 TASK_QUEUES: dict[str, str] = {
-    "retrosynthesis_multi_step": "gpu",
+    "retrosynthesis_multi_step": "default",
     "chat": "chat",
 }
 

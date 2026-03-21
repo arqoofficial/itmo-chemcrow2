@@ -81,6 +81,6 @@ def get_resources() -> dict[str, list[str]]:
 
 
 @app.get("/health")
-def health() -> dict[str, str]:
+def health() -> dict[str, Any]:
     status = "ok" if ENGINES else "no_engines"
     return {"status": status, "engines": list(ENGINES)}
