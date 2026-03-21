@@ -162,6 +162,9 @@ services:
       - BACKEND_URL=http://backend:8000
       - REACTION_PREDICT_URL=http://reaction-predict:8051
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      # .env часто задаёт LANGFUSE_HOST=http://localhost:3000 для UI с хоста;
+      # внутри контейнера localhost — не Langfuse, OTEL/SDK получают connection refused.
+      - LANGFUSE_HOST=http://langfuse-server:3000
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
@@ -223,10 +226,28 @@ services:
       timeout: 3s
       retries: 10
 
+  langfuse-zookeeper:
+    image: zookeeper:3.9
+    restart: unless-stopped
+    environment:
+      ZOO_TICK_TIME: 2000
+    volumes:
+      - langfuse-zookeeper-data:/data
+      - langfuse-zookeeper-datalog:/datalog
+    healthcheck:
+      test: ["CMD-SHELL", "zkServer.sh status || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
   langfuse-clickhouse:
-    image: clickhouse/clickhouse-server
+    image: clickhouse/clickhouse-server:25.8
     restart: unless-stopped
     user: "101:101"
+    depends_on:
+      langfuse-zookeeper:
+        condition: service_healthy
     environment:
       CLICKHOUSE_DB: default
       CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
@@ -234,6 +255,8 @@ services:
     volumes:
       - langfuse-clickhouse-data:/var/lib/clickhouse
       - langfuse-clickhouse-logs:/var/log/clickhouse-server
+      - ./deploy/langfuse-clickhouse/macros.xml:/etc/clickhouse-server/config.d/langfuse-macros.xml:ro
+      - ./deploy/langfuse-clickhouse/zookeeper.xml:/etc/clickhouse-server/config.d/langfuse-zookeeper.xml:ro
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
       interval: 5s
@@ -397,6 +420,8 @@ volumes:
   app-db-data:
   redis-data:
   langfuse-db-data:
+  langfuse-zookeeper-data:
+  langfuse-zookeeper-datalog:
   langfuse-clickhouse-data:
   langfuse-clickhouse-logs:
   langfuse-minio-data:
