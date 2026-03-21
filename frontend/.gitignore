@@ -13,6 +13,16 @@ dist-ssr
 *.local
 openapi.json
 
+__pycache__
+*.pyc
+.mypy_cache
+.coverage
+htmlcov
+.cache
+.venv
+
+.DS_Store
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
