@@ -1,0 +1,30 @@
+Intermolecular rhodium-catalyzed oxidative cyclization.
+
+<!-- image -->
+
+## Summary and outlook
+
+Syntheses of indole derivatives represent an amazing area of research for organic chemists. In addition, due to the relevance of indoles, efforts to develop their efficient syntheses influence other research areas, including biology, medicine and material science, thereby affecting our society and our life. The most recent and remarkable discoveries in the syntheses of indoles are presented in this review.
+
+A plethora of versatile methodologies based on transition metal-catalyzed cyclizations, C-C- or C-N-bond formation crosscoupling reactions are currently available and allow for the assembly of functionalized indoles. While these protocols ensure the regioselective preparation of the desired indole derivative, they required a prefunctionalization of starting materials, which results in longer synthetic routes. In this sense, procedures involving functionalization of ubiquitous C-H-bonds have emerged as promising alternative routes to prepare indoles. However, the functionalization of strong C-H- or C-X-bonds involve, among others, the use of harsher reaction conditions or rather expensive catalysts, which proceed with low turnovers. Besides, synthetically elaborated substrates enable an easy access to specific indolecontaining structures through transition metal-catalyzed cyclizations, particularly, when using noble metals such as palladium, gold or platinum. In contrast, inexpensive copper or iron catalysts still remain a challenge to perform these valuable transformations.
+
+As shown in this review, many cleverly devised routes for the synthesis of indoles have been developed in recent years. This could give the impression to the reader that not many new goals remain unravelled in this field. However, new solutions necessarily provoke new questions, which should be addressed. Thus, for example, sustainability and efficiency criteria appear as mandatory requirements. These translate into the necessity to put into practice protocols which make use of ecologically benign media, in terms of energy and cleanliness, starting from readily available feedstocks. Likewise, cascade-domino reactions or multi-step one-pot procedures which enable the straightforward preparation of highly functionalized indoles are highly desirable. Moreover, the development of robust catalysts might be useful in terms of functional group tolerance or catalytic efficiency, which should be beneficial in the preparation of complex indolecontaining structures or to accomplish large scale synthesis. As a consequence, new exciting and innovative achievements are expected to appear in this relevant research area.
+
+## Acknowledgements
+
+Financial support through a 'Juan de la Cierva' contract from Ministerio de Ciencia e Innovaci´ on is gratefully acknowledge. Prof. J. Barluenga and Prof. M. Tom´ as are warmly acknowledged for the continuous support. Dr L. A. L´ opez, Dr F. Rodr´ ıguez and Dr E. K. Schmitt are acknowledged for the revision of this manuscript.
+
+## Notes and references
+
+- 1 A. Baeyer, Justus Liebigs Ann. Chem., 1866, 140, 295.
+- 2 (a) R. J. Sundberg, in The Chemistry of Indoles, Academic Press, New York, 1970; (b) R. K. Brown, in Indoles (Ed.: W. J. Houlihan), WileyInterscience, New York, 1972.
+- 3 'Indole and its Derivatives' J. A. Joule, in Science of Synthesis (HoubenWeyl Methods of Molecular Transformations), Vol. 10 (Ed.: E. J. Thomas), Thieme, Stuttgart, 2000, chap. 10.13.
+- 4 Selected recent reviews: (a) S. Cacchi, G. Fabrizi and A. Goggiamani, Org. Biomol. Chem., 2011, 9, 641-652; (b) S. A. Patil, R. Patil and D. D. Miller, Curr. Med. Chem., 2011, 18, 615-637; (c) G. Palmisano, A. Penoni, M. Sisti, F. Tibiletti, S. Tollari and K. M. Nicholas, Curr. Org. Chem., 2010, 14, 2409-2441; (d) J. Barluenga, F. Rodr´ ıguez and F. J. Fa˜ nan´ as, Chem.-Asian J., 2009, 4, 1036-1048; (e) N. T. Patil and Y. Yamamoto, Chem. Rev., 2008, 108, 3395-3442; (f) K. Kr¨ uger, A. Tillack and M. Beller, Adv. Synth. Catal., 2008, 350, 2153-2167; (g) L. Ackermann, Synlett, 2007, 507-526; (h) G. R. Humphrey and J. T. Kuethe, Chem. Rev., 2006, 106, 2875-2911; (i) S. Cacchi and G. Fabrizi, Chem. Rev., 2005, 105, 2873-2920; (j) G. Zeni and R. C. Larock, Chem. Rev., 2004, 104, 2285-2310.
+- 5 For a recent review on indole functionalization, see: M. Bandini and A. Eichholzer, Angew. Chem., Int. Ed., 2009, 48, 9608-9644.
+- 6 Selected examples: (a) H. Zhou, D. Zhu, Y. Xing and H. Huang, Adv. Synth. Catal., 2010, 352, 2127-2131; (b) A. H. Stoll and P. Knochel, Org. Lett., 2008, 10, 113-116; (c) A. L. Rodriguez, C. Koradin, W. Dohle and P. Knochel, Angew. Chem., Int. Ed., 2000, 39, 2488-2490.
+- 7 A. Yasuhara, N. Suzuki, T. Yoshino, Y. Takeda and T. Sakamoto, Tetrahedron Lett., 2002, 43, 6579-6582.
+- 8 Selected examples: (a) I. Nakamura, U. Yamagishi, D. Song, S. Konta and Y. Yamamoto, Angew. Chem., Int. Ed., 2007, 46, 2284-2287; (b) B. M. Trost and A. McClory, Angew. Chem., Int. Ed., 2007, 46, 2074-2077; (c) X. Li, A. R. Chianese, T. Vogel and R. H. Crabtree, Org. Lett., 2005, 7, 5437-5440; (d) N. Sakai, K. Annaka and T. Konakahara, Org. Lett., 2004, 6, 1527-1530; (e) B. C. J. van Esseveldt, F. L. van Delft, R. de Gelder and F. P. J. T. Rutjes, Org. Lett., 2003, 5, 1717-1720; (f) F. E. McDonald and A. K. Chatterjee, Tetrahedron Lett., 1997, 38, 76877690.
+- 9 J. Barluenga, M. Trincado, E. Rubio and J. M. Gonz´ alez, Angew.Chem., Int. Ed., 2003, 42, 2406-2409.
+- 10 For related processes, see: (a) R. Halim, P. J. Scammells and B. L. Flynn, Org. Lett., 2008, 10, 1967-1970; (b) D. Yue and R. C. Larock, Org. Lett., 2004, 6, 1037-1040.
+- 11 (a) Z. Shen and X. Lu, Adv. Synth. Catal., 2009, 351, 3107-3112; (b) S. Tang, Y.-X. Xie, J.-H. Li and N.-X. Wang, Synthesis, 2007, 1841-1847.
+- 12 (a) S. Cacchi, G. Fabrizi and A. Goggiamani

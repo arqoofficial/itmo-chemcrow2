@@ -146,6 +146,9 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      # WORKDIR=/app, app code at /app/app/ → data-rag resolves to /app/app/data-rag
+      - ./services/ai-agent/app/data-rag:/app/app/data-rag
     develop:
       watch:
         - path: ./services/ai-agent
@@ -153,6 +156,7 @@ services:
           target: /app
           ignore:
             - .venv
+            - app/data-rag
         - path: ./services/ai-agent/pyproject.toml
           action: rebuild
     env_file:
@@ -165,6 +169,8 @@ services:
       # .env часто задаёт LANGFUSE_HOST=http://localhost:3000 для UI с хоста;
       # внутри контейнера localhost — не Langfuse, OTEL/SDK получают connection refused.
       - LANGFUSE_HOST=http://langfuse-server:3000
+      - RAG_ENABLED=true
+      - RAG_FORCE_REBUILD_INDEXES=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s

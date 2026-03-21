@@ -15,6 +15,10 @@ COPY services/ai-agent/app ./app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system .
 
+RUN python -c "\
+from sentence_transformers import SentenceTransformer; \
+SentenceTransformer('nomic-ai/nomic-embed-text-v1.5', trust_remote_code=True)"
+
 EXPOSE 8100
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8100"]

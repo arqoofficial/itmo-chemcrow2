@@ -20,7 +20,7 @@ class RetrievalResult:
 
     doc_id: str
     score: float
-    text: str
+    text: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
 
 

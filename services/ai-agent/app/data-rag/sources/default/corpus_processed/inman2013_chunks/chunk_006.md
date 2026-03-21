@@ -1,0 +1,55 @@
+ur. J., 2004, 10, 2409-2420; K. Alex, A. Tillack, N. Schwarz and M. Beller, Angew. Chem., Int. Ed., 2008, 47, 2304-2307.
+- 21 S. Wagaw, B. H. Yang and S. L. Buchwald, J. Am. Chem. Soc., 1998, 120, 6621-6622; S. Wagaw, B. H. Yang and S. L. Buchwald, J. Am. Chem. Soc., 1999, 121, 10251-10263.
+- 22 J. F. Hartwig, Angew. Chem., Int. Ed., 1998, 37, 2090-2093.
+- 23 M. Wolter, A. Klapars and S. L. Buchwald, Org. Lett., 2001, 3, 3803-3805.
+- 24 L. Jiang, X. Lu, H. Zhang, Y. Jiang and D. Ma, J. Org. Chem., 2009, 74, 4542-4546.
+- 25 C. C. Mauger and G. A. Mignani, Org. Process Res. Dev., 2004, 8, 1065-1071.
+- 26 Y.-K. Lim and C.-G. Cho, Tetrahedron Lett., 2004, 45, 1857-1859.
+- 27 I.-K. Park, S.-E. Suh, B.-Y. Lim and C.-G. Cho, Org. Lett., 2009, 11, 5454-5456.
+- 28 I.-K. Park, J. Park and C.-G. Cho, Angew. Chem., Int. Ed., 2012, 51, 2496-2499.
+- 29 P. P. Cellier, J.-F. Spindler, M. Taillefer and H.-J. Cristau, Tetrahedron Lett., 2003, 44, 7191-7195.
+- 30 R. L. Lundgren and M. Stradiotto, Angew. Chem., Int. Ed., 2010, 49, 8686-8690.
+- 31 M. Inman and C. J. Moody, Chem. Commun., 2011, 47, 788-790.
+- 32 M. Inman, A. Carbone and C. J. Moody, J. Org. Chem., 2012, 77, 1217-1232.
+- 33 H. Mitchell and Y. Leblanc, J. Org. Chem., 1994, 59, 682-687; J. S. Yadav, B. V. S. Reddy, G. M. Kumar and C. Madan, Synlett, 2001, 1781-1783; L. Gu, B. S. Neo and Y. Zhang, Org. Lett., 2011, 13, 1872-1874.
+- 34 K. Mu˜ niz and A. Iglesias, Angew. Chem., Int. Ed., 2007, 46, 6350-6353.
+- 35 T. Uemura and N. Chatani, J. Org. Chem., 2005, 70, 8631-8634; K. Kisseljova, O. Tˇsubrik, R. Sillard, S. M¨aeorg and U. M¨aeorg, Org. Lett., 2006, 8, 43-45.
+- 36 F. R. Japp and F. Klingemann, Ber. Dtsch. Chem. Ges., 1887, 20, 2942-2944.
+- 37 D. Y. Curtin and J. A. Ursprung, J. Org. Chem., 1956, 21, 1221-1225.
+- 38 B. A. Haag, Z.-G. Zhang, J.-S. Li and P. Knochel, Angew. Chem., Int. Ed., 2010, 49, 9513-9516; Z.-G. Zhang, B. A. Haag, J.-S. Li and P. Knochel, Synthesis, 2011, 23-29.
+
+- 39 E. Yasui, M. Wada and N. Takamura, Tetrahedron Lett., 2006, 47, 743-746; E. Yasui, M. Wada and N. Takamura, Tetrahedron, 2009, 65, 461-468.
+- 40 A. W. Schammel, B. W. Boal, L. Zu, T. Mesganaw and N. K. Garg, Tetrahedron, 2010, 66, 4687-4695.
+- 41 S. M¨uller, M. J. Webber and B. List, J. Am. Chem. Soc., 2011, 133, 18534-18537.
+- 42 A. Bischler and H. Brion, Ber. Dtsch. Chem. Ges., 1892, 25, 2860-2879; A. Bischler and P. Firemann, Ber. Dtsch. Chem. Ges., 1893, 26, 1336-1349.
+- 43 J. E. Nordlander, D. B. Catalane, K. D. Kotian, R. M. Stevens and J. E. Haky, J. Org. Chem., 1981, 46, 778-782; R. J. Sundberg and J. P. Laurino, J. Org. Chem., 1984, 49, 249-254.
+- 44 C. J. Moody and E. Swann, Synlett, 1998, 135-136; K. E. Bashford, A. L. Cooper, P. D. Kane, C. J. Moody, S. Muthusamy and E. Swann, J. Chem. Soc., Perkin Trans. 1, 2002, 1672-1687; M. A. Honey, A. J. Blake, I. B. Campbell, B. D. Judkins and C. J. Moody, Tetrahedron, 2009, 65, 8995-9001.
+- 45 M. Tokunaga, M. Ota, M.-A. Haga and Y. Wakatsuki, Tetrahedron Lett., 2001, 42, 3865-3868.
+- 46 M. P. Kumar and R.-S. Liu, J. Org. Chem., 2006, 71, 4951-4955.
+- 47 H. Hemetsberger and D. Knittel, Monatsh. Chem., 1972, 103, 194-204.
+- 48 C. J. Moody, J. Chem. Soc., Perkin Trans. 1, 1984, 1333-1337.
+- 49 T. Martin and C. J. Moody, J. Chem. Soc., Perkin Trans. 1, 1988, 241-246.
+- 50 A. R. MacKenzie, C. J. Moody and C. W. Rees, J. Chem. Soc., Chem. Commun., 1983, 1372-1373.
+- 51 R. E. Bolton, C. J. Moody, C. W. Rees and G. Tojo, J. Chem. Soc., Perkin Trans. 1, 1987, 931-935.
+- 52 M. S. Reddy and J. M. Cook, Tetrahedron Lett., 1994, 35, 5413-5416.
+- 53 J. Bonnamour and C. Bolm, Org. Lett., 2011, 13, 2012-2014; B. J. Stokes, H. Dong, B. E. Leslie, A. L. Pumphrey and T. G. Driver, J. Am. Chem. Soc., 2007, 129, 7500-7501.
+- 54 S. Chiba, G. Hattori and K. Narasaka, Chem. Lett., 2007, 36, 52-53; S. Jana, M. D. Clements, B. K. Sharp and N. Zheng, Org. Lett., 2010, 12, 3736-3739.
+- 55 D. F. Taber and W. Tian, J. Am. Chem. Soc., 2006, 128, 1058-1059.
+- 56 X. Li, Y. Du, Z. Liang, X. Li, Y. Pan and K. Zhao, Org. Lett., 2009, 11, 2643-2646.
+- 57 C. D. Nenitzescu, Bull. Soc. Chim. Romania, 1929, 11, 37-43.
+- 58 M. R¨onn, Q. McCubbin, S. Winter, M. K. Veige, N. Grimster, T. Alorati and L. Plamondon, Org. Process Res. Dev., 2007, 11, 241-245.
+- 59 K. R. Buszek, N. Brown and D. Luo, Org. Lett., 2009, 11, 201-204; P. B. Huleatt, S. S. Choo, S. Chua and C. L. L. Chai, Tetrahedron Lett., 2008, 49, 5309-5311.
+- 60 M. Bosco, R. Dalpozzo, G. Bartoli, G. Palmieri and M. Petrini, J. Chem. Soc., Perkin Trans. 2, 1991, 651-655.
+- 61 B. ˚Akermark, L. Eberson, E. Jonsson and E. Petterson, J. Org. Chem., 1975, 40, 1365-1367.
+- 62 T. Sakakibara, Y. Tanaka and S.-I. Yamasaki, Chem. Lett., 1986, 797-800.
+- 63 S. W¨urtz, S. Rakshit, T. Dr¨oge, J. J. Neumann and F. Glorius, Angew. Chem., Int. Ed., 2008, 47, 7230-7233; J. J. Neumann, S. Rakshit, T. Dr¨oge, S. W¨urtz and F. Glorius, Chem.-Eur. J., 2011, 17, 7298-7303.
+- 64 H. Iida, Y. Yuasa and C. Kibayashi, J. Org. Chem., 1980, 45, 2938-2942.
+- 65 Z.-H. Guan, Z.-Y. Yan, Z.-H. Ren, X.-Y. Liu and Y.-M. Liang, Chem. Commun., 2010, 46, 2823-2825.
+- 66 H. Hagelin, J. D. Oslob and B. ˚Akermark, Chem.-Eur. J., 1999, 5, 2413-2416.
+- 67 Z. Zhi, C. Zhang, S. Li, D. Pan, S. Ding, Y. Cui and N. Jiao, Angew. Chem., Int. Ed., 2009, 48, 4572-4576.
+- 68 R. Bernini, G. Fabrizi, A. Sferrazza and S. Cacchi, Angew. Chem., Int. Ed., 2009, 48, 8078-8081.
+- 69 W. Yu, Y. Du and K. Zhao, Org. Lett., 2009, 11, 2417-2420.
+- 70 Y. Wei, I. Deb and N. Yoshikai, J. Am. Chem. Soc., 2012, 134, 9098-9101.
+- 71 M. Yamagishi, K. Nishigai, A. Ishii, T. Hata and H. Urabe, Angew. Chem., Int. Ed., 2012, 51, 1-5.
+- 72 L. Ackermann and A. V. Lygin, Org. Lett., 2012, 14, 764-767.
+- 73 D. R. Stuart, M. Bertrand-Laperle, K. M. N. Burgess and K.

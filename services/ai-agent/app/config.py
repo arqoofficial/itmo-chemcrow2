@@ -43,6 +43,24 @@ class Settings(BaseSettings):
     AGENT_MAX_ITERATIONS: int = 10
     AGENT_TIMEOUT_SECONDS: int = 120
 
+    # RAG settings
+    RAG_ENABLED: bool = True
+    RAG_DATA_DIR: str = "app/data-rag"  # used by evaluation scripts for benchmark files
+    RAG_SOURCES_DIR: str = "app/data-rag/sources"
+    RAG_DEFAULT_SOURCE: str = "default"
+    # Legacy default-source paths retained for backwards compatibility with local tooling.
+    RAG_CORPUS_RAW_DIR: str = "app/data-rag/sources/default/corpus_raw"
+    RAG_CORPUS_PROCESSED_DIR: str = "app/data-rag/sources/default/corpus_processed"
+    RAG_BM25_INDEX_PATH: str = "app/data-rag/sources/default/indexes/bm25_index.json"
+    RAG_DENSE_INDEX_DIR: str = "app/data-rag/sources/default/indexes/nomic_dense"
+    RAG_FORCE_REBUILD_INDEXES: bool = False
+    RAG_DENSE_MATRYOSHKA_DIM: int = 512
+    RAG_DENSE_BATCH_SIZE: int = 16
+    RAG_RRF_K: int = 60
+    RAG_BM25_WEIGHT: float = 1.0
+    RAG_DENSE_WEIGHT: float = 1.0
+    RAG_CANDIDATE_K: int = 20
+
     # Langfuse observability (optional)
     LANGFUSE_PUBLIC_KEY: str = ""
     LANGFUSE_SECRET_KEY: str = ""
