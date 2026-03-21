@@ -1,0 +1,30 @@
+noline and Fargesine. ChemInform. 2014;70(34):5136-41. doi: 10.1002/CHIN.201452122.
+23. D'Souza DM, Müller TJ. Multi-component syntheses of heterocycles by transition-metal catalysis. Chem Soc Rev. 2007;36(7):1095-108. doi: 10.1039/B608235C, PMID 17576477.
+24. Egger J, Carreira EM. Efficient synthesis strategies by application of transition metal-catalyzed carbene/nitrene insertions into C-H bonds. Nat Prod Rep. 2014;31(4):449-55. doi: 10.1039/c3np70084d, PMID 24589531.
+25. Luck K, Modler KH. Synthesis of guidance mechanisms. Mech Mach Theor. 1994;29(4):525-33. doi: 10.1016/0094-114X(94)90092-2.
+26. Cabrera JA, Simón A, Prado M. Optimal synthesis of mechanisms with genetic algorithms. Mech Mach Theor. 2002;37(10):1165-77. doi: 10.1016/S0094-114X(02)00051-4.
+27. Park Y, Kim Y, Chang S. Transition metal-catalyzed C-H amination: scope, mechanism and applications. Chem Rev. 2017;117(13):9247-301. doi: 10.1021/acs.chemrev.6b00644, PMID 28051855.
+28. Lund H, Daasbjerg K, Lund T, Pedersen SU. On electron transfer in aliphatic nucleophilic substitution. Acc Chem Res. 1995;28(7):313-9. doi: 10.1021/ar00055a005.
+29. Mąkosza M. Electrophilic and nucleophilic aromatic substitutions are mechanistically similar with opposite polarity. Chemistry. 2020;26(67):15346-53. doi: 10.1002/chem.202003770, PMID 33174247.
+30. Mąkosza M, Wojciechowski K. Application of vicarious nucleophilic substitution in organic synthesis. Liebigs Ann. 1997;1997(9):1805-16. doi: 10.1002/JLAC.199719970903.
+31. Kolodiazhnyi OI. Stereochemistry of electrophilic and nucleophilic substitutions at phosphorus. Pure Appl Chem. 2019;91(1):43-57. doi: 10.1515/PAC-2018-0807.
+32. Andrés J, Berski S, Domingo LR, González-Navarrete P. Nature of the ring-closure process along the rearrangement of octa-1,3,5,7-tetraene to cycloocta-1,3,5-triene from the perspective of the electron localization function and catastrophe theory. J Comp Chem. 2012;33(7):748-56. doi: 10.1002/jcc.22898, PMID 22183786.
+33. Holub N, Blechert S. Ring-rearrangement metathesis. Chem Asian J. 2007;2(9):1064-82. doi: 10.1002/ASIA.200700072, PMID 17638376.
+34. Jana S, Clements MD, Sharp BK, Zheng N. Fe(II)-catalyzed amination of aromatic C-H bonds via ring opening of 2H-azirines: synthesis of 2,3-disubstituted indoles. Org Lett. 2010;12(17):3736-9. doi: 10.1021/ol101130e, PMID 20681598.
+35. Maehara A, Tsurugi H, Satoh T, Miura M. Regioselective C-H functionalization directed by a removable carboxyl group: palladium-catalyzed vinylation at the unusual position of indole and related heteroaromatic rings. Org Lett. 2008;10(6):1159-62. doi: 10.1021/ol8000602, PMID 18278932.
+36. Lv J, Wang B, Yuan K, Wang Y, Jia Y. Regioselective direct C-4 functionalization of indole: total syntheses of (-)-agroclavine and (-)-elymoclavine. Org Lett. 2017;19(13):3664-7. doi: 10.1021/acs.orglett.7b01681, PMID 28641012.
+37. Zhang ZZ, Liu B, Wang CY, Shi BF. Cobalt(III)-catalyzed C2-selective C-H Alkynylation of indoles. Org Lett. 2015;17(16):4094-7. doi: 10.1021/acs.orglett.5b02038, PMID 26263117.
+38. Lanke V, Bettadapur KR, Prabhu KR. Site-selective addition of maleimide to indole at the C-2 position: Ru(II)-catalyzed C-H activation. Org Lett. 2015;17(19):4662-5. doi: 10.1021/acs.orglett.5b01809, PMID 26348254.
+39. Cacchi S, Fabrizi G. Synthesis and functionalization of indoles through palladium-catalyzed reactions. Chem Rev. 2005;105(7):2873-920. doi: 10.1021/cr040639b, PMID 16011327.
+40. Ghosh P, Das S. The C-H functionalization of N-alkoxycarbamoyl indoles by transition metal catalysis. Org Biomol Chem. 2021;19(37):7949-69. doi: 10.1039/d1ob01121a, PMID 34490862.
+41. Moriyama K, Ishida K, Togo H. Regioselective C(sp2)-H dual functionalization of indoles using hypervalent iodine(III): bromo-amination via 1,3-migration of imides on indolyl(phenyl)iodonium imides. Chem Commun (Camb). 2015;51(12):2273-6. doi: 10.1039/c4cc09077b, PMID 25556519.
+42. Yu W, Du Y, Zhao K. PIDA-mediated oxidative C-C bond formation: novel synthesis of indoles from N-aryl enamines. Org Lett. 2009;11(11):2417-20. doi: 10.1021/ol900576a, PMID 19419193.
+43. Vargas DA, Tinoco A, Tyagi V, Fasan R. Myoglobin-catalyzed C-H functionalization of unprotected indoles. Angew Chem Int Ed Engl. 2018;57(31):9911-5. doi: 10.1002/anie.201804779, PMID 29905974.
+44. Poteat CM, Lindsay VN. Controlled α-mono- and α,α-di-halogenation of alkyl sulfones using reagent-solvent halogen bonding. Chem Commun (Camb). 2019;55(20):2912-5. doi: 10.1039/c9cc00550a, PMID 30785177.
+45. Guilbaud J, Selmi A, Kammoun M, Contal S, Montalbetti C, Pirio N, et al. C-H halogenation of pyridyl sulfides avoiding the sulfur oxidation: A direct catalytic access to sulfanyl polyhalides and polyaromatics. ACS Omega. 2019;4(24):20459-69. doi: 10.1021/acsomega.9b01636, PMID 31858029.
+46. Cerfontain H, Koeberg-Telder A, Laali K, Lambrechts HJ, Wit PD. Aromatic sulfonation. Halogen directing and steric effects in the sulfonation of the twelve halogenotoluenes and some related compounds. Recl Trav Chim Pays-Bas. 2010;101:390-2. doi: 10.1002/RECL.19821011104.
+47. Suter C, Weston AW. Direct sulfonation of aromatic hydrocarbons and their halogen derivatives. Org React. 2011:141-97. doi: 10.1002/0471264180.OR003.04.
+48. Heravi M, Rohani S, Zadsirjan V, Zahedi N. Fischer indole synthesis applied to the total synthesis of natural products. RSC Adv. 2017;7(83):52852-87. doi: 10.1039/C7RA10716A.
+49. Cacchi S, Fabrizi G. Synthesis and functionalization of indoles through palladium-catalyzed reactions. Chem Rev. 2005;105(7):2873-920. doi: 10.1021/cr040639b, PMID 16011327.
+50. Mondal D, Kalar PL, Kori S, Gayen S, Das K. Recent developments on synthesis of indole derivatives through green approaches and their pharmaceutical applications. Curr Org Chem. 2020;24(22):2665-93. doi: 10.2174/1385272824999201111203812.
+51. M
