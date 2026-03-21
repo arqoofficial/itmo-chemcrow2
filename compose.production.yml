@@ -109,6 +109,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      - ./services/ai-agent/app/data-rag:/app/app/data-rag
     env_file:
       - .env
     environment:
@@ -116,6 +118,8 @@ services:
       - BACKEND_URL=http://backend:8000
       - REACTION_PREDICT_URL=http://reaction-predict:8051
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      - RAG_ENABLED=true
+      - RAG_FORCE_REBUILD_INDEXES=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
