@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react"
+import { copyTextToClipboard } from "@/lib/clipboard"
 import { Editor } from "ketcher-react"
 import "ketcher-react/dist/index.css"
 import { StandaloneStructServiceProvider } from "ketcher-standalone"
@@ -22,12 +23,12 @@ export default function KetcherEditor() {
 
   const handleCopySmiles = useCallback(async () => {
     if (!smiles) return
-    try {
-      await navigator.clipboard.writeText(smiles)
+    const ok = await copyTextToClipboard(smiles)
+    if (ok) {
       setCopied(true)
       setTimeout(() => setCopied(false), 1500)
-    } catch (error) {
-      console.error("Failed to copy SMILES:", error)
+    } else {
+      console.error("Failed to copy SMILES")
     }
   }, [smiles])
 
