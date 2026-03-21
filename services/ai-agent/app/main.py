@@ -96,20 +96,26 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                         }
 
                 elif kind == "on_tool_start":
+                    tool_name = event.get("name", "")
+                    tool_input = event.get("data", {}).get("input", {})
+                    logger.info("TOOL CALL: %s | input: %s", tool_name, tool_input)
                     yield {
                         "event": "tool_start",
                         "data": json.dumps({
-                            "tool": event.get("name", ""),
-                            "input": event.get("data", {}).get("input", {}),
+                            "tool": tool_name,
+                            "input": tool_input,
                         }),
                     }
 
                 elif kind == "on_tool_end":
+                    tool_name = event.get("name", "")
+                    tool_output = str(event.get("data", {}).get("output", ""))
+                    logger.info("TOOL END: %s | output: %.200s", tool_name, tool_output)
                     yield {
                         "event": "tool_end",
                         "data": json.dumps({
-                            "tool": event.get("name", ""),
-                            "output": str(event.get("data", {}).get("output", "")),
+                            "tool": tool_name,
+                            "output": tool_output,
                         }),
                     }
 
