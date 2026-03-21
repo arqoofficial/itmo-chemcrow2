@@ -230,10 +230,10 @@ services:
   langfuse-clickhouse:
     image: clickhouse/clickhouse-server:24.12
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       CLICKHOUSE_DB: default
-      CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
     volumes:
       - langfuse-clickhouse-data:/var/lib/clickhouse
     healthcheck:
@@ -255,11 +255,6 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD}@langfuse-db:5432/langfuse
-      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
-      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
-      CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
       REDIS_URL: redis://redis:6379/1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
@@ -279,11 +274,6 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD}@langfuse-db:5432/langfuse
-      CLICKHOUSE_URL: http://langfuse-clickhouse:8123
-      CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
-      CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD}
       REDIS_URL: redis://redis:6379/1
 
   mailcatcher:
