@@ -217,6 +217,7 @@ services:
       POSTGRES_USER: langfuse
       POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD}
       POSTGRES_DB: langfuse
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - langfuse-db-data:/var/lib/postgresql/data/pgdata
     healthcheck:
