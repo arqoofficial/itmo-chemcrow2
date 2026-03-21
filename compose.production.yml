@@ -67,6 +67,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
       interval: 10s
@@ -96,6 +97,7 @@ services:
       - POSTGRES_SERVER=db
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
     deploy:
       replicas: 2
 
@@ -112,10 +114,41 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - BACKEND_URL=http://backend:8000
+      - REACTION_PREDICT_URL=http://reaction-predict:8051
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
       timeout: 5s
+      retries: 5
+
+  reaction-predict:
+    build:
+      context: ./services/reaction-predict
+    restart: always
+    profiles: ["reaction"]
+    ports:
+      - "8051:8051"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8051/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  retrosynthesis:
+    build:
+      context: ./services/retrosynthesis
+    restart: always
+    volumes:
+      - ./data/aizynthfinder:/data/aizynthfinder:ro
+    env_file:
+      - .env
+    environment:
+      - AZF_CONFIG_PATH=/data/aizynthfinder/config.yml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8052/health"]
+      interval: 30s
+      timeout: 10s
       retries: 5
 
   frontend:
