@@ -114,6 +114,8 @@ services:
     environment:
       - REDIS_URL=redis://redis:6379/0
       - BACKEND_URL=http://backend:8000
+      - REACTION_PREDICT_URL=http://reaction-predict:8051
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
