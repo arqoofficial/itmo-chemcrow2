@@ -67,6 +67,15 @@ def get_all_tools() -> list[BaseTool]:
     except ImportError:
         logger.exception("Failed to load NMR prediction tool")
 
+    # Molecule structure drawing tool (RDKit local)
+    try:
+        from app.tools.molecule_draw_rdkit import draw_molecule_rdkit
+
+        tools.append(draw_molecule_rdkit)
+        logger.info("MoleculeDrawRDKit tool enabled")
+    except ImportError:
+        logger.exception("Failed to load molecule draw rdkit tool")
+
     # Reaction tools (local Docker containers)
     try:
         from app.tools.reactions import reaction_predict, reaction_retrosynthesis
