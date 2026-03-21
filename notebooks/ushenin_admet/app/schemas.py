@@ -5,6 +5,12 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 
+class ErrorInfo(BaseModel):
+    code: str
+    message: str
+    details: Optional[Dict[str, Any]] = None
+
+
 class ADMETRequest(BaseModel):
     smiles: str = Field(
         default="",
@@ -27,11 +33,6 @@ class ADMETRequest(BaseModel):
     )
 
 
-class ErrorInfo(BaseModel):
-    code: str
-    message: str
-    details: Optional[Dict[str, Any]] = None
-
 
 class ADMETResponse(BaseModel):
     success: bool
@@ -41,4 +42,67 @@ class ADMETResponse(BaseModel):
     error: Optional[ErrorInfo] = None
     descriptors: Optional[Dict[str, Any]] = None
     admet: Optional[Dict[str, Any]] = None
+    meta: Dict[str, Any] = Field(default_factory=dict)
+
+
+
+class ProtocolReviewRequest(BaseModel):
+    protocol_text: str = Field(
+        ...,
+        description="Raw laboratory protocol text to review.",
+        examples=[
+            "Hydration of Acetylene Protocol ... Add Pt–Bi/C catalyst ... heat to 70 °C ..."
+        ],
+    )
+    include_intermediate: bool = Field(
+        default=False,
+        description="If true, include outputs of individual graph branches.",
+    )
+    include_structured_output: bool = Field(
+        default=True,
+        description="If false, omit structured output from the response.",
+    )
+
+
+class ProtocolSectionReview(BaseModel):
+    evaluation: str
+    feasibility: str
+    risks_or_gaps: List[str] = Field(default_factory=list)
+    improvement_ideas: List[str] = Field(default_factory=list)
+
+
+class ProtocolSafetyReview(BaseModel):
+    hazards: List[str] = Field(default_factory=list)
+    ppe: List[str] = Field(default_factory=list)
+    engineering_controls: List[str] = Field(default_factory=list)
+    critical_notes: List[str] = Field(default_factory=list)
+
+
+class ProtocolStructuredOutput(BaseModel):
+    precursor_review: ProtocolSectionReview
+    steps_review: ProtocolSectionReview
+    catalyst_review: ProtocolSectionReview
+    reaction_conditions_review: ProtocolSectionReview
+    laboratory_safety_review: ProtocolSafetyReview
+    overall_summary: str
+    priority_recommendations: List[str] = Field(default_factory=list)
+
+
+class ProtocolIntermediateOutputs(BaseModel):
+    precursor_answer: Optional[str] = None
+    steps_answer: Optional[str] = None
+    catalyst_answer: Optional[str] = None
+    conditions_answer: Optional[str] = None
+    safety_answer: Optional[str] = None
+    aggregated_answer: Optional[str] = None
+
+
+class ProtocolReviewResponse(BaseModel):
+    success: bool
+    input_protocol_text: str = ""
+    final_text: Optional[str] = None
+    structured_output: Optional[ProtocolStructuredOutput] = None
+    intermediate: Optional[ProtocolIntermediateOutputs] = None
+    warnings: List[str] = Field(default_factory=list)
+    error: Optional[ErrorInfo] = None
     meta: Dict[str, Any] = Field(default_factory=dict)

@@ -49,6 +49,15 @@ def get_all_tools() -> list[BaseTool]:
     except ImportError:
         logger.exception("Failed to load search tools (molbloom missing?)")
 
+    # Protocol review tool
+    try:
+        from app.tools.protocol_review import protocol_review
+
+        tools.append(protocol_review)
+        logger.info("ProtocolReview tool enabled")
+    except ImportError:
+        logger.exception("Failed to load protocol review tool")
+
     # Reaction tools (local Docker containers)
     try:
         from app.tools.reactions import reaction_predict, reaction_retrosynthesis
