@@ -57,7 +57,7 @@ requires-dist = [
     { name = "langchain-anthropic", specifier = ">=0.3.0" },
     { name = "langchain-community", specifier = ">=0.3.0" },
     { name = "langchain-openai", specifier = ">=0.3.0" },
-    { name = "langfuse", specifier = ">=3.9.0" },
+    { name = "langfuse", specifier = ">=4.0.0" },
     { name = "langgraph", specifier = ">=0.4.0" },
     { name = "molbloom", specifier = ">=2.1.0" },
     { name = "pandas", specifier = ">=2.0.0" },

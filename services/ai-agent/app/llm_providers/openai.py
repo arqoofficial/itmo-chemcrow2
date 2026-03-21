@@ -11,6 +11,7 @@ def get_openai_model() -> ChatOpenAI:
         "api_key": settings.OPENAI_API_KEY,
         "temperature": 0,
         "streaming": True,
+        "max_retries": 3,
     }
     if settings.OPENAI_BASE_URL:
         kwargs["base_url"] = settings.OPENAI_BASE_URL
