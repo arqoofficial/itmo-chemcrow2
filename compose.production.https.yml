@@ -1,0 +1,19 @@
+# Подключение: docker compose -f compose.production.yml -f compose.production.https.yml up -d
+#
+# Перед запуском:
+#   1) Создайте каталог certs/ в корне репозитория с файлами fullchain.pem и privkey.pem
+#      (Let's Encrypt, коммерческий CA или самоподписанный — см. scripts/gen-selfsigned-certs.sh).
+#   2) В .env укажите FRONTEND_HOST и BACKEND_CORS_ORIGINS с https:// (тот же хост, что в браузере).
+#
+# Let's Encrypt: положите fullchain.pem и privkey.pem в certs/ (certbot на хосте или отдельный контейнер).
+# Webroot для обновления: каталог certbot/www смонтирован в /var/www/certbot (см. location в nginx-ip-https.conf).
+
+services:
+  frontend:
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/ssl:ro
+      - ./certbot/www:/var/www/certbot:ro
+      - ./frontend/nginx-ip-https.conf:/etc/nginx/conf.d/default.conf:ro

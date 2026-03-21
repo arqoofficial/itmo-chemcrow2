@@ -7,6 +7,11 @@ data/*
 .venv
 .env
 
+# TLS (не коммитить ключи и выдачу LE)
+/certs/
+/certbot/www/*
+!/certbot/www/.gitkeep
+
 .vscode/*
 !.vscode/extensions.json
 node_modules/
