@@ -471,7 +471,7 @@ class BM25DenseRankFusionRetriever:
                     score=float(score),
                     text=text,
                     metadata={
-                        **doc_meta,
+                        **doc_meta,  # doc_meta keys are overridden by retriever-level metadata below
                         "retriever": "bm25_dense_rrf",
                         "rrf_k": self.rrf_k,
                         "bm25_weight": self.bm25_weight,
@@ -613,7 +613,7 @@ def _get_retriever_for_scope(scope: str = "default") -> BM25DenseRankFusionRetri
     with _REGISTRY_LOCK:
         if scope not in _RETRIEVER_REGISTRY:
             _RETRIEVER_REGISTRY[scope] = _build_hybrid_retriever(scope)
-    return _RETRIEVER_REGISTRY[scope]
+        return _RETRIEVER_REGISTRY[scope]
 
 
 def _format_retrieval_results(results: list[RetrievalResult]) -> str:
