@@ -48,7 +48,7 @@ Routing policy in agent prompt:
 Run from `services/ai-agent`:
 
 ```bash
-python ../.venv/Scripts/python.exe scripts/evaluate_rag.py --top-k 5 --max-queries 12
+uv run python scripts/evaluate_rag.py --top-k 5 --max-queries 12
 ```
 
 The script compares BM25, dense (Nomic), and fusion (RRF), and writes a JSON report to
@@ -57,10 +57,16 @@ The script compares BM25, dense (Nomic), and fusion (RRF), and writes a JSON rep
 ## Query fused retrieval manually
 Use `query_fused_rag.py` to run one-off hybrid retrieval and inspect top sources.
 
-Run from `services/ai-agent`:
+Run from repository root:
 
 ```bash
-python ../.venv/Scripts/python.exe scripts/query_fused_rag.py "best solvent for SN2" --top-k 3
+uv run python scripts/query_fused_rag.py "best solvent for SN2" --top-k 3
+```
+
+Direct run from `services/ai-agent` is still supported:
+
+```bash
+uv run python scripts/query_fused_rag.py "best solvent for SN2" --top-k 3
 ```
 
 If you omit the query argument, the script will prompt interactively.
@@ -71,11 +77,11 @@ Use `preflight_rag_corpus.py` before starting the service to validate chunk pair
 Run from `services/ai-agent`:
 
 ```bash
-python ../.venv/Scripts/python.exe scripts/preflight_rag_corpus.py --scope default
+uv run python scripts/preflight_rag_corpus.py --scope default
 ```
 
 Strict mode treats warnings (for example, orphan BM25 folders) as errors:
 
 ```bash
-python ../.venv/Scripts/python.exe scripts/preflight_rag_corpus.py --scope default --strict
+uv run python scripts/preflight_rag_corpus.py --scope default --strict
 ```
