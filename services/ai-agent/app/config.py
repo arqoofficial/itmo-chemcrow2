@@ -43,5 +43,10 @@ class Settings(BaseSettings):
     AGENT_MAX_ITERATIONS: int = 10
     AGENT_TIMEOUT_SECONDS: int = 120
 
+    # Langfuse tracing (optional)
+    LANGFUSE_SECRET_KEY: str = ""
+    LANGFUSE_PUBLIC_KEY: str = ""
+    LANGFUSE_HOST: str = "http://langfuse-server:3000"
+
 
 settings = Settings()  # type: ignore
