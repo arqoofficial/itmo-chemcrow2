@@ -1,0 +1,17 @@
+[
+  {
+    "question_id": "q-0001",
+    "question": "What is retrosynthetic analysis and why is it useful for planning organic synthesis?",
+    "reference_answer": "Retrosynthetic analysis is a strategy that works backward from a target molecule to simpler precursors by disconnecting strategic bonds. It helps chemists identify feasible synthetic routes, compare alternatives, and choose practical starting materials and reaction sequences."
+  },
+  {
+    "question_id": "q-0002",
+    "question": "What is the role of a catalyst in chemical reactions?",
+    "reference_answer": "A catalyst increases reaction rate by providing an alternative pathway with lower activation energy, while being regenerated at the end of the reaction cycle. Catalysts can improve selectivity and reduce required temperature or pressure."
+  },
+  {
+    "question_id": "q-0003",
+    "question": "Why is temperature control important in laboratory synthesis?",
+    "reference_answer": "Temperature control is important because it affects kinetics, selectivity, equilibrium, and safety. Poor control can cause side reactions, decomposition, or thermal runaway, while proper control improves yield, reproducibility, and safe operation."
+  }
+]

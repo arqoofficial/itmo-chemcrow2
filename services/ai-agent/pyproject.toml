@@ -25,6 +25,7 @@ dependencies = [
     "sentence-transformers>=3.0.0",
     "einops>=0.8.0",
     "langfuse>=3.9.0",
+    "ragas>=0.2.0,<0.4.0",
 ]
 
 [build-system]
