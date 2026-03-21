@@ -45,11 +45,15 @@ class Settings(BaseSettings):
 
     # RAG settings
     RAG_ENABLED: bool = True
-    RAG_DATA_DIR: str = "app/data-rag"
-    RAG_CORPUS_RAW_DIR: str = "app/data-rag/corpus_raw"
-    RAG_CORPUS_PROCESSED_DIR: str = "app/data-rag/corpus_processed"
-    RAG_BM25_INDEX_PATH: str = "app/data-rag/indexes/bm25_index.json"
-    RAG_DENSE_INDEX_DIR: str = "app/data-rag/indexes/nomic_dense"
+    RAG_DATA_DIR: str = "app/data-rag"           # kept: used by evaluate_rag.py for benchmarks
+    RAG_SOURCES_DIR: str = "app/data-rag/sources"
+    RAG_DEFAULT_SOURCE: str = "default"
+    # Derived paths for the default source
+    # TODO: remove once _build_hybrid_retriever derives all paths from RAG_SOURCES_DIR/scope
+    RAG_CORPUS_RAW_DIR: str = "app/data-rag/sources/default/corpus_raw"
+    RAG_CORPUS_PROCESSED_DIR: str = "app/data-rag/sources/default/corpus_processed"
+    RAG_BM25_INDEX_PATH: str = "app/data-rag/sources/default/indexes/bm25_index.json"
+    RAG_DENSE_INDEX_DIR: str = "app/data-rag/sources/default/indexes/nomic_dense"
     RAG_FORCE_REBUILD_INDEXES: bool = False
     RAG_DENSE_MATRYOSHKA_DIM: int = 512
     RAG_DENSE_BATCH_SIZE: int = 16
