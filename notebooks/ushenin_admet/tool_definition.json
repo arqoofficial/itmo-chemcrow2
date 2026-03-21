@@ -1,0 +1,18 @@
+{
+  "type": "function",
+  "function": {
+    "name": "SMILES_to_ADMET",
+    "description": "Convert one single-molecule SMILES string into RDKit descriptors and descriptor-based heuristic ADMET proxy predictions. Reject mixtures and reaction SMILES.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "A single-molecule SMILES string, for example CC(=O)Oc1ccccc1C(=O)O. Do not send mixtures with '.' or reaction SMILES with '>' or '>>'."
+        }
+      },
+      "required": ["smiles"],
+      "additionalProperties": false
+    }
+  }
+}
