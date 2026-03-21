@@ -223,10 +223,22 @@ services:
       timeout: 3s
       retries: 10
 
+  # Coordination for Langfuse ClickHouse Replicated* tables (macros shard/replica + ZooKeeper path).
+  langfuse-clickhouse-keeper:
+    image: clickhouse/clickhouse-keeper:latest-alpine
+    restart: unless-stopped
+    user: "101:101"
+    volumes:
+      - langfuse-clickhouse-keeper-data:/var/lib/clickhouse
+      - ./deploy/langfuse/keeper_config.xml:/etc/clickhouse-keeper/keeper_config.xml:ro
+
   langfuse-clickhouse:
     image: clickhouse/clickhouse-server
     restart: unless-stopped
     user: "101:101"
+    depends_on:
+      langfuse-clickhouse-keeper:
+        condition: service_started
     environment:
       CLICKHOUSE_DB: default
       CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
@@ -234,12 +246,13 @@ services:
     volumes:
       - langfuse-clickhouse-data:/var/lib/clickhouse
       - langfuse-clickhouse-logs:/var/log/clickhouse-server
+      - ./deploy/langfuse/clickhouse-langfuse.xml:/etc/clickhouse-server/config.d/langfuse-langfuse.xml:ro
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
       interval: 5s
       timeout: 5s
       retries: 10
-      start_period: 1s
+      start_period: 30s
 
   langfuse-minio:
     image: cgr.dev/chainguard/minio
@@ -299,7 +312,8 @@ services:
       REDIS_HOST: langfuse-cache
       REDIS_PORT: "6379"
       REDIS_AUTH: ""
-      REDIS_URL: ""
+      # Явный URL без пароля — перебивает REDIS_URL из .env (общий redis с auth)
+      REDIS_URL: redis://langfuse-cache:6379/0
       LANGFUSE_CACHE_ENABLED: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
@@ -352,7 +366,7 @@ services:
       REDIS_HOST: langfuse-cache
       REDIS_PORT: "6379"
       REDIS_AUTH: ""
-      REDIS_URL: ""
+      REDIS_URL: redis://langfuse-cache:6379/0
       LANGFUSE_CACHE_ENABLED: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
@@ -398,5 +412,6 @@ volumes:
   redis-data:
   langfuse-db-data:
   langfuse-clickhouse-data:
+  langfuse-clickhouse-keeper-data:
   langfuse-clickhouse-logs:
   langfuse-minio-data:

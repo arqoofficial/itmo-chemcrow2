@@ -1,0 +1,13 @@
+<!-- Langfuse: ReplicatedMergeTree tables need shard/replica macros and ZooKeeper/Keeper. -->
+<clickhouse>
+    <zookeeper>
+        <node>
+            <host>langfuse-clickhouse-keeper</host>
+            <port>9181</port>
+        </node>
+    </zookeeper>
+    <macros>
+        <shard>01</shard>
+        <replica>01</replica>
+    </macros>
+</clickhouse>
