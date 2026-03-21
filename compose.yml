@@ -208,6 +208,45 @@ services:
       timeout: 10s
       retries: 5
 
+  langfuse-db:
+    image: postgres:17
+    restart: unless-stopped
+    profiles: ["langfuse"]
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: ${LANGFUSE_POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse-db-data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+
+  langfuse-server:
+    image: langfuse/langfuse:latest
+    restart: unless-stopped
+    profiles: ["langfuse"]
+    depends_on:
+      langfuse-db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:${LANGFUSE_POSTGRES_PASSWORD:-changeme}@langfuse-db:5432/langfuse
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-change-me-to-a-random-32-char-secret}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      LANGFUSE_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
+      LANGFUSE_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/public/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   mailcatcher:
     image: schickling/mailcatcher
     restart: unless-stopped
@@ -235,3 +274,4 @@ services:
 volumes:
   app-db-data:
   redis-data:
+  langfuse-db-data:
