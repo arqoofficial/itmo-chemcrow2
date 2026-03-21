@@ -19,6 +19,7 @@ def get_all_tools() -> list[BaseTool]:
 
     # Core tools (RDKit, PubChem — always available)
     try:
+        from app.tools.admet import smiles_to_admet
         from app.tools.converters import query2cas_tool, query2smiles_tool, smiles2name_tool
         from app.tools.rdkit_tools import func_groups, mol_similarity, smiles2weight
         from app.tools.safety import (
@@ -31,6 +32,7 @@ def get_all_tools() -> list[BaseTool]:
             query2smiles_tool, query2cas_tool, smiles2name_tool,
             smiles2weight, mol_similarity, func_groups,
             control_chem_check, similar_control_chem_check, explosive_check,
+            smiles_to_admet,
         ])
     except ImportError:
         logger.exception("Failed to load core chemistry tools (rdkit missing?)")
