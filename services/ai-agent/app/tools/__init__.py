@@ -20,7 +20,11 @@ def get_all_tools() -> list[BaseTool]:
     # Core tools (RDKit, PubChem — always available)
     try:
         from app.tools.admet import smiles_to_admet
-        from app.tools.converters import query2cas_tool, query2smiles_tool, smiles2name_tool
+        from app.tools.converters import (
+            query2cas_tool,
+            query2smiles_tool,
+            smiles2name_tool,
+        )
         from app.tools.rdkit_tools import func_groups, mol_similarity, smiles2weight
         from app.tools.safety import (
             control_chem_check,
@@ -68,9 +72,9 @@ def get_all_tools() -> list[BaseTool]:
 
     # RAG tool (local corpus + hybrid retrieval)
     try:
-        from app.tools.rag import rag_search
+        from app.tools.rag import literature_citation_search, rag_search
 
-        tools.append(rag_search)
+        tools.extend([rag_search, literature_citation_search])
     except ImportError:
         logger.exception("Failed to load RAG tool")
 

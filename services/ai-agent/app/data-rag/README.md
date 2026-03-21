@@ -16,6 +16,17 @@ Production RAG assets for `services/ai-agent`.
 2. Current baseline preprocessing mirrors files into `corpus_processed/`.
 3. Hybrid retriever in `app/tools/rag.py` loads prebuilt indexes from `indexes/`.
 
+## Agent literature workflow
+- Primary citation tool: `literature_citation_search` (local RAG corpus).
+- General retrieval tool: `rag_search` (same local hybrid retriever).
+- External fallback: `literature_search` (Semantic Scholar API).
+
+Routing policy in agent prompt:
+1. If user asks for literature references/citations on a topic, call
+  `literature_citation_search` first.
+2. If local corpus has no/weak coverage, fallback to `literature_search`.
+3. Final answer should clearly cite source origin (local corpus vs external papers).
+
 ## Rebuild behavior
 Set `RAG_FORCE_REBUILD_INDEXES=true` to force index regeneration at runtime.
 
