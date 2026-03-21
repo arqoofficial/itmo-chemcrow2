@@ -1,4 +1,4 @@
-import { Briefcase, FlaskConical, Home, MessageCircle, Users } from "lucide-react"
+import { FlaskConical, Home, ListTodo, MessageCircle, Users } from "lucide-react"
 
 import { SidebarAppearance } from "@/components/Common/Appearance"
 import { Logo } from "@/components/Common/Logo"
@@ -16,7 +16,7 @@ import { User } from "./User"
 const baseItems: Item[] = [
   { icon: Home, title: "Dashboard", path: "/" },
   { icon: MessageCircle, title: "Chat", path: "/chat" },
-  { icon: Briefcase, title: "Items", path: "/items" },
+  { icon: ListTodo, title: "Tasks", path: "/tasks" },
   { icon: FlaskConical, title: "Molecule Editor", path: "/molecule-editor" },
 ]
 

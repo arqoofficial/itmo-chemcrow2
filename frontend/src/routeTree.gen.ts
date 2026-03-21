@@ -15,12 +15,14 @@ import { Route as RecoverPasswordRouteImport } from './routes/recover-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
+import { Route as LayoutTasksRouteImport } from './routes/_layout/tasks'
 import { Route as LayoutSettingsRouteImport } from './routes/_layout/settings'
 import { Route as LayoutMoleculeEditorRouteImport } from './routes/_layout/molecule-editor'
-import { Route as LayoutItemsRouteImport } from './routes/_layout/items'
 import { Route as LayoutChatRouteImport } from './routes/_layout/chat'
 import { Route as LayoutAdminRouteImport } from './routes/_layout/admin'
+import { Route as LayoutTasksIndexRouteImport } from './routes/_layout/tasks/index'
 import { Route as LayoutChatIndexRouteImport } from './routes/_layout/chat/index'
+import { Route as LayoutTasksTaskIdRouteImport } from './routes/_layout/tasks/$taskId'
 import { Route as LayoutChatConversationIdRouteImport } from './routes/_layout/chat/$conversationId'
 
 const SignupRoute = SignupRouteImport.update({
@@ -52,6 +54,11 @@ const LayoutIndexRoute = LayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTasksRoute = LayoutTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => LayoutRoute,
+} as any)
 const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -60,11 +67,6 @@ const LayoutSettingsRoute = LayoutSettingsRouteImport.update({
 const LayoutMoleculeEditorRoute = LayoutMoleculeEditorRouteImport.update({
   id: '/molecule-editor',
   path: '/molecule-editor',
-  getParentRoute: () => LayoutRoute,
-} as any)
-const LayoutItemsRoute = LayoutItemsRouteImport.update({
-  id: '/items',
-  path: '/items',
   getParentRoute: () => LayoutRoute,
 } as any)
 const LayoutChatRoute = LayoutChatRouteImport.update({
@@ -77,10 +79,20 @@ const LayoutAdminRoute = LayoutAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => LayoutRoute,
 } as any)
+const LayoutTasksIndexRoute = LayoutTasksIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LayoutTasksRoute,
+} as any)
 const LayoutChatIndexRoute = LayoutChatIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => LayoutChatRoute,
+} as any)
+const LayoutTasksTaskIdRoute = LayoutTasksTaskIdRouteImport.update({
+  id: '/$taskId',
+  path: '/$taskId',
+  getParentRoute: () => LayoutTasksRoute,
 } as any)
 const LayoutChatConversationIdRoute =
   LayoutChatConversationIdRouteImport.update({
@@ -97,11 +109,13 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
   '/chat': typeof LayoutChatRouteWithChildren
-  '/items': typeof LayoutItemsRoute
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
+  '/tasks': typeof LayoutTasksRouteWithChildren
   '/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/tasks/$taskId': typeof LayoutTasksTaskIdRoute
   '/chat/': typeof LayoutChatIndexRoute
+  '/tasks/': typeof LayoutTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -109,12 +123,13 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
   '/admin': typeof LayoutAdminRoute
-  '/items': typeof LayoutItemsRoute
   '/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/settings': typeof LayoutSettingsRoute
   '/': typeof LayoutIndexRoute
   '/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/tasks/$taskId': typeof LayoutTasksTaskIdRoute
   '/chat': typeof LayoutChatIndexRoute
+  '/tasks': typeof LayoutTasksIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,12 +140,14 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_layout/admin': typeof LayoutAdminRoute
   '/_layout/chat': typeof LayoutChatRouteWithChildren
-  '/_layout/items': typeof LayoutItemsRoute
   '/_layout/molecule-editor': typeof LayoutMoleculeEditorRoute
   '/_layout/settings': typeof LayoutSettingsRoute
+  '/_layout/tasks': typeof LayoutTasksRouteWithChildren
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/chat/$conversationId': typeof LayoutChatConversationIdRoute
+  '/_layout/tasks/$taskId': typeof LayoutTasksTaskIdRoute
   '/_layout/chat/': typeof LayoutChatIndexRoute
+  '/_layout/tasks/': typeof LayoutTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -142,11 +159,13 @@ export interface FileRouteTypes {
     | '/signup'
     | '/admin'
     | '/chat'
-    | '/items'
     | '/molecule-editor'
     | '/settings'
+    | '/tasks'
     | '/chat/$conversationId'
+    | '/tasks/$taskId'
     | '/chat/'
+    | '/tasks/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -154,12 +173,13 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/signup'
     | '/admin'
-    | '/items'
     | '/molecule-editor'
     | '/settings'
     | '/'
     | '/chat/$conversationId'
+    | '/tasks/$taskId'
     | '/chat'
+    | '/tasks'
   id:
     | '__root__'
     | '/_layout'
@@ -169,12 +189,14 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_layout/admin'
     | '/_layout/chat'
-    | '/_layout/items'
     | '/_layout/molecule-editor'
     | '/_layout/settings'
+    | '/_layout/tasks'
     | '/_layout/'
     | '/_layout/chat/$conversationId'
+    | '/_layout/tasks/$taskId'
     | '/_layout/chat/'
+    | '/_layout/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -229,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutIndexRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/tasks': {
+      id: '/_layout/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof LayoutTasksRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/settings': {
       id: '/_layout/settings'
       path: '/settings'
@@ -241,13 +270,6 @@ declare module '@tanstack/react-router' {
       path: '/molecule-editor'
       fullPath: '/molecule-editor'
       preLoaderRoute: typeof LayoutMoleculeEditorRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/items': {
-      id: '/_layout/items'
-      path: '/items'
-      fullPath: '/items'
-      preLoaderRoute: typeof LayoutItemsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/chat': {
@@ -264,12 +286,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutAdminRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/tasks/': {
+      id: '/_layout/tasks/'
+      path: '/'
+      fullPath: '/tasks/'
+      preLoaderRoute: typeof LayoutTasksIndexRouteImport
+      parentRoute: typeof LayoutTasksRoute
+    }
     '/_layout/chat/': {
       id: '/_layout/chat/'
       path: '/'
       fullPath: '/chat/'
       preLoaderRoute: typeof LayoutChatIndexRouteImport
       parentRoute: typeof LayoutChatRoute
+    }
+    '/_layout/tasks/$taskId': {
+      id: '/_layout/tasks/$taskId'
+      path: '/$taskId'
+      fullPath: '/tasks/$taskId'
+      preLoaderRoute: typeof LayoutTasksTaskIdRouteImport
+      parentRoute: typeof LayoutTasksRoute
     }
     '/_layout/chat/$conversationId': {
       id: '/_layout/chat/$conversationId'
@@ -295,21 +331,35 @@ const LayoutChatRouteWithChildren = LayoutChatRoute._addFileChildren(
   LayoutChatRouteChildren,
 )
 
+interface LayoutTasksRouteChildren {
+  LayoutTasksTaskIdRoute: typeof LayoutTasksTaskIdRoute
+  LayoutTasksIndexRoute: typeof LayoutTasksIndexRoute
+}
+
+const LayoutTasksRouteChildren: LayoutTasksRouteChildren = {
+  LayoutTasksTaskIdRoute: LayoutTasksTaskIdRoute,
+  LayoutTasksIndexRoute: LayoutTasksIndexRoute,
+}
+
+const LayoutTasksRouteWithChildren = LayoutTasksRoute._addFileChildren(
+  LayoutTasksRouteChildren,
+)
+
 interface LayoutRouteChildren {
   LayoutAdminRoute: typeof LayoutAdminRoute
   LayoutChatRoute: typeof LayoutChatRouteWithChildren
-  LayoutItemsRoute: typeof LayoutItemsRoute
   LayoutMoleculeEditorRoute: typeof LayoutMoleculeEditorRoute
   LayoutSettingsRoute: typeof LayoutSettingsRoute
+  LayoutTasksRoute: typeof LayoutTasksRouteWithChildren
   LayoutIndexRoute: typeof LayoutIndexRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutAdminRoute: LayoutAdminRoute,
   LayoutChatRoute: LayoutChatRouteWithChildren,
-  LayoutItemsRoute: LayoutItemsRoute,
   LayoutMoleculeEditorRoute: LayoutMoleculeEditorRoute,
   LayoutSettingsRoute: LayoutSettingsRoute,
+  LayoutTasksRoute: LayoutTasksRouteWithChildren,
   LayoutIndexRoute: LayoutIndexRoute,
 }
 

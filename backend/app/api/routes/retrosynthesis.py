@@ -64,6 +64,7 @@ def run_multi_step(
     task = TaskJob(
         user_id=current_user.id,
         task_type="retrosynthesis_multi_step",
+        source="manual",
         input_data=body.model_dump_json(),
     )
     session.add(task)
