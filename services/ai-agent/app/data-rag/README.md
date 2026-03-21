@@ -3,8 +3,9 @@
 Production RAG assets for `services/ai-agent`.
 
 ## Layout
-- `corpus_raw/`: source markdown documents used for final answer excerpts.
-- `corpus_processed/`: retrieval-ready corpus (currently a mirrored copy of raw).
+- `corpus_processed/`: retrieval-ready chunk corpus.
+  - `<doc_key>_chunks/`: canonical chunks returned by the tool.
+  - `<doc_key>_bm25_chunks/`: BM25-optimized chunks used only for sparse retrieval.
 - `indexes/`: persisted retrieval indexes.
   - `bm25_index.json`
   - `nomic_dense/`
@@ -12,9 +13,17 @@ Production RAG assets for `services/ai-agent`.
 - `pipelines/preprocessing/`: reserved for future preprocessing scripts.
 
 ## Current flow
-1. Raw files are authored or synced into `corpus_raw/`.
-2. Current baseline preprocessing mirrors files into `corpus_processed/`.
-3. Hybrid retriever in `app/tools/rag.py` loads prebuilt indexes from `indexes/`.
+1. Chunk folders are synced into `sources/<scope>/corpus_processed/`.
+2. Hybrid retriever loads canonical chunks from `*_chunks/` and BM25 chunks from `*_bm25_chunks/`.
+3. Search is fused with RRF in canonical id space, so results always return canonical chunk text.
+4. Indexes are loaded from `indexes/` when fingerprints match, otherwise rebuilt and saved.
+
+## Chunk mapping rules
+- Each BM25 chunk must have a matching canonical chunk with the same relative chunk key.
+- Supported chunk extensions: `.md`, `.txt`.
+- Example pair:
+  - `paper_01_chunks/chunk_000.md`
+  - `paper_01_bm25_chunks/chunk_000.txt`
 
 ## Agent literature workflow
 - Primary citation tool: `literature_citation_search` (local RAG corpus).
@@ -28,7 +37,9 @@ Routing policy in agent prompt:
 3. Final answer should clearly cite source origin (local corpus vs external papers).
 
 ## Rebuild behavior
-Set `RAG_FORCE_REBUILD_INDEXES=true` to force index regeneration at runtime.
+- Default mode: persisted indexes are reused.
+- Rebuild happens only when an index is missing, schema version changes, or corpus fingerprint changes.
+- Set `RAG_FORCE_REBUILD_INDEXES=true` to force index regeneration.
 
 ## Benchmarking
 - Query benchmark file: `benchmarks/chapter_eval_queries.json`

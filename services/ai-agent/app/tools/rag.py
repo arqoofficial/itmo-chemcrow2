@@ -10,7 +10,6 @@ import json
 import logging
 import math
 import re
-import shutil
 from collections import Counter, defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -26,6 +25,9 @@ _TOKEN_RE = re.compile(r"[A-Za-zА-Яа-яЁё0-9_]+")
 _HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 _RETRIEVER_REGISTRY: dict[str, BM25DenseRankFusionRetriever] = {}
 _REGISTRY_LOCK = Lock()
+_CANONICAL_CHUNKS_SUFFIX = "_chunks"
+_BM25_CHUNKS_SUFFIX = "_bm25_chunks"
+_SUPPORTED_CHUNK_EXTENSIONS = {".md", ".txt"}
 
 
 @dataclass(slots=True)
@@ -45,6 +47,16 @@ class RetrievalResult:
     score: float
     text: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(slots=True)
+class ChunkedCorpusBundle:
+    """In-memory representation of chunked corpus inputs for hybrid retrieval."""
+
+    dense_documents: list[Document]
+    bm25_documents: list[Document]
+    bm25_to_canonical_doc_id: dict[str, str]
+    canonical_documents_by_id: dict[str, Document]
 
 
 DocumentResolver = Callable[[str], tuple[str, dict[str, Any]] | None]
@@ -161,7 +173,7 @@ class BM25SparseEmbedder:
 class BM25Retriever:
     """Retriever built on top of BM25 sparse embeddings."""
 
-    INDEX_VERSION = 1
+    INDEX_VERSION = 2
 
     def __init__(
         self,
@@ -256,13 +268,17 @@ class BM25Retriever:
             hasher.update(b"\x00")
             hasher.update(doc.text.encode("utf-8"))
             hasher.update(b"\x00")
+            hasher.update(
+                json.dumps(doc.metadata, sort_keys=True, ensure_ascii=False).encode("utf-8")
+            )
+            hasher.update(b"\x00")
         return hasher.hexdigest()
 
 
 class NomicDenseRetriever:
     """Bi-encoder retriever using nomic-embed-text-v1.5."""
 
-    INDEX_VERSION = 1
+    INDEX_VERSION = 2
 
     def __init__(
         self,
@@ -430,6 +446,10 @@ class NomicDenseRetriever:
             hasher.update(b"\x00")
             hasher.update(doc.text.encode("utf-8"))
             hasher.update(b"\x00")
+            hasher.update(
+                json.dumps(doc.metadata, sort_keys=True, ensure_ascii=False).encode("utf-8")
+            )
+            hasher.update(b"\x00")
         return hasher.hexdigest()
 
 
@@ -445,6 +465,7 @@ class BM25DenseRankFusionRetriever:
         bm25_weight: float = 1.0,
         dense_weight: float = 1.0,
         candidate_k: int = 20,
+        bm25_to_canonical_doc_id: dict[str, str] | None = None,
         document_resolver: DocumentResolver | None = None,
     ) -> None:
         self.bm25_retriever = bm25_retriever
@@ -453,6 +474,7 @@ class BM25DenseRankFusionRetriever:
         self.bm25_weight = bm25_weight
         self.dense_weight = dense_weight
         self.candidate_k = candidate_k
+        self.bm25_to_canonical_doc_id = bm25_to_canonical_doc_id or {}
         self._document_resolver = document_resolver
 
     def retrieve(self, query: str, top_k: int = 5) -> list[RetrievalResult]:
@@ -491,7 +513,8 @@ class BM25DenseRankFusionRetriever:
 
         scores: dict[str, float] = defaultdict(float)
         for rank, (doc_id, _) in enumerate(bm25_ids, start=1):
-            scores[doc_id] += self.bm25_weight / (self.rrf_k + rank)
+            canonical_doc_id = self.bm25_to_canonical_doc_id.get(doc_id, doc_id)
+            scores[canonical_doc_id] += self.bm25_weight / (self.rrf_k + rank)
         for rank, (doc_id, _) in enumerate(dense_ids, start=1):
             scores[doc_id] += self.dense_weight / (self.rrf_k + rank)
 
@@ -499,65 +522,126 @@ class BM25DenseRankFusionRetriever:
         return ranked[:top_k]
 
 
-def _load_markdown_documents(corpus_dir: Path) -> list[Document]:
-    if not corpus_dir.exists():
-        raise FileNotFoundError(f"Corpus directory does not exist: {corpus_dir}")
-
-    documents: list[Document] = []
-    for md_file in sorted(corpus_dir.glob("*.md")):
-        text = md_file.read_text(encoding="utf-8")
-        documents.append(
-            Document(
-                doc_id=md_file.stem,
-                text=text,
-                metadata={"source": str(md_file)},
-            )
-        )
-    return documents
+def _supported_chunk_files(directory: Path) -> list[Path]:
+    files = [
+        p
+        for p in directory.rglob("*")
+        if p.is_file() and p.suffix.lower() in _SUPPORTED_CHUNK_EXTENSIONS
+    ]
+    return sorted(files)
 
 
-def _prepare_processed_corpus(raw_corpus_dir: Path, processed_corpus_dir: Path) -> None:
-    """Initial baseline preprocessing: mirror raw markdown into processed folder."""
-    if not raw_corpus_dir.exists():
-        raise FileNotFoundError(f"Raw corpus directory does not exist: {raw_corpus_dir}")
-
-    processed_corpus_dir.mkdir(parents=True, exist_ok=True)
-    for raw_file in sorted(raw_corpus_dir.glob("*.md")):
-        shutil.copy2(raw_file, processed_corpus_dir / raw_file.name)
+def _chunk_key(file_path: Path, parent: Path) -> str:
+    rel = file_path.relative_to(parent)
+    return rel.with_suffix("").as_posix()
 
 
-def _load_dual_corpus_documents(
-    raw_corpus_dir: Path,
-    processed_corpus_dir: Path,
-) -> tuple[list[Document], dict[str, Document]]:
-    raw_docs = _load_markdown_documents(raw_corpus_dir)
-    processed_docs = _load_markdown_documents(processed_corpus_dir)
+def _build_canonical_doc_id(doc_key: str, chunk_key: str) -> str:
+    return f"{doc_key}::{chunk_key}"
 
-    raw_by_id = {doc.doc_id: doc for doc in raw_docs}
-    missing = [doc.doc_id for doc in processed_docs if doc.doc_id not in raw_by_id]
-    if missing:
+
+def _build_bm25_doc_id(doc_key: str, chunk_key: str) -> str:
+    return f"{doc_key}::bm25::{chunk_key}"
+
+
+def _load_chunked_processed_corpus(processed_corpus_dir: Path) -> ChunkedCorpusBundle:
+    if not processed_corpus_dir.exists():
+        raise FileNotFoundError(f"Processed corpus directory does not exist: {processed_corpus_dir}")
+
+    dense_dirs = sorted(
+        p
+        for p in processed_corpus_dir.iterdir()
+        if p.is_dir() and p.name.endswith(_CANONICAL_CHUNKS_SUFFIX) and not p.name.endswith(_BM25_CHUNKS_SUFFIX)
+    )
+    if not dense_dirs:
         raise ValueError(
-            "Processed corpus contains doc_ids not found in raw corpus: "
-            + ", ".join(sorted(missing))
+            "No canonical chunk directories were found. "
+            f"Expected folders matching '*{_CANONICAL_CHUNKS_SUFFIX}' in {processed_corpus_dir}."
         )
 
-    with_raw_mapping: list[Document] = []
-    for doc in processed_docs:
-        raw_doc = raw_by_id[doc.doc_id]
-        metadata = dict(doc.metadata)
-        metadata["raw_source"] = raw_doc.metadata.get("source")
-        metadata["processed_source"] = doc.metadata.get("source")
-        with_raw_mapping.append(Document(doc_id=doc.doc_id, text=doc.text, metadata=metadata))
+    dense_documents: list[Document] = []
+    bm25_documents: list[Document] = []
+    bm25_to_canonical_doc_id: dict[str, str] = {}
+    canonical_documents_by_id: dict[str, Document] = {}
 
-    return with_raw_mapping, raw_by_id
+    for dense_dir in dense_dirs:
+        doc_key = dense_dir.name[: -len(_CANONICAL_CHUNKS_SUFFIX)]
+        bm25_dir = processed_corpus_dir / f"{doc_key}{_BM25_CHUNKS_SUFFIX}"
+        if not bm25_dir.exists() or not bm25_dir.is_dir():
+            raise ValueError(f"BM25 chunk directory is missing for '{doc_key}': {bm25_dir}")
+
+        dense_files = _supported_chunk_files(dense_dir)
+        bm25_files = _supported_chunk_files(bm25_dir)
+        if not dense_files:
+            raise ValueError(f"Canonical chunk directory is empty for '{doc_key}': {dense_dir}")
+        if not bm25_files:
+            raise ValueError(f"BM25 chunk directory is empty for '{doc_key}': {bm25_dir}")
+
+        dense_by_chunk_key: dict[str, Document] = {}
+        for dense_file in dense_files:
+            key = _chunk_key(dense_file, dense_dir)
+            dense_doc_id = _build_canonical_doc_id(doc_key, key)
+            text = dense_file.read_text(encoding="utf-8")
+            dense_doc = Document(
+                doc_id=dense_doc_id,
+                text=text,
+                metadata={
+                    "source": str(dense_file),
+                    "doc_key": doc_key,
+                    "chunk_key": key,
+                    "chunk_kind": "canonical",
+                },
+            )
+            dense_by_chunk_key[key] = dense_doc
+            dense_documents.append(dense_doc)
+            canonical_documents_by_id[dense_doc_id] = dense_doc
+
+        for bm25_file in bm25_files:
+            key = _chunk_key(bm25_file, bm25_dir)
+            canonical_doc = dense_by_chunk_key.get(key)
+            if canonical_doc is None:
+                raise ValueError(
+                    "BM25 chunk has no canonical counterpart: "
+                    f"doc_key={doc_key}, chunk_key={key}, file={bm25_file}"
+                )
+
+            bm25_doc_id = _build_bm25_doc_id(doc_key, key)
+            bm25_doc = Document(
+                doc_id=bm25_doc_id,
+                text=bm25_file.read_text(encoding="utf-8"),
+                metadata={
+                    "source": str(bm25_file),
+                    "doc_key": doc_key,
+                    "chunk_key": key,
+                    "chunk_kind": "bm25",
+                    "canonical_doc_id": canonical_doc.doc_id,
+                    "canonical_source": canonical_doc.metadata.get("source"),
+                },
+            )
+            bm25_documents.append(bm25_doc)
+            bm25_to_canonical_doc_id[bm25_doc_id] = canonical_doc.doc_id
+
+    return ChunkedCorpusBundle(
+        dense_documents=dense_documents,
+        bm25_documents=bm25_documents,
+        bm25_to_canonical_doc_id=bm25_to_canonical_doc_id,
+        canonical_documents_by_id=canonical_documents_by_id,
+    )
 
 
-def _build_raw_document_resolver(raw_docs_by_id: dict[str, Document]) -> DocumentResolver:
+def _build_canonical_document_resolver(canonical_docs_by_id: dict[str, Document]) -> DocumentResolver:
     def _resolve(doc_id: str) -> tuple[str, dict[str, Any]] | None:
-        doc = raw_docs_by_id.get(doc_id)
+        doc = canonical_docs_by_id.get(doc_id)
         if doc is None:
             return None
-        return (doc.text, {"raw_source": doc.metadata["source"]})
+        return (
+            doc.text,
+            {
+                "source": doc.metadata.get("source"),
+                "doc_key": doc.metadata.get("doc_key"),
+                "chunk_key": doc.metadata.get("chunk_key"),
+            },
+        )
 
     return _resolve
 
@@ -569,26 +653,18 @@ def _build_hybrid_retriever(scope: str = "default") -> BM25DenseRankFusionRetrie
     if not source_dir.exists():
         raise FileNotFoundError(f"RAG source directory not found: {source_dir}")
 
-    raw_corpus_dir = source_dir / "corpus_raw"
     processed_corpus_dir = source_dir / "corpus_processed"
     bm25_index_path = source_dir / "indexes" / "bm25_index.json"
     dense_index_dir = source_dir / "indexes" / "nomic_dense"
 
-    if not raw_corpus_dir.exists():
-        raise FileNotFoundError(f"RAG raw corpus directory not found: {raw_corpus_dir}")
-
-    if not processed_corpus_dir.exists() or not any(processed_corpus_dir.glob("*.md")):
-        logger.info("Preparing processed corpus in %s", processed_corpus_dir)
-        _prepare_processed_corpus(raw_corpus_dir, processed_corpus_dir)
-
-    processed_docs, raw_docs_by_id = _load_dual_corpus_documents(
-        raw_corpus_dir=raw_corpus_dir,
-        processed_corpus_dir=processed_corpus_dir,
-    )
-    resolver = _build_raw_document_resolver(raw_docs_by_id)
+    bundle = _load_chunked_processed_corpus(processed_corpus_dir)
+    resolver = _build_canonical_document_resolver(bundle.canonical_documents_by_id)
 
     bm25 = BM25Retriever(index_path=bm25_index_path, document_resolver=resolver)
-    bm25.build_or_load(processed_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
+    bm25_status = bm25.build_or_load(
+        bundle.bm25_documents,
+        force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES,
+    )
 
     dense = NomicDenseRetriever(
         matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
@@ -596,7 +672,19 @@ def _build_hybrid_retriever(scope: str = "default") -> BM25DenseRankFusionRetrie
         index_dir=dense_index_dir,
         document_resolver=resolver,
     )
-    dense.build_or_load(processed_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
+    dense_status = dense.build_or_load(
+        bundle.dense_documents,
+        force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES,
+    )
+
+    logger.info(
+        "RAG scope '%s': dense_docs=%s, bm25_docs=%s, dense_index=%s, bm25_index=%s",
+        scope,
+        len(bundle.dense_documents),
+        len(bundle.bm25_documents),
+        dense_status,
+        bm25_status,
+    )
 
     return BM25DenseRankFusionRetriever(
         bm25_retriever=bm25,
@@ -605,6 +693,7 @@ def _build_hybrid_retriever(scope: str = "default") -> BM25DenseRankFusionRetrie
         bm25_weight=settings.RAG_BM25_WEIGHT,
         dense_weight=settings.RAG_DENSE_WEIGHT,
         candidate_k=settings.RAG_CANDIDATE_K,
+        bm25_to_canonical_doc_id=bundle.bm25_to_canonical_doc_id,
         document_resolver=resolver,
     )
 
@@ -648,7 +737,7 @@ def _format_citation_results(results: list[RetrievalResult]) -> str:
         if len(snippet) > 320:
             snippet = snippet[:320].rstrip() + "..."
         title = _extract_title_from_text(hit.text, hit.doc_id)
-        source = hit.metadata.get("raw_source") or f"(unknown source for {hit.doc_id})"
+        source = hit.metadata.get("source") or f"(unknown source for {hit.doc_id})"
         lines.append(
             f"{idx}. doc_id={hit.doc_id}; title={title}; source={source}; "
             f"score={hit.score:.4f}; excerpt={snippet}"

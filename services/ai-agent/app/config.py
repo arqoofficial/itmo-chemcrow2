@@ -45,11 +45,10 @@ class Settings(BaseSettings):
 
     # RAG settings
     RAG_ENABLED: bool = True
-    RAG_DATA_DIR: str = "app/data-rag"           # kept: used by evaluate_rag.py for benchmarks
+    RAG_DATA_DIR: str = "app/data-rag"  # used by evaluation scripts for benchmark files
     RAG_SOURCES_DIR: str = "app/data-rag/sources"
     RAG_DEFAULT_SOURCE: str = "default"
-    # Derived paths for the default source
-    # TODO: remove once _build_hybrid_retriever derives all paths from RAG_SOURCES_DIR/scope
+    # Legacy default-source paths retained for backwards compatibility with local tooling.
     RAG_CORPUS_RAW_DIR: str = "app/data-rag/sources/default/corpus_raw"
     RAG_CORPUS_PROCESSED_DIR: str = "app/data-rag/sources/default/corpus_processed"
     RAG_BM25_INDEX_PATH: str = "app/data-rag/sources/default/indexes/bm25_index.json"

@@ -25,56 +25,13 @@ rag_module = _load_module("ai_agent_rag", PROJECT_ROOT / "app" / "tools" / "rag.
 
 settings = config_module.settings
 BM25DenseRankFusionRetriever = rag_module.BM25DenseRankFusionRetriever
-BM25Retriever = rag_module.BM25Retriever
-NomicDenseRetriever = rag_module.NomicDenseRetriever
-_build_raw_document_resolver = rag_module._build_raw_document_resolver
-_load_dual_corpus_documents = rag_module._load_dual_corpus_documents
-_prepare_processed_corpus = rag_module._prepare_processed_corpus
 
 _HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 
 
 def _build_retriever() -> tuple[BM25DenseRankFusionRetriever, dict[str, str]]:
-    raw_corpus_dir = Path(settings.RAG_CORPUS_RAW_DIR)
-    processed_corpus_dir = Path(settings.RAG_CORPUS_PROCESSED_DIR)
-    bm25_index_path = Path(settings.RAG_BM25_INDEX_PATH)
-    dense_index_dir = Path(settings.RAG_DENSE_INDEX_DIR)
-
-    if not raw_corpus_dir.exists():
-        raise FileNotFoundError(f"RAG raw corpus directory not found: {raw_corpus_dir}")
-
-    if not processed_corpus_dir.exists() or not any(processed_corpus_dir.glob("*.md")):
-        _prepare_processed_corpus(raw_corpus_dir, processed_corpus_dir)
-
-    processed_docs, raw_docs_by_id = _load_dual_corpus_documents(raw_corpus_dir, processed_corpus_dir)
-    resolver = _build_raw_document_resolver(raw_docs_by_id)
-
-    bm25 = BM25Retriever(index_path=bm25_index_path, document_resolver=resolver)
-    bm25.build_or_load(processed_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
-
-    dense = NomicDenseRetriever(
-        matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
-        batch_size=settings.RAG_DENSE_BATCH_SIZE,
-        index_dir=dense_index_dir,
-        document_resolver=resolver,
-        show_progress_bar=False,
-    )
-    dense.build_or_load(processed_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
-
-    retriever = BM25DenseRankFusionRetriever(
-        bm25_retriever=bm25,
-        dense_retriever=dense,
-        rrf_k=settings.RAG_RRF_K,
-        bm25_weight=settings.RAG_BM25_WEIGHT,
-        dense_weight=settings.RAG_DENSE_WEIGHT,
-        candidate_k=settings.RAG_CANDIDATE_K,
-        document_resolver=resolver,
-    )
-
-    sources = {
-        doc_id: raw_doc.metadata.get("source", f"{settings.RAG_CORPUS_RAW_DIR}/{doc_id}.md")
-        for doc_id, raw_doc in raw_docs_by_id.items()
-    }
+    retriever = rag_module._build_hybrid_retriever(settings.RAG_DEFAULT_SOURCE)
+    sources: dict[str, str] = {}
     return retriever, sources
 
 
@@ -93,7 +50,7 @@ def _print_results(query: str, retriever: BM25DenseRankFusionRetriever, sources:
 
     print(f"Top {top_k} fused RAG sources for query: {query}")
     for idx, hit in enumerate(results, start=1):
-        source_path = sources.get(hit.doc_id, f"{settings.RAG_CORPUS_RAW_DIR}/{hit.doc_id}.md")
+        source_path = hit.metadata.get("source") or sources.get(hit.doc_id, f"(unknown source for {hit.doc_id})")
         title = _extract_title(hit.text, hit.doc_id)
         excerpt = " ".join(hit.text.strip().split())
         if len(excerpt) > 260:

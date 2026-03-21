@@ -95,13 +95,8 @@ def test_rag_search_missing_data(monkeypatch):
 
 
 def test_bm25_dense_rrf_retrieve_forwards_doc_metadata():
-    """retrieve() must forward raw_source from document resolver into RetrievalResult.metadata."""
-    from app.tools.rag import (
-        BM25DenseRankFusionRetriever,
-        BM25Retriever,
-        NomicDenseRetriever,
-        Document,
-    )
+    """retrieve() must forward source from document resolver into RetrievalResult.metadata."""
+    from app.tools.rag import BM25DenseRankFusionRetriever
 
     class _StubBM25:
         def retrieve_ids(self, query, top_k=5):
@@ -118,7 +113,7 @@ def test_bm25_dense_rrf_retrieve_forwards_doc_metadata():
             pass
 
     def resolver(doc_id):
-        return ("some text about chemistry", {"raw_source": "app/data-rag/sources/default/corpus_raw/doc_01.md"})
+        return ("some text about chemistry", {"source": "app/data-rag/sources/default/corpus_processed/doc_chunks/chunk_001.md"})
 
     retriever = BM25DenseRankFusionRetriever(
         bm25_retriever=_StubBM25(),
@@ -129,5 +124,58 @@ def test_bm25_dense_rrf_retrieve_forwards_doc_metadata():
 
     assert len(results) == 1
     assert results[0].text == "some text about chemistry"
-    assert results[0].metadata["raw_source"] == "app/data-rag/sources/default/corpus_raw/doc_01.md"
+    assert results[0].metadata["source"] == "app/data-rag/sources/default/corpus_processed/doc_chunks/chunk_001.md"
     assert results[0].metadata["retriever"] == "bm25_dense_rrf"
+
+
+def test_load_chunked_processed_corpus_builds_mapping(tmp_path):
+    processed = tmp_path / "corpus_processed"
+    dense_dir = processed / "paper_01_chunks"
+    bm25_dir = processed / "paper_01_bm25_chunks"
+    dense_dir.mkdir(parents=True)
+    bm25_dir.mkdir(parents=True)
+
+    (dense_dir / "chunk_000.md").write_text("canonical dense text", encoding="utf-8")
+    (bm25_dir / "chunk_000.txt").write_text("bm25-optimized text", encoding="utf-8")
+
+    bundle = rag._load_chunked_processed_corpus(processed)
+
+    assert len(bundle.dense_documents) == 1
+    assert len(bundle.bm25_documents) == 1
+    bm25_doc = bundle.bm25_documents[0]
+    canonical_doc = bundle.dense_documents[0]
+    assert bm25_doc.metadata["canonical_doc_id"] == canonical_doc.doc_id
+    assert bundle.bm25_to_canonical_doc_id[bm25_doc.doc_id] == canonical_doc.doc_id
+    assert bundle.canonical_documents_by_id[canonical_doc.doc_id].text == "canonical dense text"
+
+
+def test_bm25_dense_rrf_normalizes_bm25_ids_to_canonical():
+    class _StubBM25:
+        def retrieve_ids(self, query, top_k=5):
+            return [("paper_01::bm25::chunk_000", 0.95)]
+
+    class _StubDense:
+        def retrieve_ids(self, query, top_k=5):
+            return [("paper_01::chunk_000", 0.91)]
+
+    def resolver(doc_id):
+        if doc_id == "paper_01::chunk_000":
+            return (
+                "canonical chunk text",
+                {"source": "app/data-rag/sources/default/corpus_processed/paper_01_chunks/chunk_000.md"},
+            )
+        return None
+
+    retriever = rag.BM25DenseRankFusionRetriever(
+        bm25_retriever=_StubBM25(),
+        dense_retriever=_StubDense(),
+        bm25_to_canonical_doc_id={"paper_01::bm25::chunk_000": "paper_01::chunk_000"},
+        document_resolver=resolver,
+    )
+
+    ids = retriever.retrieve_ids("solvent", top_k=1)
+    assert ids[0][0] == "paper_01::chunk_000"
+
+    results = retriever.retrieve("solvent", top_k=1)
+    assert results[0].doc_id == "paper_01::chunk_000"
+    assert results[0].text == "canonical chunk text"

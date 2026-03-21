@@ -30,8 +30,8 @@ rag_module = _load_rag_module()
 BM25DenseRankFusionRetriever = rag_module.BM25DenseRankFusionRetriever
 BM25Retriever = rag_module.BM25Retriever
 NomicDenseRetriever = rag_module.NomicDenseRetriever
-_build_raw_document_resolver = rag_module._build_raw_document_resolver
-_load_dual_corpus_documents = rag_module._load_dual_corpus_documents
+_build_canonical_document_resolver = rag_module._build_canonical_document_resolver
+_load_chunked_processed_corpus = rag_module._load_chunked_processed_corpus
 
 
 class SupportsRetrieveIds(Protocol):
@@ -154,21 +154,21 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    raw_corpus_dir = Path(settings.RAG_CORPUS_RAW_DIR)
-    processed_corpus_dir = Path(settings.RAG_CORPUS_PROCESSED_DIR)
-    bm25_index_path = Path(settings.RAG_BM25_INDEX_PATH)
-    dense_index_dir = Path(settings.RAG_DENSE_INDEX_DIR)
+    source_dir = Path(settings.RAG_SOURCES_DIR) / settings.RAG_DEFAULT_SOURCE
+    processed_corpus_dir = source_dir / "corpus_processed"
+    bm25_index_path = source_dir / "indexes" / "bm25_index.json"
+    dense_index_dir = source_dir / "indexes" / "nomic_dense"
 
     queries_by_doc = json.loads(args.queries.read_text(encoding="utf-8"))
     pairs = flatten_queries(queries_by_doc)
     if args.max_queries > 0:
         pairs = pairs[: args.max_queries]
 
-    processed_docs, raw_docs_by_id = _load_dual_corpus_documents(raw_corpus_dir, processed_corpus_dir)
-    resolver = _build_raw_document_resolver(raw_docs_by_id)
+    bundle = _load_chunked_processed_corpus(processed_corpus_dir)
+    resolver = _build_canonical_document_resolver(bundle.canonical_documents_by_id)
 
     bm25 = BM25Retriever(index_path=bm25_index_path, document_resolver=resolver)
-    bm25.build_or_load(processed_docs, force_rebuild=False)
+    bm25.build_or_load(bundle.bm25_documents, force_rebuild=False)
 
     dense = NomicDenseRetriever(
         matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
@@ -177,7 +177,7 @@ def main() -> None:
         document_resolver=resolver,
         show_progress_bar=False,
     )
-    dense.build_or_load(processed_docs, force_rebuild=False)
+    dense.build_or_load(bundle.dense_documents, force_rebuild=False)
 
     fusion = BM25DenseRankFusionRetriever(
         bm25_retriever=bm25,
@@ -186,6 +186,7 @@ def main() -> None:
         bm25_weight=settings.RAG_BM25_WEIGHT,
         dense_weight=settings.RAG_DENSE_WEIGHT,
         candidate_k=settings.RAG_CANDIDATE_K,
+        bm25_to_canonical_doc_id=bundle.bm25_to_canonical_doc_id,
         document_resolver=resolver,
     )
 
@@ -200,7 +201,7 @@ def main() -> None:
 
     try:
         rebuild_check = run_dense_rebuild_check(
-            processed_docs,
+            bundle.dense_documents,
             matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
             batch_size=settings.RAG_DENSE_BATCH_SIZE,
         )
@@ -213,8 +214,8 @@ def main() -> None:
     report = {
         "benchmark": {
             "queries_path": str(args.queries),
-            "raw_corpus_dir": str(raw_corpus_dir),
             "processed_corpus_dir": str(processed_corpus_dir),
+            "source_dir": str(source_dir),
             "query_count": len(pairs),
             "top_k": args.top_k,
         },
