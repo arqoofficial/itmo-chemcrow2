@@ -57,6 +57,12 @@ class Settings(BaseSettings):
     RAG_BM25_WEIGHT: float = 1.0
     RAG_DENSE_WEIGHT: float = 1.0
     RAG_CANDIDATE_K: int = 20
+    RAG_PDF_RAW_SUBDIR: str = "pdfs"
+    RAG_BM25_SUFFIX: str = "__bm25"
+    RAG_PDF_ENABLE_LLM_CLEANING: bool = False
+    RAG_PDF_CLEAN_MODEL: str = "openai/gpt-4o-mini"
+    RAG_PDF_CLEAN_WINDOW_SIZE: int = 6000
+    RAG_PDF_CLEAN_OVERLAP: int = 800
 
     # Langfuse observability (optional)
     LANGFUSE_PUBLIC_KEY: str = ""

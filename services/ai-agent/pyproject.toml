@@ -24,6 +24,7 @@ dependencies = [
     "numpy>=1.26.0",
     "sentence-transformers>=3.0.0",
     "langfuse>=3.9.0",
+    "pypdf>=5.1.0",
 ]
 
 [build-system]

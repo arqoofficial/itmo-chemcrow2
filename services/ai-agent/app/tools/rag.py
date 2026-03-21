@@ -10,7 +10,6 @@ import json
 import logging
 import math
 import re
-import shutil
 from collections import Counter, defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -19,6 +18,14 @@ from threading import Lock
 from typing import Any
 
 from langchain.tools import tool
+
+from app.tools.rag_pdf_ingestion import (
+    BM25_SUFFIX,
+    PDF_DOC_PREFIX,
+    canonical_doc_id,
+    is_bm25_variant_stem,
+    process_raw_and_pdf_corpus,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -497,16 +504,28 @@ class BM25DenseRankFusionRetriever:
         return ranked[:top_k]
 
 
-def _load_markdown_documents(corpus_dir: Path) -> list[Document]:
+def _load_markdown_documents(
+    corpus_dir: Path,
+    *,
+    bm25_only: bool = False,
+    bm25_suffix: str = BM25_SUFFIX,
+) -> list[Document]:
     if not corpus_dir.exists():
         raise FileNotFoundError(f"Corpus directory does not exist: {corpus_dir}")
 
     documents: list[Document] = []
     for md_file in sorted(corpus_dir.glob("*.md")):
+        stem = md_file.stem
+        is_bm25 = is_bm25_variant_stem(stem, suffix=bm25_suffix)
+        if bm25_only and not is_bm25:
+            continue
+        if not bm25_only and is_bm25:
+            continue
+
         text = md_file.read_text(encoding="utf-8")
         documents.append(
             Document(
-                doc_id=md_file.stem,
+                doc_id=canonical_doc_id(stem, suffix=bm25_suffix),
                 text=text,
                 metadata={"source": str(md_file)},
             )
@@ -515,47 +534,94 @@ def _load_markdown_documents(corpus_dir: Path) -> list[Document]:
 
 
 def _prepare_processed_corpus(raw_corpus_dir: Path, processed_corpus_dir: Path) -> None:
-    """Initial baseline preprocessing: mirror raw markdown into processed folder."""
-    if not raw_corpus_dir.exists():
-        raise FileNotFoundError(f"Raw corpus directory does not exist: {raw_corpus_dir}")
+    """Prepare processed corpus from raw markdown and raw PDFs."""
+    from app.config import settings
 
-    processed_corpus_dir.mkdir(parents=True, exist_ok=True)
-    for raw_file in sorted(raw_corpus_dir.glob("*.md")):
-        shutil.copy2(raw_file, processed_corpus_dir / raw_file.name)
+    summary = process_raw_and_pdf_corpus(
+        raw_corpus_dir=raw_corpus_dir,
+        processed_corpus_dir=processed_corpus_dir,
+        pdf_raw_subdir=settings.RAG_PDF_RAW_SUBDIR,
+        bm25_suffix=settings.RAG_BM25_SUFFIX,
+        use_llm_cleaning=settings.RAG_PDF_ENABLE_LLM_CLEANING,
+        llm_model=settings.RAG_PDF_CLEAN_MODEL,
+        llm_window_size=settings.RAG_PDF_CLEAN_WINDOW_SIZE,
+        llm_overlap=settings.RAG_PDF_CLEAN_OVERLAP,
+    )
+    logger.info(
+        "Processed corpus prepared: copied_raw=%d, pdf_docs=%d, bm25_docs=%d",
+        summary.copied_raw_markdown,
+        summary.generated_pdf_docs,
+        summary.generated_bm25_docs,
+    )
 
 
 def _load_dual_corpus_documents(
     raw_corpus_dir: Path,
     processed_corpus_dir: Path,
 ) -> tuple[list[Document], dict[str, Document]]:
-    raw_docs = _load_markdown_documents(raw_corpus_dir)
-    processed_docs = _load_markdown_documents(processed_corpus_dir)
+    raw_docs = _load_markdown_documents(raw_corpus_dir, bm25_only=False)
+    processed_docs = _load_markdown_documents(processed_corpus_dir, bm25_only=False)
 
     raw_by_id = {doc.doc_id: doc for doc in raw_docs}
-    missing = [doc.doc_id for doc in processed_docs if doc.doc_id not in raw_by_id]
-    if missing:
-        raise ValueError(
-            "Processed corpus contains doc_ids not found in raw corpus: "
-            + ", ".join(sorted(missing))
-        )
 
     with_raw_mapping: list[Document] = []
     for doc in processed_docs:
-        raw_doc = raw_by_id[doc.doc_id]
         metadata = dict(doc.metadata)
-        metadata["raw_source"] = raw_doc.metadata.get("source")
         metadata["processed_source"] = doc.metadata.get("source")
+        raw_doc = raw_by_id.get(doc.doc_id)
+        if raw_doc is not None:
+            metadata["raw_source"] = raw_doc.metadata.get("source")
+            metadata["source_type"] = "raw_markdown"
+        elif doc.doc_id.startswith(PDF_DOC_PREFIX):
+            metadata["raw_source"] = f"app/data-rag/corpus_raw/pdfs/{doc.doc_id[len(PDF_DOC_PREFIX):]}.pdf"
+            metadata["source_type"] = "pdf"
+        else:
+            metadata["raw_source"] = metadata["processed_source"]
+            metadata["source_type"] = "processed_only"
         with_raw_mapping.append(Document(doc_id=doc.doc_id, text=doc.text, metadata=metadata))
 
     return with_raw_mapping, raw_by_id
 
 
-def _build_raw_document_resolver(raw_docs_by_id: dict[str, Document]) -> DocumentResolver:
+def _build_raw_document_resolver(
+    raw_docs_by_id: dict[str, Document],
+    processed_docs: list[Document],
+) -> DocumentResolver:
+    processed_by_id = {doc.doc_id: doc for doc in processed_docs}
+
     def _resolve(doc_id: str) -> str | None:
         doc = raw_docs_by_id.get(doc_id)
-        return doc.text if doc is not None else None
+        if doc is not None:
+            return doc.text
+        processed_doc = processed_by_id.get(doc_id)
+        return processed_doc.text if processed_doc is not None else None
 
     return _resolve
+
+
+def _build_bm25_documents(
+    processed_corpus_dir: Path,
+    processed_docs: list[Document],
+    *,
+    bm25_suffix: str,
+) -> list[Document]:
+    bm25_docs = _load_markdown_documents(
+        processed_corpus_dir,
+        bm25_only=True,
+        bm25_suffix=bm25_suffix,
+    )
+    by_id = {doc.doc_id: doc for doc in bm25_docs}
+
+    for clean_doc in processed_docs:
+        if clean_doc.doc_id in by_id:
+            continue
+        by_id[clean_doc.doc_id] = Document(
+            doc_id=clean_doc.doc_id,
+            text=clean_doc.text,
+            metadata=dict(clean_doc.metadata),
+        )
+
+    return [by_id[doc.doc_id] for doc in processed_docs if doc.doc_id in by_id]
 
 
 def _build_hybrid_retriever() -> BM25DenseRankFusionRetriever:
@@ -580,10 +646,15 @@ def _build_hybrid_retriever() -> BM25DenseRankFusionRetriever:
         raw_corpus_dir=raw_corpus_dir,
         processed_corpus_dir=processed_corpus_dir,
     )
-    resolver = _build_raw_document_resolver(raw_docs_by_id)
+    resolver = _build_raw_document_resolver(raw_docs_by_id, processed_docs)
+    bm25_docs = _build_bm25_documents(
+        processed_corpus_dir,
+        processed_docs,
+        bm25_suffix=settings.RAG_BM25_SUFFIX,
+    )
 
     bm25 = BM25Retriever(index_path=bm25_index_path, document_resolver=resolver)
-    bm25.build_or_load(processed_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
+    bm25.build_or_load(bm25_docs, force_rebuild=settings.RAG_FORCE_REBUILD_INDEXES)
 
     dense = NomicDenseRetriever(
         matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
@@ -647,7 +718,10 @@ def _format_citation_results(results: list[RetrievalResult]) -> str:
         if len(snippet) > 320:
             snippet = snippet[:320].rstrip() + "..."
         title = _extract_title_from_text(hit.text, hit.doc_id)
-        source = f"app/data-rag/corpus_raw/{hit.doc_id}.md"
+        if hit.doc_id.startswith(PDF_DOC_PREFIX):
+            source = f"app/data-rag/corpus_raw/pdfs/{hit.doc_id[len(PDF_DOC_PREFIX):]}.pdf"
+        else:
+            source = f"app/data-rag/corpus_raw/{hit.doc_id}.md"
         lines.append(
             f"{idx}. doc_id={hit.doc_id}; title={title}; source={source}; "
             f"score={hit.score:.4f}; excerpt={snippet}"
