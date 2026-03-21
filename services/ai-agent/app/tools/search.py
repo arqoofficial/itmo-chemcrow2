@@ -125,7 +125,7 @@ def literature_search(query: str, max_results: int = 5) -> str:
             doi = ext_ids.get("DOI")
             if not doi:
                 paper_url = p.get("url")
-                if paper_url:
+                if paper_url and "semanticscholar.org" not in paper_url:
                     doi = _scrape_doi_from_url(paper_url)
 
             results.append(

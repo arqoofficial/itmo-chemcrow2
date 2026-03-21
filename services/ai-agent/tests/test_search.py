@@ -90,7 +90,7 @@ def test_literature_search_doi_from_html_fallback(mock_get):
                 "abstract": "Abstract text.",
                 "year": 2022,
                 "citationCount": 5,
-                "url": "https://www.semanticscholar.org/paper/xyz999",
+                "url": "https://pubs.acs.org/doi/10.1021/fallback",
                 "externalIds": {},
             }
         ]
@@ -121,7 +121,7 @@ def test_literature_search_doi_from_html_fallback_null_external_ids(mock_get):
                 "abstract": "Old paper.",
                 "year": 2005,
                 "citationCount": 1,
-                "url": "https://www.semanticscholar.org/paper/old",
+                "url": "https://pubs.acs.org/doi/10.1021/oldpaper",
                 # externalIds key intentionally absent
             }
         ]
