@@ -1,0 +1,51 @@
+{
+  "benchmark": {
+    "queries_path": "app\\data-rag\\benchmarks\\chapter_eval_queries.json",
+    "raw_corpus_dir": "app\\data-rag\\corpus_raw",
+    "processed_corpus_dir": "app\\data-rag\\corpus_processed",
+    "query_count": 12,
+    "top_k": 5
+  },
+  "models": [
+    {
+      "name": "bm25",
+      "queries": 12,
+      "top1": 0.9166666666666666,
+      "hit@5": 1.0,
+      "mrr": 0.9444444444444445,
+      "ndcg@5": 0.9583333333333334
+    },
+    {
+      "name": "dense_nomic",
+      "queries": 12,
+      "top1": 0.5,
+      "hit@5": 0.9166666666666666,
+      "mrr": 0.6875,
+      "ndcg@5": 0.7461996310299353
+    },
+    {
+      "name": "fusion_rrf",
+      "queries": 12,
+      "top1": 0.8333333333333334,
+      "hit@5": 1.0,
+      "mrr": 0.9166666666666666,
+      "ndcg@5": 0.9384882922619097
+    }
+  ],
+  "best_model": {
+    "by_top1": "bm25",
+    "by_mrr": "bm25"
+  },
+  "dense_rebuild_check": {
+    "first_status": "built",
+    "first_build_seconds": 10.134,
+    "second_status_after_delete": "built",
+    "second_build_seconds": 2.106,
+    "meta_exists_after_build": true,
+    "vectors_exists_after_build": true,
+    "meta_exists_after_rebuild": true,
+    "vectors_exists_after_rebuild": true,
+    "sample_retrieval_count": 3,
+    "sample_top_doc": "chapter_03_vybor_rastvoritelya"
+  }
+}

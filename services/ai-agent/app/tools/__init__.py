@@ -55,6 +55,14 @@ def get_all_tools() -> list[BaseTool]:
     except ImportError:
         logger.exception("Failed to load reaction tools")
 
+    # RAG tool (local corpus + hybrid retrieval)
+    try:
+        from app.tools.rag import rag_search
+
+        tools.append(rag_search)
+    except ImportError:
+        logger.exception("Failed to load RAG tool")
+
     # Optional: molecule pricing (needs CHEMSPACE_API_KEY)
     if settings.CHEMSPACE_API_KEY:
         try:
