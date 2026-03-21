@@ -30,6 +30,8 @@ dependencies = [
     "langchain-community>=0.3.0",
     "langchain-core>=1.2.20",
     "ipykernel>=7.2.0",
+    "numpy>=1.26.0",
+    "sentence-transformers>=3.0.0",
 ]
 
 [tool.uv.workspace]

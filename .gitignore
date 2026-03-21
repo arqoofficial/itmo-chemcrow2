@@ -14,3 +14,8 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# generated local artifacts
+notebooks/karimov/.rag_index/
+notebooks/karimov/rag_mvp/__pycache__/
+*.pyc
