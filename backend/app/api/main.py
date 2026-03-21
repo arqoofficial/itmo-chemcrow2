@@ -6,6 +6,7 @@ from app.api.routes import (
     items,
     login,
     private,
+    retrosynthesis,
     tasks,
     users,
     utils,
@@ -18,6 +19,7 @@ api_router.include_router(users.router)
 api_router.include_router(utils.router)
 api_router.include_router(items.router)
 api_router.include_router(tasks.router)
+api_router.include_router(retrosynthesis.router)
 api_router.include_router(conversations.router)
 api_router.include_router(events.router)
 
