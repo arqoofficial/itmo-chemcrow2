@@ -319,10 +319,12 @@ services:
       CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
       CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
       CLICKHOUSE_CLUSTER_ENABLED: "false"
+      # Langfuse удаляет env со значением "" до парсинга; из .env могут остаться
+      # REDIS_AUTH / REDIS_CONNECTION_STRING для основного Redis — тогда worker шлёт AUTH без requirepass.
+      # Явная строка подключения перекрывает .env и совпадает с голым langfuse-cache.
+      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379/0
       REDIS_HOST: langfuse-cache
       REDIS_PORT: "6379"
-      REDIS_AUTH: ""
-      REDIS_URL: ""
       LANGFUSE_CACHE_ENABLED: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
@@ -372,10 +374,12 @@ services:
       CLICKHOUSE_USER: ${LANGFUSE_CLICKHOUSE_USER:-clickhouse}
       CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
       CLICKHOUSE_CLUSTER_ENABLED: "false"
+      # Langfuse удаляет env со значением "" до парсинга; из .env могут остаться
+      # REDIS_AUTH / REDIS_CONNECTION_STRING для основного Redis — тогда worker шлёт AUTH без requirepass.
+      # Явная строка подключения перекрывает .env и совпадает с голым langfuse-cache.
+      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379/0
       REDIS_HOST: langfuse-cache
       REDIS_PORT: "6379"
-      REDIS_AUTH: ""
-      REDIS_URL: ""
       LANGFUSE_CACHE_ENABLED: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_REGION: auto
