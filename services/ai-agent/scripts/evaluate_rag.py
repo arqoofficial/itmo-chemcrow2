@@ -92,6 +92,7 @@ def run_dense_rebuild_check(processed_docs: list, matryoshka_dim: int, batch_siz
         tmp_index_dir = Path(tmpdir) / "nomic_dense"
 
         dense = NomicDenseRetriever(
+            model_name=settings.RAG_EMBEDDING_MODEL,
             matryoshka_dim=matryoshka_dim,
             batch_size=batch_size,
             index_dir=tmp_index_dir,
@@ -171,6 +172,7 @@ def main() -> None:
     bm25.build_or_load(bundle.bm25_documents, force_rebuild=False)
 
     dense = NomicDenseRetriever(
+        model_name=settings.RAG_EMBEDDING_MODEL,
         matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
         batch_size=settings.RAG_DENSE_BATCH_SIZE,
         index_dir=dense_index_dir,

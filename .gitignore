@@ -23,6 +23,9 @@ node_modules/
 notebooks/karimov/.rag_index/
 notebooks/karimov/rag_mvp/__pycache__/
 
+# SentenceTransformer weights (populate via repo scripts/download_embedding_model.py)
+services/ai-agent/app/data/SentenceTransformer/
+
 # RAG index files: ignore all generated artifacts, allow JSON metadata only.
 services/ai-agent/app/data-rag/sources/*/indexes/**
 !services/ai-agent/app/data-rag/sources/*/indexes/**/

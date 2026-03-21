@@ -18,6 +18,40 @@ uv run python scripts/download_public_data.py /path/to/dir
 
 ---
 
+### `scripts/download_embedding_model.py` — Веса эмбеддинга для RAG (ai-agent / SentenceTransformer)
+
+Скачивает модель из Hugging Face (по умолчанию `nomic-ai/nomic-embed-text-v1.5`, см. `RAG_EMBEDDING_MODEL` в `services/ai-agent/app/config.py`) и сохраняет её в **`services/ai-agent/app/data/SentenceTransformer`** (путь задаётся `RAG_EMBEDDING_MODEL_DIR`). После этого `ai-agent` и скрипты RAG подхватывают модель с диска; каталог обычно монтируется как volume в Docker (см. `compose.yml`).
+
+**Локально (из корня репозитория):**
+
+```bash
+uv run python scripts/download_embedding_model.py
+```
+
+**Из каталога `services/ai-agent`** (интерпретатор должен видеть пакет `app` — проще запускать из корня, см. выше):
+
+```bash
+cd services/ai-agent
+uv run python ../../scripts/download_embedding_model.py
+```
+
+**Другой каталог или модель:**
+
+```bash
+uv run python scripts/download_embedding_model.py --output /path/to/SentenceTransformer
+uv run python scripts/download_embedding_model.py --model nomic-ai/nomic-embed-text-v1.5
+```
+
+**В Docker** (образ `ai-agent`, в контексте билда скрипт копируется в `/app/scripts/`):
+
+```bash
+docker compose run --rm ai-agent python scripts/download_embedding_model.py
+```
+
+Зависимости: `sentence-transformers` (есть в корневом `pyproject.toml` и в `services/ai-agent`).
+
+---
+
 ### `scripts/get-data-project-procrustes.sh` — Синхронизация данных RetroCast с CDN
 
 Скачивает файлы по манифесту `SHA256SUMS` с `files.ischemist.com`, проверяет SHA-256, умеет докачивать только недостающее или повреждённое.

@@ -8,3 +8,4 @@ agent-transcripts
 
 # RAG corpus is bind-mounted at runtime, not baked into the image
 services/ai-agent/app/data-rag/
+services/ai-agent/app/data/SentenceTransformer/

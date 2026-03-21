@@ -21,6 +21,22 @@ from langchain.tools import tool
 
 logger = logging.getLogger(__name__)
 
+
+def _resolve_rag_embedding_local_dir() -> Path | None:
+    """Return saved SentenceTransformer directory if RAG_EMBEDDING_MODEL_DIR has a valid model."""
+    from app.config import settings
+
+    raw = (settings.RAG_EMBEDDING_MODEL_DIR or "").strip()
+    if not raw:
+        return None
+    base = Path(raw)
+    if not base.is_absolute():
+        base = Path.cwd() / base
+    if not base.is_dir() or not (base / "config.json").is_file():
+        return None
+    return base.resolve()
+
+
 _TOKEN_RE = re.compile(r"[A-Za-zА-Яа-яЁё0-9_]+")
 _RETRIEVER_REGISTRY: dict[str, BM25DenseRankFusionRetriever] = {}
 _REGISTRY_LOCK = Lock()
@@ -282,7 +298,7 @@ class NomicDenseRetriever:
     def __init__(
         self,
         *,
-        model_name: str = "nomic-ai/nomic-embed-text-v1.5",
+        model_name: str = "nomic-ai/nomic-embed-text-v1.5",  # HF id; must match dense index meta["model_name"]
         matryoshka_dim: int = 512,
         batch_size: int = 16,
         show_progress_bar: bool = False,
@@ -422,7 +438,13 @@ class NomicDenseRetriever:
                 "sentence-transformers is required for dense retrieval"
             ) from exc
 
-        self._model = SentenceTransformer(self.model_name, trust_remote_code=True)
+        local = _resolve_rag_embedding_local_dir()
+        if local is not None:
+            logger.info("Loading dense embedding model from local path: %s", local)
+            self._model = SentenceTransformer(str(local), trust_remote_code=True)
+        else:
+            logger.info("Loading dense embedding model from Hugging Face Hub: %s", self.model_name)
+            self._model = SentenceTransformer(self.model_name, trust_remote_code=True)
         return self._model
 
     def _truncate_and_normalize(self, vectors):
@@ -666,6 +688,7 @@ def _build_hybrid_retriever(scope: str = "default") -> BM25DenseRankFusionRetrie
     )
 
     dense = NomicDenseRetriever(
+        model_name=settings.RAG_EMBEDDING_MODEL,
         matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
         batch_size=settings.RAG_DENSE_BATCH_SIZE,
         index_dir=dense_index_dir,

@@ -111,6 +111,7 @@ services:
         condition: service_healthy
     volumes:
       - ./services/ai-agent/app/data-rag:/app/app/data-rag
+      - ./services/ai-agent/app/data/SentenceTransformer:/app/app/data/SentenceTransformer
     env_file:
       - .env
     environment:

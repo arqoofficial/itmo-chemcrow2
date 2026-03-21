@@ -149,6 +149,7 @@ services:
     volumes:
       # WORKDIR=/app, app code at /app/app/ → data-rag resolves to /app/app/data-rag
       - ./services/ai-agent/app/data-rag:/app/app/data-rag
+      - ./services/ai-agent/app/data/SentenceTransformer:/app/app/data/SentenceTransformer
     develop:
       watch:
         - path: ./services/ai-agent
@@ -157,6 +158,7 @@ services:
           ignore:
             - .venv
             - app/data-rag
+            - app/data/SentenceTransformer
         - path: ./services/ai-agent/pyproject.toml
           action: rebuild
     env_file:

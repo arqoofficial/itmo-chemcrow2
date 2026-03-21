@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     RAG_CORPUS_PROCESSED_DIR: str = "app/data-rag/sources/default/corpus_processed"
     RAG_BM25_INDEX_PATH: str = "app/data-rag/sources/default/indexes/bm25_index.json"
     RAG_DENSE_INDEX_DIR: str = "app/data-rag/sources/default/indexes/nomic_dense"
+    # Hugging Face id stored in dense index metadata; weights load from RAG_EMBEDDING_MODEL_DIR when present.
+    RAG_EMBEDDING_MODEL: str = "nomic-ai/nomic-embed-text-v1.5"
+    RAG_EMBEDDING_MODEL_DIR: str = "app/data/SentenceTransformer"
     RAG_FORCE_REBUILD_INDEXES: bool = False
     RAG_DENSE_MATRYOSHKA_DIM: int = 512
     RAG_DENSE_BATCH_SIZE: int = 16

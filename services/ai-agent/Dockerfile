@@ -11,13 +11,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY services/ai-agent/pyproject.toml .
 COPY services/ai-agent/app ./app
+COPY services/ai-agent/scripts ./scripts
+COPY scripts/download_embedding_model.py ./scripts/download_embedding_model.py
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system .
-
-RUN python -c "\
-from sentence_transformers import SentenceTransformer; \
-SentenceTransformer('nomic-ai/nomic-embed-text-v1.5', trust_remote_code=True)"
 
 EXPOSE 8100
 
