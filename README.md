@@ -40,4 +40,4 @@ itmo_fatsapi/
 
 ## Установка
 
-Рекомендации по установке и запуску — в [SETUP.md](./SETUP.md).
+Рекомендации по установке и запуску — в [SETUP.md](./SETUP.md). Скачивание внешних датасетов RetroCast — в [docs/data-retrocast.md](./docs/data-retrocast.md).

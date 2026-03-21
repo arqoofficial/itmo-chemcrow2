@@ -1,5 +1,28 @@
 ---
 
+### `scripts/get-data-project-procrustes.sh` — Синхронизация данных RetroCast с CDN
+
+Скачивает файлы по манифесту `SHA256SUMS` с `files.ischemist.com`, проверяет SHA-256, умеет докачивать только недостающее или повреждённое.
+
+**Примеры:**
+
+```bash
+# всё (~554 MiB), в data/retrocast
+bash scripts/get-data-project-procrustes.sh all
+
+# без скачивания — только список
+bash scripts/get-data-project-procrustes.sh all --dry-run
+
+# другой каталог
+bash scripts/get-data-project-procrustes.sh benchmarks --dir=/tmp/retrocast
+```
+
+Цели: `all`, `benchmarks`, `definitions`, `stocks`, `raw`, `processed`, `scored`, `results`, а также `mkt-lin-500`, `mkt-cnv-160`, `ref-lin-600`, `ref-cnv-400`, `ref-lng-84`. Каталог по умолчанию переопределяется переменной `RETROCAST_DATA_DIR`.
+
+Полная документация: [docs/data-retrocast.md](../docs/data-retrocast.md).
+
+---
+
 ### `scripts/setup-dotenv-example.sh` — Создание `.env` файлов из `.env.example`
 
 Рекурсивно ищет все файлы `.env.example` в проекте и создаёт из них `.env` (убирая суффикс `.example`). Если `.env` уже существует — пропускает, чтобы не затереть локальные настройки.

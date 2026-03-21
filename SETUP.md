@@ -9,6 +9,7 @@
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
 - [Полезные ссылки после запуска](#полезные-ссылки-после-запуска)
 - [Перезапуск конкретного сервиса](#перезапуск-конкретного-сервиса)
+- [Данные RetroCast](#данные-retrocast)
 - [Частые проблемы](#частые-проблемы)
 
 ---
@@ -289,6 +290,18 @@ docker compose -f compose.production.yml up -d --build
 | Frontend + API | http://<IP_СЕРВЕРА> |
 | Swagger UI | http://<IP_СЕРВЕРА>/docs |
 | Adminer (БД) | http://<IP_СЕРВЕРА>:8080 |
+
+---
+
+## Данные RetroCast
+
+Большие наборы для бенчмарков/ретросинтеза (не в git) скачиваются отдельно. Подробно: **[docs/data-retrocast.md](./docs/data-retrocast.md)**.
+
+Кратко — всё одной командой из корня репозитория:
+
+```bash
+bash scripts/get-data-project-procrustes.sh all
+```
 
 ---
 
