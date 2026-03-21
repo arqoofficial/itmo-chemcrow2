@@ -271,7 +271,9 @@ services:
       CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
       CLICKHOUSE_USER: clickhouse
       CLICKHOUSE_PASSWORD: clickhouse
-      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379
+      REDIS_HOST: langfuse-cache
+      REDIS_PORT: "6379"
+      REDIS_AUTH: ""
       LANGFUSE_CACHE_ENABLED: "true"
       NEXTAUTH_URL: http://localhost:3000
       NEXTAUTH_SECRET: changeme-nextauth-secret-32chars!!
@@ -305,7 +307,9 @@ services:
       CLICKHOUSE_MIGRATION_URL: clickhouse://langfuse-clickhouse:9000
       CLICKHOUSE_USER: clickhouse
       CLICKHOUSE_PASSWORD: clickhouse
-      REDIS_CONNECTION_STRING: redis://langfuse-cache:6379
+      REDIS_HOST: langfuse-cache
+      REDIS_PORT: "6379"
+      REDIS_AUTH: ""
       LANGFUSE_CACHE_ENABLED: "true"
       SALT: changeme-salt-value-32-chars!!!!
       ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
