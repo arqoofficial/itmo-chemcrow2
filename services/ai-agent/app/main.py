@@ -110,6 +110,16 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 elif kind == "on_tool_end":
                     tool_name = event.get("name", "")
                     tool_output = str(event.get("data", {}).get("output", ""))
+                    if tool_name == "predict_nmr":
+                        try:
+                            from app.tools.nmr import pop_pending_image
+                            tool_input = event.get("data", {}).get("input", {})
+                            smiles = tool_input.get("smiles", "")
+                            image_uri = pop_pending_image(smiles)
+                            if image_uri:
+                                tool_output = tool_output + f"\n\n![¹H NMR spectrum]({image_uri})"
+                        except Exception:
+                            pass
                     logger.info("TOOL END: %s | output: %.200s", tool_name, tool_output)
                     yield {
                         "event": "tool_end",

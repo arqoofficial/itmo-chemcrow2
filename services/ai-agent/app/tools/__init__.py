@@ -58,6 +58,15 @@ def get_all_tools() -> list[BaseTool]:
     except ImportError:
         logger.exception("Failed to load protocol review tool")
 
+    # NMR prediction tool
+    try:
+        from app.tools.nmr import predict_nmr
+
+        tools.append(predict_nmr)
+        logger.info("NMR prediction tool enabled")
+    except ImportError:
+        logger.exception("Failed to load NMR prediction tool")
+
     # Reaction tools (local Docker containers)
     try:
         from app.tools.reactions import reaction_predict, reaction_retrosynthesis
