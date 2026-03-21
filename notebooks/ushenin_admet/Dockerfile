@@ -11,6 +11,7 @@ COPY pyproject.toml README.md ./
 COPY app ./app
 COPY demo ./demo
 COPY tool_definition.json ./tool_definition.json
+COPY .env ./.env
 
 RUN uv sync
 

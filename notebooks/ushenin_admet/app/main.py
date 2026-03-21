@@ -9,7 +9,28 @@ from fastapi.responses import JSONResponse
 
 from app import __version__
 from app.admet import ADMETInputError, predict_admet
-from app.schemas import ADMETRequest, ADMETResponse
+from app.prot_review import ProtocolReviewError, run_protocol_review
+
+from app.schemas import (
+    ADMETRequest,
+    ADMETResponse,
+    ProtocolReviewRequest,
+    ProtocolReviewResponse,
+)
+
+from pydantic import ValidationError
+
+def _prot_review_meta() -> Dict[str, Any]:
+    return {
+        "service": "protocol-review-microservice",
+        "version": __version__,
+        "graph": "parallel-5-branch-review",
+        "model": os.getenv("OPENAI_MODEL", "unknown"),
+        "notes": [
+            "This endpoint returns free-form chemistry protocol review text plus validated structured output.",
+            "Structured output is generated from final synthesized text using a deterministic extraction pass.",
+        ],
+    }
 
 APP_NAME = os.getenv("ADMET_APP_NAME", "ADMET Microservice")
 DEFAULT_MAX_HEAVY_ATOMS = int(os.getenv("ADMET_MAX_HEAVY_ATOMS", "200"))
@@ -130,4 +151,48 @@ async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONR
         input_smiles=input_smiles,
         code="unhandled_exception",
         message=str(exc),
+    )
+
+
+@app.post("/v1/prot_review", response_model=ProtocolReviewResponse)
+def prot_review_endpoint(payload: ProtocolReviewRequest) -> ProtocolReviewResponse:
+    try:
+        result = run_protocol_review(
+            payload.protocol_text,
+            include_intermediate=payload.include_intermediate,
+        )
+    except ProtocolReviewError as exc:
+        return ProtocolReviewResponse(
+            success=False,
+            input_protocol_text=payload.protocol_text,
+            error={"code": "invalid_protocol_text", "message": str(exc)},
+            meta=_prot_review_meta(),
+        )
+    except ValidationError as exc:
+        return ProtocolReviewResponse(
+            success=False,
+            input_protocol_text=payload.protocol_text,
+            error={
+                "code": "structured_output_validation_error",
+                "message": "Failed to validate structured protocol-review output.",
+                "details": {"errors": exc.errors()},
+            },
+            meta=_prot_review_meta(),
+        )
+    except Exception as exc:  # pragma: no cover
+        return ProtocolReviewResponse(
+            success=False,
+            input_protocol_text=payload.protocol_text,
+            error={"code": "internal_error", "message": str(exc)},
+            meta=_prot_review_meta(),
+        )
+
+    return ProtocolReviewResponse(
+        success=True,
+        input_protocol_text=result["input_protocol_text"],
+        final_text=result["final_text"],
+        structured_output=result["structured_output"] if payload.include_structured_output else None,
+        intermediate=result.get("intermediate") if payload.include_intermediate else None,
+        warnings=result.get("warnings", []),
+        meta=_prot_review_meta(),
     )
