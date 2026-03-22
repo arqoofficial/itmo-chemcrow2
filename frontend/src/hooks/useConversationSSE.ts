@@ -5,7 +5,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { OpenAPI } from "@/client"
-import type { ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
+import type { ArticleDownloadJob, ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
 
 export type StreamingState = "idle" | "connecting" | "thinking" | "streaming"
 
@@ -15,6 +15,7 @@ interface UseConversationSSEOptions {
   onMessage?: (msg: ChatMessagePublic) => void
   onToolCall?: (tc: ToolCallInfo) => void
   onHazards?: (chemicals: HazardChemical[]) => void
+  onArticleDownloads?: (jobs: ArticleDownloadJob[]) => void
   onError?: (err: string) => void
 }
 
@@ -24,13 +25,14 @@ export function useConversationSSE({
   onMessage,
   onToolCall,
   onHazards,
+  onArticleDownloads,
   onError,
 }: UseConversationSSEOptions) {
   const [streamingState, setStreamingState] = useState<StreamingState>("idle")
   const [streamingContent, setStreamingContent] = useState("")
   const abortRef = useRef<AbortController | null>(null)
-  const callbacksRef = useRef({ onMessage, onToolCall, onHazards, onError })
-  callbacksRef.current = { onMessage, onToolCall, onHazards, onError }
+  const callbacksRef = useRef({ onMessage, onToolCall, onHazards, onArticleDownloads, onError })
+  callbacksRef.current = { onMessage, onToolCall, onHazards, onArticleDownloads, onError }
 
   const contentRef = useRef("")
   const rafRef = useRef<number | null>(null)
@@ -119,6 +121,11 @@ export function useConversationSSE({
               case "hazards":
                 callbacksRef.current.onHazards?.(
                   (data as { chemicals: HazardChemical[] }).chemicals ?? [],
+                )
+                break
+              case "article_downloads":
+                callbacksRef.current.onArticleDownloads?.(
+                  (data as { jobs: ArticleDownloadJob[] }).jobs ?? [],
                 )
                 break
               case "error":
