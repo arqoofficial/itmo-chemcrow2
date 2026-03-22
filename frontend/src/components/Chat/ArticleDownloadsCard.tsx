@@ -12,20 +12,65 @@ interface JobStatus {
   error: string | null
 }
 
+interface ParseStatus {
+  job_id: string
+  status: string
+  error: string | null
+}
+
+async function apiFetch(path: string) {
+  const token =
+    typeof OpenAPI.TOKEN === "function"
+      ? await OpenAPI.TOKEN({} as never)
+      : (OpenAPI.TOKEN ?? "")
+  const resp = await fetch(path, { headers: { Authorization: `Bearer ${token}` } })
+  if (!resp.ok) throw new Error("fetch failed")
+  return resp.json()
+}
+
+function ParseIndicator({ jobId }: { jobId: string }) {
+  const { data } = useQuery<ParseStatus>({
+    queryKey: ["parse-status", jobId],
+    queryFn: () => apiFetch(`/api/v1/articles/jobs/${jobId}/parse-status`),
+    refetchInterval: (query) => {
+      const s = query.state.data?.status
+      if (s === "completed" || s === "failed") return false
+      return 3000
+    },
+    staleTime: 0,
+    retry: 3,
+    retryDelay: 3000,
+  })
+
+  const s = data?.status
+  if (s === "completed") {
+    return (
+      <span className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400">
+        <CheckCircle2 className="h-3 w-3 shrink-0" />
+        parsed
+      </span>
+    )
+  }
+  if (s === "failed") {
+    return (
+      <span className="flex items-center gap-1 text-destructive" title={data?.error ?? undefined}>
+        <XCircle className="h-3 w-3 shrink-0" />
+        parse failed
+      </span>
+    )
+  }
+  return (
+    <span className="flex items-center gap-1 text-muted-foreground">
+      <Loader2 className="h-3 w-3 shrink-0 animate-spin" />
+      parsing…
+    </span>
+  )
+}
+
 function ArticleJobRow({ job }: { job: ArticleDownloadJob }) {
   const { data } = useQuery<JobStatus>({
     queryKey: ["article-job", job.job_id],
-    queryFn: async () => {
-      const token =
-        typeof OpenAPI.TOKEN === "function"
-          ? await OpenAPI.TOKEN({} as never)
-          : (OpenAPI.TOKEN ?? "")
-      const resp = await fetch(`/api/v1/articles/jobs/${job.job_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      if (!resp.ok) throw new Error("fetch failed")
-      return resp.json()
-    },
+    queryFn: () => apiFetch(`/api/v1/articles/jobs/${job.job_id}`),
     refetchInterval: (query) => {
       const status = query.state.data?.status
       if (status === "done" || status === "failed") return false
@@ -65,6 +110,7 @@ function ArticleJobRow({ job }: { job: ArticleDownloadJob }) {
             {truncatedDoi}
           </span>
         )}
+        {status === "done" && <ParseIndicator jobId={job.job_id} />}
       </div>
       {status === "failed" && data?.error && (
         <p className="pl-5 text-destructive/80">{data.error}</p>
