@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
-from app.parser import detect_language, make_windows, make_bm25_chunk, Window
+from app.parser import detect_language, make_windows, make_bm25_chunk
 
 
 def test_make_windows_basic():
@@ -58,3 +58,11 @@ async def test_process_pdf_uploads_conversation_scoped_chunks():
     assert any(c.args[0] == "conv-1" and c.args[1] == "10_1234_test" for c in calls)
     assert "chunk_000" in artifacts
     assert "bm25_000" in artifacts
+
+    # Verify chunk_dir and filename pattern for the chunk uploads
+    chunk_calls = [c for c in calls if len(c.args) >= 3 and c.args[2] == "_chunks"]
+    bm25_calls = [c for c in calls if len(c.args) >= 3 and c.args[2] == "_bm25_chunks"]
+    assert len(chunk_calls) >= 1
+    assert len(bm25_calls) >= 1
+    assert chunk_calls[0].args[3].endswith(".md")
+    assert bm25_calls[0].args[3].endswith(".txt")

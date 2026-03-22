@@ -467,6 +467,9 @@ async def process_pdf_to_minio(
         lang = detect_language(raw_md)
         windows = make_windows(raw_md)
         total = len(windows)
+        if total == 0:
+            log.warning("parser: job %s produced no windows (empty or unreadable document)", job_id)
+            return artifacts
         chain = build_chain(llm, lang)
 
         cleaned_parts: list[str] = await asyncio.gather(*[
