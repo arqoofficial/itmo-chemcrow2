@@ -8,7 +8,8 @@ from app.schemas import JobState, JobStatus
 @pytest.fixture
 async def store():
     fake = fakeredis.aioredis.FakeRedis()
-    return RedisJobStore(redis=fake, ttl=60)
+    yield RedisJobStore(redis=fake, ttl=60)
+    await fake.aclose()
 
 
 async def test_create_and_get_job(store):
