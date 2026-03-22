@@ -18,13 +18,6 @@ from app.tracing import check_langfuse_auth, get_langfuse_config
 logger = logging.getLogger(__name__)
 
 
-def _blocked_message(text: str) -> str:
-    """Return a blocked-request message in the user's language."""
-    if any("\u0400" <= ch <= "\u04ff" for ch in text):
-        return "Этот запрос запрещен."
-    return "This request is not allowed."
-
-
 async def _warmup_guard():
     import asyncio
     try:
@@ -74,7 +67,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
     _, failed_input = await asyncio.to_thread(scan_input, user_text)
     if failed_input:
         logger.warning("Input blocked by LLM Guard (sync): %s", failed_input)
-        return ChatResponse(content=_blocked_message(user_text))
+        return ChatResponse(content="Недопустимый запрос.")
 
     agent = get_agent(request.provider)
     lf_config = get_langfuse_config()
@@ -130,7 +123,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 logger.warning("Input blocked by LLM Guard: %s", failed_input)
                 yield {
                     "event": "token",
-                    "data": json.dumps({"content": _blocked_message(user_text)}),
+                    "data": json.dumps({"content": "Недопустимый запрос."}),
                 }
                 yield {"event": "done", "data": json.dumps({"status": "completed"})}
                 return

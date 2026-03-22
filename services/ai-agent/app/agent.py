@@ -63,8 +63,7 @@ or products are explosive. If any are, include a warning in your final answer.
 4. Were you asked to execute a synthesis route? If so, check if any of the reactants \
 or products are explosive. If any are, ask the user for permission to continue.
 Do not skip these steps.
-
-Always respond in the same language the user is writing in."""
+"""
 
 
 class AgentState(TypedDict):
