@@ -12,6 +12,7 @@ import math
 import re
 from collections import Counter, defaultdict
 from collections.abc import Callable
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from pathlib import Path
 from threading import Lock
@@ -27,6 +28,15 @@ _REGISTRY_LOCK = Lock()
 _CANONICAL_CHUNKS_SUFFIX = "_chunks"
 _BM25_CHUNKS_SUFFIX = "_bm25_chunks"
 _SUPPORTED_CHUNK_EXTENSIONS = {".md", ".txt"}
+
+# Per-request conversation context — set before invoking the agent
+_CURRENT_CONV_ID: ContextVar[str | None] = ContextVar("conv_id", default=None)
+
+# Conversation-scoped document store and retriever registry
+# {conversation_id: (dense_docs, bm25_docs, bm25_to_canonical_map)}
+_CONV_DOCS: dict[str, tuple[list[Document], list[Document], dict[str, str]]] = {}
+_CONV_RETRIEVER_REGISTRY: dict[str, BM25DenseRankFusionRetriever] = {}
+_CONV_REGISTRY_LOCK = Lock()
 
 
 @dataclass(slots=True)
@@ -719,6 +729,132 @@ def _format_retrieval_results(results: list[RetrievalResult]) -> str:
     return "\n".join(lines)
 
 
+def _download_conv_docs_from_minio(
+    conversation_id: str,
+    doc_key: str,
+) -> tuple[list[Document], list[Document], dict[str, str]]:
+    """Download parsed chunks from MinIO and return (dense_docs, bm25_docs, bm25_to_canonical)."""
+    from minio import Minio
+
+    from app.config import settings
+
+    client = Minio(
+        settings.ARTICLES_MINIO_ENDPOINT,
+        access_key=settings.ARTICLES_MINIO_ACCESS_KEY,
+        secret_key=settings.ARTICLES_MINIO_SECRET_KEY,
+        secure=settings.ARTICLES_MINIO_SECURE,
+    )
+
+    prefix = f"{conversation_id}/{doc_key}/"
+    objects = list(client.list_objects(settings.ARTICLES_MINIO_PARSED_BUCKET, prefix=prefix, recursive=True))
+
+    canonical_by_chunk: dict[str, Document] = {}
+    dense_docs: list[Document] = []
+    bm25_docs: list[Document] = []
+    bm25_to_canonical: dict[str, str] = {}
+
+    for obj in sorted(objects, key=lambda o: o.object_name):
+        key = obj.object_name
+        # key format: {conv_id}/{doc_key}/{_chunks|_bm25_chunks}/{filename}
+        parts = key.split("/")
+        if len(parts) < 4:
+            continue
+        chunk_dir = parts[-2]
+        filename = parts[-1]
+        chunk_name = filename.rsplit(".", 1)[0]  # e.g. "chunk_000"
+
+        response = client.get_object(settings.ARTICLES_MINIO_PARSED_BUCKET, key)
+        try:
+            text = response.read().decode("utf-8")
+        finally:
+            response.close()
+            response.release_conn()
+
+        if chunk_dir == "_chunks":
+            doc_id = f"{doc_key}::{chunk_name}"
+            doc = Document(
+                doc_id=doc_id,
+                text=text,
+                metadata={"doc_key": doc_key, "chunk_key": chunk_name, "conversation_id": conversation_id},
+            )
+            dense_docs.append(doc)
+            canonical_by_chunk[chunk_name] = doc
+        elif chunk_dir == "_bm25_chunks":
+            bm25_doc_id = f"{doc_key}::bm25::{chunk_name}"
+            bm25_doc = Document(
+                doc_id=bm25_doc_id,
+                text=text,
+                metadata={"doc_key": doc_key, "chunk_key": chunk_name, "conversation_id": conversation_id},
+            )
+            bm25_docs.append(bm25_doc)
+
+    for bm25_doc in bm25_docs:
+        chunk_name = bm25_doc.metadata["chunk_key"]
+        canonical = canonical_by_chunk.get(chunk_name)
+        if canonical:
+            bm25_to_canonical[bm25_doc.doc_id] = canonical.doc_id
+
+    logger.info(
+        "minio: downloaded %d dense + %d bm25 chunks for conv=%s doc=%s",
+        len(dense_docs), len(bm25_docs), conversation_id, doc_key,
+    )
+    return dense_docs, bm25_docs, bm25_to_canonical
+
+
+def _build_conv_retriever(
+    dense_docs: list[Document],
+    bm25_docs: list[Document],
+    bm25_to_canonical: dict[str, str],
+) -> BM25DenseRankFusionRetriever:
+    from app.config import settings
+
+    resolver = _build_canonical_document_resolver({d.doc_id: d for d in dense_docs})
+
+    bm25 = BM25Retriever(document_resolver=resolver)
+    bm25.build(bm25_docs)
+
+    dense = NomicDenseRetriever(
+        matryoshka_dim=settings.RAG_DENSE_MATRYOSHKA_DIM,
+        batch_size=settings.RAG_DENSE_BATCH_SIZE,
+        document_resolver=resolver,
+    )
+    dense.build(dense_docs)
+
+    return BM25DenseRankFusionRetriever(
+        bm25_retriever=bm25,
+        dense_retriever=dense,
+        rrf_k=settings.RAG_RRF_K,
+        bm25_weight=settings.RAG_BM25_WEIGHT,
+        dense_weight=settings.RAG_DENSE_WEIGHT,
+        candidate_k=settings.RAG_CANDIDATE_K,
+        bm25_to_canonical_doc_id=bm25_to_canonical,
+        document_resolver=resolver,
+    )
+
+
+def ingest_conversation_document(conversation_id: str, doc_key: str) -> None:
+    """Download parsed chunks from MinIO and build/update an in-memory retriever for the conversation."""
+    new_dense, new_bm25, new_bm25_to_canonical = _download_conv_docs_from_minio(conversation_id, doc_key)
+
+    if not new_dense or not new_bm25:
+        logger.warning("ingest: no chunks found for conv=%s doc=%s — skipping", conversation_id, doc_key)
+        return
+
+    with _CONV_REGISTRY_LOCK:
+        existing = _CONV_DOCS.get(conversation_id, ([], [], {}))
+        merged_dense = existing[0] + new_dense
+        merged_bm25 = existing[1] + new_bm25
+        merged_map = {**existing[2], **new_bm25_to_canonical}
+
+        _CONV_DOCS[conversation_id] = (merged_dense, merged_bm25, merged_map)
+        _CONV_RETRIEVER_REGISTRY[conversation_id] = _build_conv_retriever(merged_dense, merged_bm25, merged_map)
+
+    logger.info(
+        "ingest: conv=%s now has %d dense docs total (added doc=%s)",
+        conversation_id, len(merged_dense), doc_key,
+    )
+
+
 def _run_rag_query(query: str, top_k: int) -> str:
     from app.config import settings
 
@@ -728,26 +864,51 @@ def _run_rag_query(query: str, top_k: int) -> str:
         return "Query must be a non-empty string."
 
     safe_top_k = min(max(int(top_k), 1), 10)
+    conv_id = _CURRENT_CONV_ID.get()
+
+    all_results: list[RetrievalResult] = []
+
+    # Search conversation-specific index first (recently parsed articles)
+    with _CONV_REGISTRY_LOCK:
+        conv_retriever = _CONV_RETRIEVER_REGISTRY.get(conv_id) if conv_id else None
+
+    if conv_retriever is not None:
+        try:
+            conv_results = conv_retriever.retrieve(query.strip(), top_k=safe_top_k)
+            all_results.extend(conv_results)
+            logger.info("RAG conv index: %d hits for conv=%s", len(conv_results), conv_id)
+        except Exception:
+            logger.exception("RAG conv search failed for conv=%s", conv_id)
+
+    # Search the shared default index
     try:
         retriever = _get_retriever_for_scope(settings.RAG_DEFAULT_SOURCE)
-        results = retriever.retrieve(query.strip(), top_k=safe_top_k)
-        return _format_retrieval_results(results)
+        default_results = retriever.retrieve(query.strip(), top_k=safe_top_k)
+        all_results.extend(default_results)
     except FileNotFoundError as exc:
-        logger.exception("RAG data is missing")
-        return (
-            "RAG data is not initialized correctly. "
-            f"Missing path: {exc}."
-        )
+        logger.warning("RAG default index missing: %s", exc)
     except ImportError as exc:
         logger.exception("Dense retriever dependency missing")
-        return (
-            "RAG dense retriever dependencies are missing. "
-            "Install sentence-transformers and numpy in ai-agent environment. "
-            f"Details: {exc}"
-        )
+        if not all_results:
+            return (
+                "RAG dense retriever dependencies are missing. "
+                f"Details: {exc}"
+            )
     except Exception as exc:
-        logger.exception("RAG search failed")
-        return f"RAG search failed: {exc}"
+        logger.exception("RAG default search failed")
+        if not all_results:
+            return f"RAG search failed: {exc}"
+
+    if not all_results:
+        return "No relevant documents found in RAG corpus."
+
+    # Deduplicate by doc_id, keep highest score
+    seen: dict[str, RetrievalResult] = {}
+    for r in all_results:
+        if r.doc_id not in seen or r.score > seen[r.doc_id].score:
+            seen[r.doc_id] = r
+    merged = sorted(seen.values(), key=lambda r: r.score, reverse=True)[:safe_top_k]
+    return _format_retrieval_results(merged)
 
 
 @tool

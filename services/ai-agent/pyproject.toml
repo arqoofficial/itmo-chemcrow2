@@ -25,6 +25,7 @@ dependencies = [
     "sentence-transformers>=3.0.0",
     "einops>=0.8.0",
     "langfuse>=3.9.0",
+    "minio>=7.0.0",
 ]
 
 [build-system]

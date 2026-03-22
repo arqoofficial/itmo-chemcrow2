@@ -61,6 +61,13 @@ class Settings(BaseSettings):
     RAG_DENSE_WEIGHT: float = 1.0
     RAG_CANDIDATE_K: int = 20
 
+    # MinIO for parsed article chunks
+    ARTICLES_MINIO_ENDPOINT: str = "articles-minio:9000"
+    ARTICLES_MINIO_ACCESS_KEY: str = "minioadmin"
+    ARTICLES_MINIO_SECRET_KEY: str = "minioadmin"
+    ARTICLES_MINIO_PARSED_BUCKET: str = "parsed-chunks"
+    ARTICLES_MINIO_SECURE: bool = False
+
     # Langfuse observability (optional)
     LANGFUSE_PUBLIC_KEY: str = ""
     LANGFUSE_SECRET_KEY: str = ""
