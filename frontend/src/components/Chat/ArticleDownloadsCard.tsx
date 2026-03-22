@@ -47,22 +47,27 @@ function ArticleJobRow({ job }: { job: ArticleDownloadJob }) {
     )
 
   return (
-    <div className="flex items-center gap-2 py-1 text-xs">
-      {icon}
-      {status === "done" && data?.url ? (
-        <a
-          href={data.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="truncate text-blue-600 hover:underline dark:text-blue-400"
-          title={job.doi}
-        >
-          {truncatedDoi}
-        </a>
-      ) : (
-        <span className="truncate text-muted-foreground" title={job.doi}>
-          {truncatedDoi}
-        </span>
+    <div className="flex flex-col gap-0.5 py-1 text-xs">
+      <div className="flex items-center gap-2">
+        {icon}
+        {status === "done" && data?.url ? (
+          <a
+            href={data.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="truncate text-blue-600 hover:underline dark:text-blue-400"
+            title={job.doi}
+          >
+            {truncatedDoi}
+          </a>
+        ) : (
+          <span className="truncate text-muted-foreground" title={job.doi}>
+            {truncatedDoi}
+          </span>
+        )}
+      </div>
+      {status === "failed" && data?.error && (
+        <p className="pl-5 text-destructive/80">{data.error}</p>
       )}
     </div>
   )
