@@ -129,6 +129,31 @@ Docker поднимет все сервисы автоматически.
 
 > **Подробнее:** варианты запуска, production-деплой, частые проблемы — в **[SETUP.md](./SETUP.md)**.
 
+## Langfuse — трассировка LLM
+
+[Langfuse](https://langfuse.com/) — self-hosted наблюдаемость для агента: в UI видны трассы диалогов с вложенными вызовами модели и инструментов (LangGraph ReAct интегрирован через `CallbackHandler` из SDK).
+
+**Интерфейс:** http://localhost:3000 (после `docker compose up`).
+
+**Как включить отправку трассов в Langfuse:**
+
+1. Зайдите в Langfuse → создайте проект → **API Keys** → сгенерируйте пару ключей.
+2. Пропишите в `.env` (см. [`.env.example`](./.env.example)):
+
+   ```env
+   LANGFUSE_SECRET_KEY=sk-lf-...
+   LANGFUSE_PUBLIC_KEY=pk-lf-...
+   LANGFUSE_HOST=http://langfuse-server:3000
+   ```
+
+   Для агента в Docker `LANGFUSE_HOST` должен указывать на сервис `langfuse-server` (как в примере). Локальный запуск без Docker — на ваш публичный URL Langfuse (например `http://localhost:3000`).
+
+3. Перезапустите воркеры, подхватывающие конфиг: `docker compose restart worker ai-agent`.
+
+Если `LANGFUSE_SECRET_KEY` / `LANGFUSE_PUBLIC_KEY` не заданы, агент работает как обычно, трассировка просто отключена.
+
+Полный список переменных стека Langfuse (БД, ClickHouse, секреты NextAuth и т.д.) и production-замечания — в **[SETUP.md § Langfuse](./SETUP.md#langfuse--трассировка-llm-вызовов)**.
+
 ## Внешние данные (опционально)
 
 Для работы ретросинтеза нужны большие наборы данных, которые не входят в репозиторий:
@@ -213,6 +238,9 @@ bash scripts/get-data-project-procrustes.sh all
 | `CHEMSPACE_API_KEY` | Цены на реагенты |
 | `SEMANTIC_SCHOLAR_API_KEY` | Поиск по литературе |
 | `SENTRY_DSN` | Мониторинг ошибок |
+| `LANGFUSE_SECRET_KEY` | Трассировка агента в Langfuse (см. раздел выше) |
+| `LANGFUSE_PUBLIC_KEY` | Публичный ключ Langfuse |
+| `LANGFUSE_HOST` | URL Langfuse (`http://langfuse-server:3000` в Docker Compose) |
 
 ## Разработка
 
