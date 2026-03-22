@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 import httpx
 import redis as redis_lib
@@ -54,6 +55,36 @@ def _iter_sse_events(response: httpx.Response):
 
     if data_buf:
         yield event_type, "\n".join(data_buf)
+
+
+def _extract_dois(tool_output: str) -> list[str]:
+    """Extract unique, non-N/A DOIs from a literature_search tool output string."""
+    seen: set[str] = set()
+    result: list[str] = []
+    for match in re.finditer(r"DOI:\s*(\S+)", tool_output):
+        doi = match.group(1)
+        if doi != "N/A" and doi not in seen:
+            seen.add(doi)
+            result.append(doi)
+    return result
+
+
+def _get_conversation_article_jobs(r: redis_lib.Redis, conversation_id: str) -> list[dict]:
+    """Return all stored {doi, job_id} pairs for a conversation from Redis."""
+    raw = r.lrange(f"conversation:{conversation_id}:article_jobs", 0, -1)
+    return [json.loads(item) for item in raw]
+
+
+def _build_article_status_block(jobs: list[dict]) -> str:
+    """Format a status summary string for injection into the AI agent context."""
+    if not jobs:
+        return ""
+    label_map = {"done": "available", "failed": "failed"}
+    lines = ["[Article Download Status]"]
+    for job in jobs:
+        label = label_map.get(job.get("status", ""), "downloading")
+        lines.append(f"- {job['doi']}: {label}")
+    return "\n".join(lines)
 
 
 def _process_streaming(
