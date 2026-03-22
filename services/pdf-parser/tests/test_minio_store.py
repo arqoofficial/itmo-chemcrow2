@@ -46,3 +46,6 @@ def test_list_chunk_keys(store):
     store._client.list_objects.return_value = [obj1, obj2]
     keys = store.list_chunk_keys("conv-1", "10_1234_test")
     assert "conv-1/10_1234_test/_chunks/chunk_000.md" in keys
+    store._client.list_objects.assert_called_once_with(
+        "parsed-chunks", prefix="conv-1/10_1234_test/", recursive=True
+    )

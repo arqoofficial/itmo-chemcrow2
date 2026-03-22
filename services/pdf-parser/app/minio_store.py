@@ -20,7 +20,11 @@ class MinioStore:
     def download_pdf(self, object_key: str) -> bytes:
         """Download a PDF from the input bucket."""
         response = self._client.get_object(self._input_bucket, object_key)
-        data = response.read()
+        try:
+            data = response.read()
+        finally:
+            response.close()
+            response.release_conn()
         log.info("minio_store: downloaded %s (%d bytes)", object_key, len(data))
         return data
 
