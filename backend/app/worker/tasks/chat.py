@@ -64,6 +64,7 @@ def _process_streaming(
     """Stream from ai-agent, forward tokens via Redis, return assembled content and tool_calls."""
     content_parts: list[str] = []
     tool_calls: list[dict] = []
+    pending_tool_args: dict[str, dict] = {}
 
     timeout = httpx.Timeout(
         connect=10.0,
@@ -98,21 +99,32 @@ def _process_streaming(
                         })
 
                 elif event_type == "tool_start":
-                    tool_calls.append({
-                        "name": data.get("tool", ""),
-                        "args": data.get("input", {}),
-                    })
+                    name = data.get("tool", "")
+                    args = data.get("input", {})
+                    tool_calls.append({"name": name, "args": args})
+                    pending_tool_args[name] = args
                     _publish(r, conversation_id, {
                         "event": "tool_call",
-                        "name": data.get("tool", ""),
-                        "args": data.get("input", {}),
+                        "name": name,
+                        "args": args,
+                        "status": "running",
                     })
 
                 elif event_type == "tool_end":
+                    name = data.get("tool", "")
+                    output = data.get("output", "")
+                    args = pending_tool_args.get(name, {})
+                    for tc in tool_calls:
+                        if tc["name"] == name:
+                            tc["result"] = output
+                            tc["status"] = "completed"
+                            break
                     _publish(r, conversation_id, {
-                        "event": "tool_end",
-                        "tool": data.get("tool", ""),
-                        "output": data.get("output", ""),
+                        "event": "tool_call",
+                        "name": name,
+                        "args": args,
+                        "result": output,
+                        "status": "completed",
                     })
 
                 elif event_type == "hazards":

@@ -97,6 +97,14 @@ const mdComponents: Components = {
     </a>
   ),
   hr: () => <hr className="my-3 border-muted-foreground/20" />,
+  img: ({ src, alt }) => (
+    <img
+      src={src}
+      alt={alt ?? ""}
+      className="mt-4 mb-2 max-w-full rounded-lg"
+      style={{ maxHeight: "400px" }}
+    />
+  ),
 }
 
 export const MarkdownContent = memo(function MarkdownContent({
@@ -110,7 +118,11 @@ export const MarkdownContent = memo(function MarkdownContent({
 
   return (
     <div className={wrapperClassName}>
-      <ReactMarkdown remarkPlugins={remarkPlugins} components={mdComponents}>
+      <ReactMarkdown
+        remarkPlugins={remarkPlugins}
+        components={mdComponents}
+        urlTransform={(url) => (url.startsWith("javascript:") ? "" : url)}
+      >
         {content}
       </ReactMarkdown>
     </div>

@@ -7,10 +7,16 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     build-essential \
+    libxrender1 \
+    libxext6 \
+    libexpat1 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY services/ai-agent/pyproject.toml .
 COPY services/ai-agent/app ./app
+
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --system torch --index-url https://download.pytorch.org/whl/cpu
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system .
