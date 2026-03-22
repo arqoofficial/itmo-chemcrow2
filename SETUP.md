@@ -10,6 +10,7 @@
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
 - [Полезные ссылки после запуска](#полезные-ссылки-после-запуска)
 - [Перезапуск конкретного сервиса](#перезапуск-конкретного-сервиса)
+- [Langfuse — трассировка LLM-вызовов](#langfuse--трассировка-llm-вызовов)
 - [Данные RetroCast и AiZynthFinder](#данные-retrocast-и-aizynthfinder)
 - [Частые проблемы](#частые-проблемы)
 
@@ -166,6 +167,7 @@ docker compose up --build -d
 | Backend API | http://localhost:8000 |
 | Swagger UI | http://localhost:8000/docs |
 | Adminer (БД) | http://localhost:8080 |
+| Langfuse (LLM tracing) | http://localhost:3000 |
 | Mailcatcher | http://localhost:1080 |
 
 ### Hot reload
@@ -327,6 +329,51 @@ docker compose -f compose.production.yml up -d
 | Frontend + API | http://<IP_СЕРВЕРА> |
 | Swagger UI | http://<IP_СЕРВЕРА>/docs |
 | Adminer (БД) | http://<IP_СЕРВЕРА>:8080 |
+
+---
+
+## Langfuse — трассировка LLM-вызовов
+
+[Langfuse](https://langfuse.com/) поднимается автоматически вместе с остальными сервисами в `compose.yml`. После запуска откройте http://localhost:3000 и создайте аккаунт.
+
+### Первоначальная настройка
+
+1. Откройте http://localhost:3000 → зарегистрируйтесь (первый пользователь становится администратором).
+2. Создайте организацию и проект.
+3. В настройках проекта перейдите в **API Keys** → сгенерируйте пару ключей.
+4. Скопируйте ключи в `.env`:
+
+```env
+LANGFUSE_SECRET_KEY=sk-lf-...
+LANGFUSE_PUBLIC_KEY=pk-lf-...
+LANGFUSE_HOST=http://langfuse-server:3000
+```
+
+5. Перезапустите сервисы, чтобы применить ключи:
+
+```bash
+docker compose restart worker ai-agent
+```
+
+### Переменные Langfuse
+
+В `.env` предусмотрены dev-дефолты для обязательных переменных. Для production замените их на криптостойкие значения:
+
+```bash
+# Сгенерировать NEXTAUTH_SECRET, SALT, ENCRYPTION_KEY
+python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+| Переменная | Описание |
+|-----------|---------|
+| `NEXTAUTH_SECRET` | Секрет NextAuth (≥32 символов) |
+| `SALT` | Соль хэширования (≥32 символов) |
+| `ENCRYPTION_KEY` | Ключ шифрования (≥32 символов) |
+| `LANGFUSE_SECRET_KEY` | Серверный ключ (из UI после регистрации) |
+| `LANGFUSE_PUBLIC_KEY` | Публичный ключ (из UI после регистрации) |
+| `LANGFUSE_HOST` | URL Langfuse (`http://langfuse-server:3000` внутри Docker) |
+
+> Если трассировка не нужна, Langfuse можно не настраивать — агент будет работать без неё.
 
 ---
 
