@@ -4,7 +4,7 @@
 
 ## Overview
 
-Integrate the `article-fetcher` microservice into the ChemCrow2 app so that whenever the AI agent calls `literature_search`, all returned DOIs are automatically submitted to the fetcher. The UI displays inline download status cards in the chat. The article-fetcher is also wired to notify a future article processor via webhook when downloads complete.
+Integrate the `article-fetcher` microservice into the ChemCrow2 app so that whenever the AI agent calls `literature_search`, all returned DOIs are automatically submitted to the fetcher. The UI displays inline download status cards in the chat. On every subsequent user message, the current download status for all jobs in the conversation is injected into the AI agent's context so it can reference available articles. The article-fetcher is also wired to notify a future article processor via webhook when downloads complete.
 
 ## Architecture
 
@@ -15,7 +15,8 @@ literature_search tool_end event
 chat.py (Celery task) — intercepts tool_end for "literature_search"
     │  ├── regex-extract DOIs from output text
     │  ├── POST /fetch to article-fetcher per DOI → job_id
-    │  └── publish "article_downloads" SSE event to Redis
+    │  ├── store {doi, job_id} pairs in Redis: conversation:{conversation_id}:article_jobs (TTL 7d)
+    │  └── publish "article_downloads" SSE event to Redis conversation channel
     │
     ▼
 Redis pub/sub → backend events.py → frontend SSE
@@ -28,6 +29,20 @@ ArticleDownloadsCard (React) — polls GET /api/v1/articles/jobs/{job_id} every 
     │                          until status is "done" or "failed"
     ▼
 article-fetcher (job done) → optional webhook POST to ARTICLE_PROCESSOR_WEBHOOK_URL
+
+
+User sends new chat message
+    │
+    ▼
+chat.py — reads conversation:{conversation_id}:article_jobs from Redis
+    │  ├── for each job: GET {ARTICLE_FETCHER_URL}/jobs/{job_id}
+    │  └── builds status summary string
+    │
+    ▼
+status summary injected as system message prepended to messages_payload
+    │
+    ▼
+AI agent receives context: which articles are available, downloading, or failed
 ```
 
 ## SSE Event Shape
@@ -55,13 +70,30 @@ ARTICLE_FETCHER_URL: str = "http://article-fetcher:8200"
 ```
 
 ### 2. `backend/app/worker/tasks/chat.py`
-After processing `tool_end` for `literature_search`:
+
+**On `tool_end` for `literature_search`:**
 - Extract DOIs via regex: `DOI:\s*([^\s\n]+)` where value is not `N/A`
 - For each DOI, call `POST {ARTICLE_FETCHER_URL}/fetch` with `{"doi": "..."}` (fire-and-forget, log failures, never raise)
 - Collect `{doi, job_id}` pairs
+- Store collected pairs by appending to Redis list key `conversation:{conversation_id}:article_jobs` (JSON-encoded per element, TTL 7 days)
 - If any jobs created: publish `article_downloads` event to Redis conversation channel
 
-Error handling: HTTP errors or connection failures are logged at WARNING level and skipped — a failed fetch submission must not break the chat response.
+**Deduplication:** Before calling `POST /fetch` for a DOI, read `conversation:{conversation_id}:article_jobs` and skip any DOI already present. Reuse the existing job_id for those. This prevents duplicate fetch jobs when `literature_search` is called multiple times in the same conversation.
+
+**On every new user message (before calling the AI agent):**
+- Read `conversation:{conversation_id}:article_jobs` from Redis (empty list if key absent)
+- For each stored job, call `GET {ARTICLE_FETCHER_URL}/jobs/{job_id}` (skip on error)
+- Build a status block (only if there are any reachable jobs):
+  ```
+  [Article Download Status]
+  - 10.1038/s41586-021-03819-2: available
+  - 10.1021/acs.nanolett.1c02548: downloading
+  - 10.1016/failed.doi: failed
+  ```
+  Labels: `available` (done), `downloading` (pending/running), `failed`.
+- Inject by **prepending a `user` role message** to `messages_payload`. Do NOT use `system` role — the LangGraph agent's `call_model` silently drops the hardcoded `SYSTEM_PROMPT` if `messages[0]` is already a `SystemMessage`.
+
+Error handling: HTTP errors or connection failures are logged at WARNING level and skipped — a failed status check must not break the chat response. If all status fetches fail, omit the status block entirely.
 
 ### 3. `backend/app/api/routes/articles.py` (new)
 Proxy route:
@@ -131,10 +163,12 @@ This ensures the Celery worker (the only process that calls the article-fetcher)
 
 | Failure | Behavior |
 |---|---|
-| article-fetcher unreachable | Log WARNING, skip — chat response unaffected |
-| DOI fetch fails (sci-hub) | Job status → "failed", error shown in UI card |
-| Job not found in Redis | Backend proxy returns 404 |
+| article-fetcher unreachable on submit | Log WARNING, skip — chat response unaffected |
+| article-fetcher unreachable on status check | Log WARNING, skip job from status block |
+| DOI fetch fails (sci-hub) | Job status → "failed", shown as `failed` in status block and UI card |
+| Job not found in Redis (expired) | Skip from status block; backend proxy returns 404 |
 | Webhook POST fails | Log WARNING, job still marked done |
+| All status checks fail | Omit status block from AI context entirely |
 
 ## Article Processor Readiness
 
