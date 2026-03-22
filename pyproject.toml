@@ -38,6 +38,7 @@ dependencies = [
 members = [
     "backend",
     "services/ai-agent",
+    "services/pdf-parser",
 ]
 
 [dependency-groups]

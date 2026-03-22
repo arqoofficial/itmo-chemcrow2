@@ -170,6 +170,10 @@ services:
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
       - RAG_ENABLED=true
       - RAG_FORCE_REBUILD_INDEXES=false
+      - ARTICLES_MINIO_ENDPOINT=articles-minio:9000
+      - ARTICLES_MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - ARTICLES_MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - ARTICLES_MINIO_PARSED_BUCKET=parsed-chunks
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
@@ -279,6 +283,7 @@ services:
       - MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
       - MINIO_BUCKET=articles
       - MINIO_PUBLIC_ENDPOINT=http://localhost:9092
+      - ARTICLE_PROCESSOR_WEBHOOK_URL=http://pdf-parser:8300/jobs
     develop:
       watch:
         - path: ./services/article-fetcher
@@ -290,6 +295,43 @@ services:
           action: rebuild
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8200/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pdf-parser:
+    build:
+      context: .
+      dockerfile: services/pdf-parser/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8300:8300"
+    depends_on:
+      redis:
+        condition: service_healthy
+      articles-minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - ARTICLES_MINIO_ENDPOINT=articles-minio:9000
+      - ARTICLES_MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - ARTICLES_MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - ARTICLES_MINIO_INPUT_BUCKET=articles
+      - ARTICLES_MINIO_OUTPUT_BUCKET=parsed-chunks
+      - AI_AGENT_INGEST_URL=http://ai-agent:8100
+    develop:
+      watch:
+        - path: ./services/pdf-parser
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/pdf-parser/pyproject.toml
+          action: rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8300/health"]
       interval: 10s
       timeout: 5s
       retries: 5
