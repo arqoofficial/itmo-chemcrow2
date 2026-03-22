@@ -102,3 +102,73 @@ def test_get_job_not_found(client, mock_deps):
 
     resp = client.get("/jobs/doesnotexist")
     assert resp.status_code == 404
+
+
+def test_run_fetch_fires_webhook_on_done(mock_redis, mock_s3):
+    """When ARTICLE_PROCESSOR_WEBHOOK_URL is set, it is POSTed on job done."""
+    mock_redis.get.return_value = '{"job_id":"j1","doi":"10.1/x","status":"running","object_key":null,"error":null,"created_at":"2026-01-01T00:00:00Z"}'
+    mock_redis.set.return_value = True
+
+    with (
+        patch("app.main.redis_client", mock_redis),
+        patch("app.main.storage", mock_s3),
+        patch("app.main.fetch_article", return_value=b"%PDF"),
+        patch("app.main.settings") as mock_settings,
+        patch("app.main.requests") as mock_requests,
+    ):
+        mock_settings.article_processor_webhook_url = "http://processor/ingest"
+        mock_s3.upload_pdf.return_value = None
+        mock_s3.presign_url.return_value = "http://minio/j1.pdf"
+
+        from app.main import _run_fetch
+        _run_fetch("j1", "10.1/x")
+
+        mock_requests.post.assert_called_once()
+        call_kwargs = mock_requests.post.call_args
+        assert call_kwargs[0][0] == "http://processor/ingest"
+
+
+def test_run_fetch_skips_webhook_when_url_empty(mock_redis, mock_s3):
+    """When ARTICLE_PROCESSOR_WEBHOOK_URL is empty, no POST is made."""
+    mock_redis.get.return_value = '{"job_id":"j2","doi":"10.1/y","status":"running","object_key":null,"error":null,"created_at":"2026-01-01T00:00:00Z"}'
+    mock_redis.set.return_value = True
+
+    with (
+        patch("app.main.redis_client", mock_redis),
+        patch("app.main.storage", mock_s3),
+        patch("app.main.fetch_article", return_value=b"%PDF"),
+        patch("app.main.settings") as mock_settings,
+        patch("app.main.requests") as mock_requests,
+    ):
+        mock_settings.article_processor_webhook_url = ""
+        mock_s3.upload_pdf.return_value = None
+
+        from app.main import _run_fetch
+        _run_fetch("j2", "10.1/y")
+
+        mock_requests.post.assert_not_called()
+
+
+def test_run_fetch_webhook_failure_does_not_raise(mock_redis, mock_s3):
+    """A webhook POST failure must not propagate — job remains done."""
+    mock_redis.get.return_value = '{"job_id":"j3","doi":"10.1/z","status":"running","object_key":null,"error":null,"created_at":"2026-01-01T00:00:00Z"}'
+    mock_redis.set.return_value = True
+
+    with (
+        patch("app.main.redis_client", mock_redis),
+        patch("app.main.storage", mock_s3),
+        patch("app.main.fetch_article", return_value=b"%PDF"),
+        patch("app.main.settings") as mock_settings,
+        patch("app.main.requests") as mock_requests,
+    ):
+        mock_settings.article_processor_webhook_url = "http://processor/ingest"
+        mock_s3.upload_pdf.return_value = None
+        mock_requests.post.side_effect = Exception("connection refused")
+
+        from app.main import _run_fetch
+        _run_fetch("j3", "10.1/z")  # must not raise
+
+        # Job should still be marked done
+        set_calls = mock_redis.set.call_args_list
+        last_job = json.loads(set_calls[-1][0][1])
+        assert last_job["status"] == "done"

@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 import redis as redis_lib
+import requests
 from fastapi import BackgroundTasks, FastAPI, HTTPException
 from pydantic import BaseModel
 
@@ -102,6 +103,16 @@ def _run_fetch(job_id: str, doi: str) -> None:
         storage.upload_pdf(object_key, pdf_bytes)
         _update_job(job_id, status="done", object_key=object_key)
         logger.info("Job %s completed for DOI %s", job_id, doi)
+        if settings.article_processor_webhook_url:
+            try:
+                requests.post(
+                    settings.article_processor_webhook_url,
+                    json={"job_id": job_id, "doi": doi, "object_key": object_key, "status": "done"},
+                    timeout=5,
+                )
+                logger.info("Webhook fired for job %s", job_id)
+            except Exception:
+                logger.warning("Webhook POST failed for job %s", job_id, exc_info=True)
     except FetchError as e:
         _update_job(job_id, status="failed", error=str(e))
         logger.warning("Job %s failed for DOI %s: %s", job_id, doi, e)

@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     minio_secret_key: str = "minioadmin"
     minio_bucket: str = "articles"
     minio_public_endpoint: str = "http://localhost:9092"
+    article_processor_webhook_url: str = ""
 
     model_config = {"env_file": ".env", "extra": "ignore"}
 
