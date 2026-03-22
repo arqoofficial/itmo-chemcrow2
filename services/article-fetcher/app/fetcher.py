@@ -34,7 +34,10 @@ def fetch_article(doi: str) -> bytes:
         raise
     except Exception as e:
         logger.exception("Failed to fetch DOI %s", doi)
-        raise FetchError(str(e)) from e
+        msg = str(e)
+        if "crawling" in msg or "No pdf tag" in msg or "pdf" in msg.lower():
+            raise FetchError("Article not available on sci-hub") from e
+        raise FetchError(msg) from e
     finally:
         if os.path.exists(tmp_path):
             os.unlink(tmp_path)
