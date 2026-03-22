@@ -22,6 +22,10 @@ from app.core.db import engine
 from app.models import ChatMessage, Conversation, get_datetime_utc
 from app.worker.celery_app import celery_app
 
+# Максимальное количество сообщений, отправляемых в LLM.
+# Защита от context overflow при длинных или заспамленных беседах.
+_MAX_MESSAGES_TO_LLM = 20
+
 logger = logging.getLogger(__name__)
 
 
@@ -179,12 +183,14 @@ def process_chat_message(
             messages_db = session.exec(
                 select(ChatMessage)
                 .where(ChatMessage.conversation_id == conversation_id)
-                .order_by(col(ChatMessage.created_at).asc())
+                .order_by(col(ChatMessage.created_at).desc())
+                .limit(_MAX_MESSAGES_TO_LLM)
             ).all()
 
+            # Reverse to restore chronological order after DESC fetch
             messages_payload = [
                 {"role": msg.role, "content": msg.content}
-                for msg in messages_db
+                for msg in reversed(messages_db)
             ]
 
         try:
