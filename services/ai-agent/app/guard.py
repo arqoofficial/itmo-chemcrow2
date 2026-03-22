@@ -17,6 +17,7 @@ _output_scanners: list[Any] | None = None
 
 # Phrases that indicate prompt injection / jailbreak attempts
 _INPUT_BAN = [
+    # English
     "ignore previous instructions",
     "ignore all previous",
     "disregard your instructions",
@@ -27,6 +28,16 @@ _INPUT_BAN = [
     "bypass your",
     "jailbreak",
     "DAN mode",
+    # Russian
+    "игнорируй предыдущие инструкции",
+    "игнорируй все предыдущие",
+    "забудь свои правила",
+    "притворись что ты",
+    "ты теперь",
+    "действуй как будто",
+    "обойди свои",
+    "забудь об ограничениях",
+    "ты больше не",
 ]
 
 # Topics we never want in output
