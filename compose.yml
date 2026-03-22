@@ -238,6 +238,61 @@ services:
     volumes:
       - ./frontend/nginx-ip.conf:/etc/nginx/conf.d/default.conf:ro
 
+  articles-minio:
+    image: minio/minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9092:9000"
+      - "9093:9001"
+    volumes:
+      - articles-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  article-fetcher:
+    build:
+      context: .
+      dockerfile: services/article-fetcher/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    depends_on:
+      redis:
+        condition: service_healthy
+      articles-minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_ENDPOINT=articles-minio:9000
+      - MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - MINIO_BUCKET=articles
+      - MINIO_PUBLIC_ENDPOINT=http://localhost:9092
+    develop:
+      watch:
+        - path: ./services/article-fetcher
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/article-fetcher/pyproject.toml
+          action: rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   app-db-data:
   redis-data:
+  articles-minio-data:
