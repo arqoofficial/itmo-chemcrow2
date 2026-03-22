@@ -15,4 +15,4 @@ def test_settings_defaults():
     assert settings.ARTICLES_MINIO_INPUT_BUCKET == "articles"
     assert settings.ARTICLES_MINIO_OUTPUT_BUCKET == "parsed-chunks"
     assert settings.REDIS_JOB_TTL == 86400
-    assert settings.AI_AGENT_INGEST_URL == "http://ai-agent:8000"
+    assert settings.AI_AGENT_INGEST_URL == "http://ai-agent:8100"

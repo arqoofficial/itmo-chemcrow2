@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     ARTICLES_MINIO_SECURE: bool = False
 
     # ai-agent ingest webhook
-    AI_AGENT_INGEST_URL: str = "http://ai-agent:8000"
+    AI_AGENT_INGEST_URL: str = "http://ai-agent:8100"
 
     # LLM (OpenAI-compatible)
     OPENAI_API_KEY: str | None = None

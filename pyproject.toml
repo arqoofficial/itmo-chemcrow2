@@ -41,6 +41,9 @@ members = [
     "services/pdf-parser",
 ]
 
+[tool.uv.sources]
+en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl" }
+
 [dependency-groups]
 dev = [
     "pytest>=7.4.3,<8.0.0",
@@ -50,6 +53,7 @@ dev = [
     "prek>=0.2.24,<1.0.0",
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",
+    "en-core-web-sm",
 ]
 azf-setup = [
     "requests>=2.31.0,<3.0.0",
