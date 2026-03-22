@@ -72,9 +72,9 @@ def get_all_tools() -> list[BaseTool]:
 
     # RAG tool (local corpus + hybrid retrieval)
     try:
-        from app.tools.rag import literature_citation_search, rag_search
+        from app.tools.rag import rag_search
 
-        tools.extend([rag_search, literature_citation_search])
+        tools.append(rag_search)
     except ImportError:
         logger.exception("Failed to load RAG tool")
 

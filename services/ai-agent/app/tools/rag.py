@@ -22,7 +22,6 @@ from langchain.tools import tool
 logger = logging.getLogger(__name__)
 
 _TOKEN_RE = re.compile(r"[A-Za-zА-Яа-яЁё0-9_]+")
-_HEADING_RE = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*$", re.MULTILINE)
 _RETRIEVER_REGISTRY: dict[str, BM25DenseRankFusionRetriever] = {}
 _REGISTRY_LOCK = Lock()
 _CANONICAL_CHUNKS_SUFFIX = "_chunks"
@@ -720,32 +719,7 @@ def _format_retrieval_results(results: list[RetrievalResult]) -> str:
     return "\n".join(lines)
 
 
-def _extract_title_from_text(text: str, fallback_doc_id: str) -> str:
-    match = _HEADING_RE.search(text)
-    if match:
-        return match.group(1).strip()
-    return fallback_doc_id
-
-
-def _format_citation_results(results: list[RetrievalResult]) -> str:
-    if not results:
-        return "No citation candidates found in local literature corpus."
-
-    lines = ["Citation candidates from local literature corpus:"]
-    for idx, hit in enumerate(results, start=1):
-        snippet = " ".join(hit.text.strip().split())
-        if len(snippet) > 320:
-            snippet = snippet[:320].rstrip() + "..."
-        title = _extract_title_from_text(hit.text, hit.doc_id)
-        source = hit.metadata.get("source") or f"(unknown source for {hit.doc_id})"
-        lines.append(
-            f"{idx}. doc_id={hit.doc_id}; title={title}; source={source}; "
-            f"score={hit.score:.4f}; excerpt={snippet}"
-        )
-    return "\n".join(lines)
-
-
-def _run_rag_query(query: str, top_k: int, *, citation_mode: bool) -> str:
+def _run_rag_query(query: str, top_k: int) -> str:
     from app.config import settings
 
     if not settings.RAG_ENABLED:
@@ -757,8 +731,6 @@ def _run_rag_query(query: str, top_k: int, *, citation_mode: bool) -> str:
     try:
         retriever = _get_retriever_for_scope(settings.RAG_DEFAULT_SOURCE)
         results = retriever.retrieve(query.strip(), top_k=safe_top_k)
-        if citation_mode:
-            return _format_citation_results(results)
         return _format_retrieval_results(results)
     except FileNotFoundError as exc:
         logger.exception("RAG data is missing")
@@ -786,18 +758,4 @@ def rag_search(query: str, top_k: int = 4) -> str:
         query: Natural-language chemistry question or retrieval query.
         top_k: Number of documents to return (default 4, max 10).
     """
-    return _run_rag_query(query=query, top_k=top_k, citation_mode=False)
-
-
-@tool
-def literature_citation_search(topic: str, top_k: int = 5) -> str:
-    """Find citation candidates from the local curated chemistry literature corpus.
-
-    Use this tool when the user asks for references/citations from literature on a
-    specific chemistry topic.
-
-    Args:
-        topic: Topic or question to search in local literature corpus.
-        top_k: Number of citation candidates to return (default 5, max 10).
-    """
-    return _run_rag_query(query=topic, top_k=top_k, citation_mode=True)
+    return _run_rag_query(query=query, top_k=top_k)
