@@ -135,6 +135,7 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      - ARTICLE_FETCHER_URL=http://article-fetcher:8200
 
   ai-agent:
     build:

@@ -78,6 +78,8 @@ class Settings(BaseSettings):
     RETROSYNTHESIS_URL: str = "http://localhost:8052"
     RETROSYNTHESIS_TIMEOUT: float = 150.0
 
+    ARTICLE_FETCHER_URL: str = "http://article-fetcher:8200"
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587
