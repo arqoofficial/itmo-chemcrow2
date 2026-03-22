@@ -6,12 +6,14 @@ import importlib
 import json
 import math
 import os
+import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 from langchain_core.messages import HumanMessage
@@ -186,6 +188,120 @@ def _latency_p95(latencies: list[int]) -> float | None:
     rank = math.ceil(0.95 * len(sorted_values))
     rank_index = min(max(rank - 1, 0), len(sorted_values) - 1)
     return float(sorted_values[rank_index])
+
+
+def _extract_bind(agent_url: str) -> tuple[str, int, str] | None:
+    parsed = urlparse(agent_url)
+    host = parsed.hostname
+    port = parsed.port
+    scheme = parsed.scheme or "http"
+    if not host or not port:
+        return None
+    return host, port, scheme
+
+
+def _is_local_host(host: str) -> bool:
+    return host in {"127.0.0.1", "localhost", "0.0.0.0"}
+
+
+def _health_url_from_agent_url(agent_url: str) -> str:
+    bind = _extract_bind(agent_url)
+    if not bind:
+        return ""
+    host, port, scheme = bind
+    return f"{scheme}://{host}:{port}/health"
+
+
+async def _wait_for_health(health_url: str, timeout_seconds: float) -> bool:
+    if not health_url:
+        return False
+
+    deadline = time.perf_counter() + max(timeout_seconds, 0.1)
+    timeout = httpx.Timeout(2.0, connect=2.0)
+
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        while time.perf_counter() < deadline:
+            try:
+                response = await client.get(health_url)
+                if response.status_code == 200:
+                    return True
+            except httpx.HTTPError:
+                pass
+            await asyncio.sleep(0.5)
+
+    return False
+
+
+def _start_local_agent_process(host: str, port: int) -> subprocess.Popen[Any] | None:
+    cmd = [
+        "uv",
+        "run",
+        "uvicorn",
+        "app.main:app",
+        "--host",
+        host,
+        "--port",
+        str(port),
+    ]
+
+    popen_kwargs: dict[str, Any] = {
+        "cwd": str(PROJECT_ROOT),
+        "stdout": subprocess.DEVNULL,
+        "stderr": subprocess.DEVNULL,
+        "stdin": subprocess.DEVNULL,
+    }
+
+    if os.name == "nt":
+        popen_kwargs["creationflags"] = subprocess.CREATE_NEW_PROCESS_GROUP
+
+    try:
+        return subprocess.Popen(cmd, **popen_kwargs)
+    except Exception:
+        return None
+
+
+def _terminate_process(proc: subprocess.Popen[Any]) -> None:
+    if proc.poll() is not None:
+        return
+    try:
+        proc.terminate()
+        proc.wait(timeout=5)
+    except Exception:
+        try:
+            proc.kill()
+        except Exception:
+            pass
+
+
+async def _ensure_local_agent_available(agent_url: str, startup_wait_seconds: float) -> subprocess.Popen[Any] | None:
+    bind = _extract_bind(agent_url)
+    if not bind:
+        return None
+
+    host, port, _scheme = bind
+    if not _is_local_host(host):
+        return None
+
+    health_url = _health_url_from_agent_url(agent_url)
+    if await _wait_for_health(health_url, timeout_seconds=1.0):
+        return None
+
+    proc = _start_local_agent_process(host=host, port=port)
+    if proc is None:
+        raise RuntimeError(
+            "Failed to auto-start ai-agent process. Start it manually with: "
+            f"{sys.executable} -m uvicorn app.main:app --host {host} --port {port}"
+        )
+
+    if await _wait_for_health(health_url, timeout_seconds=startup_wait_seconds):
+        print(f"Auto-started local ai-agent at {health_url}")
+        return proc
+
+    _terminate_process(proc)
+    raise RuntimeError(
+        "Auto-started ai-agent did not become healthy in time. "
+        f"Tried health URL: {health_url}"
+    )
 
 
 def _instantiate_ragas_metrics(metric_names: list[str], judge_llm: Any) -> list[Any]:
@@ -413,6 +529,17 @@ async def main() -> None:
         help="Timeout for multi-agent HTTP calls.",
     )
     parser.add_argument(
+        "--no-auto-start-agent",
+        action="store_true",
+        help="Disable automatic startup of local ai-agent when --agent-url points to localhost.",
+    )
+    parser.add_argument(
+        "--agent-startup-wait-seconds",
+        type=float,
+        default=25.0,
+        help="How long to wait for a local auto-started ai-agent to pass /health.",
+    )
+    parser.add_argument(
         "--raw-output",
         type=Path,
         default=Path(settings.RAG_DATA_DIR) / "benchmarks" / "pipeline_eval_raw.json",
@@ -444,102 +571,124 @@ async def main() -> None:
     args = parser.parse_args()
 
     judge_provider = args.judge_provider or args.provider
-    if args.judge_only:
-        if not args.raw_output.exists():
-            raise FileNotFoundError(f"--judge-only requested but raw output not found: {args.raw_output}")
-        raw_payload = json.loads(args.raw_output.read_text(encoding="utf-8"))
-        rows = _rows_from_raw_payload(raw_payload)
-    else:
-        samples = _load_eval_set(args.eval_set, max_questions=args.max_questions)
-        run_timestamp = datetime.now(UTC).isoformat()
+    question_count = 0
+    auto_started_agent_proc: subprocess.Popen[Any] | None = None
 
-        llm = get_llm(args.provider)
-        rows = []
-
-        async with httpx.AsyncClient(timeout=args.timeout_seconds) as client:
-            for idx, sample in enumerate(samples, start=1):
-                ma_answer, ma_latency, ma_error = await _run_multi_agent_answer(
-                    client=client,
-                    chat_url=args.agent_url,
-                    question=sample.user_question,
-                    provider=args.provider,
+    try:
+        if args.judge_only:
+            if not args.raw_output.exists():
+                raise FileNotFoundError(f"--judge-only requested but raw output not found: {args.raw_output}")
+            raw_payload = json.loads(args.raw_output.read_text(encoding="utf-8"))
+            rows = _rows_from_raw_payload(raw_payload)
+            question_count = len({row.question_id for row in rows})
+        else:
+            if not args.no_auto_start_agent:
+                auto_started_agent_proc = await _ensure_local_agent_available(
+                    agent_url=args.agent_url,
+                    startup_wait_seconds=args.agent_startup_wait_seconds,
                 )
-                rows.append(
-                    PipelineRunRow(
-                        question_id=sample.question_id,
-                        user_question=sample.user_question,
-                        pipeline_type="multi_agent",
-                        answer=ma_answer,
-                        reference_answer=sample.reference_answer,
-                        retrieved_contexts=[],
-                        latency_ms=ma_latency,
-                        error=ma_error,
-                        run_timestamp=run_timestamp,
+
+            samples = _load_eval_set(args.eval_set, max_questions=args.max_questions)
+            question_count = len(samples)
+            run_timestamp = datetime.now(UTC).isoformat()
+
+            llm = get_llm(args.provider)
+            rows = []
+
+            async with httpx.AsyncClient(timeout=args.timeout_seconds) as client:
+                for idx, sample in enumerate(samples, start=1):
+                    ma_answer, ma_latency, ma_error = await _run_multi_agent_answer(
+                        client=client,
+                        chat_url=args.agent_url,
+                        question=sample.user_question,
+                        provider=args.provider,
                     )
-                )
-
-                direct_answer, direct_latency, direct_error = await _run_direct_llm_answer(
-                    question=sample.user_question,
-                    llm=llm,
-                )
-                rows.append(
-                    PipelineRunRow(
-                        question_id=sample.question_id,
-                        user_question=sample.user_question,
-                        pipeline_type="direct_llm",
-                        answer=direct_answer,
-                        reference_answer=sample.reference_answer,
-                        retrieved_contexts=[],
-                        latency_ms=direct_latency,
-                        error=direct_error,
-                        run_timestamp=run_timestamp,
+                    rows.append(
+                        PipelineRunRow(
+                            question_id=sample.question_id,
+                            user_question=sample.user_question,
+                            pipeline_type="multi_agent",
+                            answer=ma_answer,
+                            reference_answer=sample.reference_answer,
+                            retrieved_contexts=[],
+                            latency_ms=ma_latency,
+                            error=ma_error,
+                            run_timestamp=run_timestamp,
+                        )
                     )
-                )
 
-                print(f"[{idx}/{len(samples)}] completed question_id={sample.question_id}")
+                    direct_answer, direct_latency, direct_error = await _run_direct_llm_answer(
+                        question=sample.user_question,
+                        llm=llm,
+                    )
+                    rows.append(
+                        PipelineRunRow(
+                            question_id=sample.question_id,
+                            user_question=sample.user_question,
+                            pipeline_type="direct_llm",
+                            answer=direct_answer,
+                            reference_answer=sample.reference_answer,
+                            retrieved_contexts=[],
+                            latency_ms=direct_latency,
+                            error=direct_error,
+                            run_timestamp=run_timestamp,
+                        )
+                    )
 
-        raw_payload = {
-            "meta": {
-                "run_timestamp": run_timestamp,
-                "agent_url": args.agent_url,
-                "provider": args.provider or settings.DEFAULT_LLM_PROVIDER,
-                "judge_provider": judge_provider or settings.DEFAULT_LLM_PROVIDER,
-                "eval_set": str(args.eval_set),
-                "question_count": len(samples),
-            },
-            "rows": [asdict(row) for row in rows],
+                    print(f"[{idx}/{len(samples)}] completed question_id={sample.question_id}")
+
+            raw_payload = {
+                "meta": {
+                    "run_timestamp": run_timestamp,
+                    "agent_url": args.agent_url,
+                    "provider": args.provider or settings.DEFAULT_LLM_PROVIDER,
+                    "judge_provider": judge_provider or settings.DEFAULT_LLM_PROVIDER,
+                    "eval_set": str(args.eval_set),
+                    "question_count": question_count,
+                },
+                "rows": [asdict(row) for row in rows],
+            }
+
+            args.raw_output.parent.mkdir(parents=True, exist_ok=True)
+            args.raw_output.write_text(json.dumps(raw_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+        # Run RAGAS in a thread so it can create its own event loop without
+        # conflicting with the asyncio.run() that drives this function.
+        try:
+            ragas_payload = await asyncio.to_thread(
+                _evaluate_with_ragas,
+                rows,
+                judge_provider,
+                args.judge_max_tokens,
+                args.judge_temperature,
+            )
+        except asyncio.CancelledError as exc:
+            ragas_payload = {
+                "status": "error",
+                "reason": f"RAGAS evaluation cancelled: {exc}",
+                "hint": "Raw outputs are valid. Re-run with --judge-only to retry judge scoring.",
+            }
+        summary_payload = {
+            "meta": raw_payload["meta"],
+            "raw_summary": _summarize_raw(rows),
+            "ragas": ragas_payload,
         }
 
-        args.raw_output.parent.mkdir(parents=True, exist_ok=True)
-        args.raw_output.write_text(json.dumps(raw_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        if isinstance(summary_payload["meta"], dict):
+            summary_payload["meta"]["judge_only"] = bool(args.judge_only)
+            summary_payload["meta"]["judge_max_tokens"] = args.judge_max_tokens
+            summary_payload["meta"]["judge_temperature"] = args.judge_temperature
 
-    # Run RAGAS in a thread so it can create its own event loop without
-    # conflicting with the asyncio.run() that drives this function.
-    ragas_payload = await asyncio.to_thread(
-        _evaluate_with_ragas,
-        rows,
-        judge_provider,
-        args.judge_max_tokens,
-        args.judge_temperature,
-    )
-    summary_payload = {
-        "meta": raw_payload["meta"],
-        "raw_summary": _summarize_raw(rows),
-        "ragas": ragas_payload,
-    }
+        args.summary_output.parent.mkdir(parents=True, exist_ok=True)
+        args.summary_output.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    if isinstance(summary_payload["meta"], dict):
-        summary_payload["meta"]["judge_only"] = bool(args.judge_only)
-        summary_payload["meta"]["judge_max_tokens"] = args.judge_max_tokens
-        summary_payload["meta"]["judge_temperature"] = args.judge_temperature
-
-    args.summary_output.parent.mkdir(parents=True, exist_ok=True)
-    args.summary_output.write_text(json.dumps(summary_payload, ensure_ascii=False, indent=2), encoding="utf-8")
-
-    print("Pipeline comparison complete")
-    print(f"Questions: {len(samples)}")
-    print(f"Raw output: {args.raw_output}")
-    print(f"Summary output: {args.summary_output}")
+        print("Pipeline comparison complete")
+        print(f"Questions: {question_count}")
+        print(f"Raw output: {args.raw_output}")
+        print(f"Summary output: {args.summary_output}")
+    finally:
+        if auto_started_agent_proc is not None:
+            _terminate_process(auto_started_agent_proc)
 
 
 if __name__ == "__main__":
