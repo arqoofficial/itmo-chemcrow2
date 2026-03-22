@@ -8,6 +8,8 @@ WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl build-essential \
+    libxcb1 libxrender1 libxext6 libx11-6 libglib2.0-0 libgl1 \
+    poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 COPY services/pdf-parser/pyproject.toml .
