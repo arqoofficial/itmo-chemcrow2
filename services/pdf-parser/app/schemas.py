@@ -1,5 +1,5 @@
 from enum import Enum
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 def _doi_to_doc_key(doi: str) -> str:
@@ -34,7 +34,7 @@ class JobState(BaseModel):
     conversation_id: str
     error: str | None = None
     # Maps artifact name to MinIO object key
-    artifacts: dict[str, str] = {}
+    artifacts: dict[str, str] = Field(default_factory=dict)
     created_at: float | None = None
     updated_at: float | None = None
 
@@ -51,7 +51,7 @@ class JobStatusResponse(BaseModel):
     doc_key: str
     conversation_id: str
     error: str | None = None
-    artifacts: dict[str, str] = {}
+    artifacts: dict[str, str] = Field(default_factory=dict)
 
     @classmethod
     def from_job(cls, job: "JobState") -> "JobStatusResponse":

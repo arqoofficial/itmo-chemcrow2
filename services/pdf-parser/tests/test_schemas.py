@@ -1,4 +1,6 @@
-from app.schemas import JobStatus, JobState, IngestWebhookPayload
+import time
+
+from app.schemas import JobStatus, JobState, IngestWebhookPayload, JobStatusResponse
 
 
 def test_job_status_values():
@@ -33,3 +35,22 @@ def test_ingest_webhook_payload():
         conversation_id="conv-001",
     )
     assert payload.doc_key == "10_1038_s41586-021-03819-2"
+
+
+def test_job_status_response_from_job():
+    job = JobState(
+        job_id="xyz",
+        status=JobStatus.COMPLETED,
+        doi="10.1234/test",
+        doc_key="10_1234_test",
+        conversation_id="conv-42",
+        artifacts={"chunk_000": "parsed-chunks/conv-42/10_1234_test/_chunks/chunk_000.md"},
+        created_at=time.time(),
+        updated_at=time.time(),
+    )
+    resp = JobStatusResponse.from_job(job)
+    assert resp.job_id == "xyz"
+    assert resp.status == JobStatus.COMPLETED
+    assert resp.conversation_id == "conv-42"
+    assert "chunk_000" in resp.artifacts
+    assert not hasattr(resp, "created_at")
