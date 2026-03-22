@@ -62,7 +62,7 @@ def _extract_dois(tool_output: str) -> list[str]:
     seen: set[str] = set()
     result: list[str] = []
     for match in re.finditer(r"DOI:\s*(\S+)", tool_output):
-        doi = match.group(1)
+        doi = match.group(1).rstrip(".,;)(")
         if doi != "N/A" and doi not in seen:
             seen.add(doi)
             result.append(doi)

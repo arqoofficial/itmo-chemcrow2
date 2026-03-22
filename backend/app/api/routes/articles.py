@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Path
 from pydantic import BaseModel
 
 from app.api.deps import CurrentUser
@@ -20,8 +20,8 @@ class ArticleJobResponse(BaseModel):
 
 @router.get("/jobs/{job_id}", response_model=ArticleJobResponse)
 async def get_article_job(
-    job_id: str,
-    current_user: CurrentUser,  # noqa: ARG001 — auth guard
+    job_id: str = Path(pattern=r"^[0-9a-f-]{36}$"),
+    current_user: CurrentUser = ...,  # noqa: ARG001 — auth guard
 ) -> ArticleJobResponse:
     """Proxy job status from the article-fetcher service."""
     async with httpx.AsyncClient(timeout=10.0) as client:

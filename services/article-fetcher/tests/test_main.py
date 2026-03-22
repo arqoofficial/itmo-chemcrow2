@@ -10,6 +10,7 @@ def mock_deps(mock_redis, mock_s3):
     with (
         patch("app.main.redis_client", mock_redis),
         patch("app.main.storage", mock_s3),
+        patch("app.main.fetch_article", return_value=b"%PDF"),
     ):
         yield mock_redis, mock_s3
 
