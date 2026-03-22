@@ -6,7 +6,7 @@ requires-python = ">=3.11,<4.0"
 dependencies = [
     "fastapi[standard]>=0.114.2,<1.0.0",
     "uvicorn[standard]>=0.30.0,<1.0.0",
-    "pydantic>=2.0",
+    "pydantic>=2.0,<3.0.0",
     "pydantic-settings>=2.2.0,<3.0.0",
     "redis>=5.0.0,<6.0.0",
     "minio>=7.2.0,<8.0.0",
@@ -38,4 +38,5 @@ build-backend = "hatchling.build"
 packages = ["app"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 asyncio_mode = "auto"

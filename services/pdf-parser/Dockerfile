@@ -1,3 +1,5 @@
+# Must be built with context = repo root: docker build -f services/pdf-parser/Dockerfile .
+# See compose.yml pdf-parser service (context: .)
 FROM python:3.11-slim
 
 COPY --from=ghcr.io/astral-sh/uv:0.9.26 /uv /uvx /bin/
