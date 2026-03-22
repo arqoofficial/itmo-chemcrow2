@@ -95,6 +95,7 @@ services:
       - AI_AGENT_URL=http://ai-agent:8100
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
       - ARTICLE_FETCHER_URL=http://article-fetcher:8200
+      - PDF_PARSER_URL=http://pdf-parser:8300
       - SMTP_HOST=mailcatcher
       - SMTP_PORT=1025
       - SMTP_TLS=false
@@ -137,6 +138,7 @@ services:
       - AI_AGENT_URL=http://ai-agent:8100
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
       - ARTICLE_FETCHER_URL=http://article-fetcher:8200
+      - PDF_PARSER_URL=http://pdf-parser:8300
 
   ai-agent:
     build:

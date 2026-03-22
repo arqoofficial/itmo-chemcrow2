@@ -71,14 +71,15 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
 
     AI_AGENT_URL: str = "http://localhost:8100"
-    AI_AGENT_TIMEOUT: float = 120.0
-    CHAT_TASK_SOFT_TIME_LIMIT: int = 120
-    CHAT_TASK_HARD_TIME_LIMIT: int = 150
+    AI_AGENT_TIMEOUT: float = 300.0
+    CHAT_TASK_SOFT_TIME_LIMIT: int = 360
+    CHAT_TASK_HARD_TIME_LIMIT: int = 400
 
     RETROSYNTHESIS_URL: str = "http://localhost:8052"
     RETROSYNTHESIS_TIMEOUT: float = 150.0
 
     ARTICLE_FETCHER_URL: str = "http://localhost:8200"
+    PDF_PARSER_URL: str = "http://localhost:8300"
 
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False

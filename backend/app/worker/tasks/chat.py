@@ -105,7 +105,7 @@ def _submit_article_jobs(
             with httpx.Client(timeout=10.0) as client:
                 resp = client.post(
                     f"{settings.ARTICLE_FETCHER_URL}/fetch",
-                    json={"doi": doi},
+                    json={"doi": doi, "conversation_id": conversation_id},
                 )
             if resp.status_code != 202:
                 logger.warning("article-fetcher returned %d for DOI %s", resp.status_code, doi)

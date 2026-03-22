@@ -49,6 +49,37 @@ async def get_article_job(
     return ArticleJobResponse(**resp.json())
 
 
+class ParseStatusResponse(BaseModel):
+    job_id: str
+    status: str
+    error: str | None = None
+
+
+@router.get("/jobs/{job_id}/parse-status", response_model=ParseStatusResponse)
+async def get_parse_status(
+    job_id: str = Path(pattern=r"^[0-9a-f-]{36}$"),
+    current_user: CurrentUser = ...,  # noqa: ARG001 — auth guard
+) -> ParseStatusResponse:
+    """Proxy parse job status from the pdf-parser service."""
+    async with httpx.AsyncClient(timeout=10.0) as client:
+        try:
+            resp = await client.get(f"{settings.PDF_PARSER_URL}/jobs/{job_id}")
+        except httpx.RequestError as exc:
+            raise HTTPException(status_code=503, detail=f"PDF parser unreachable: {exc}")
+
+    if resp.status_code == 404:
+        raise HTTPException(status_code=404, detail="Parse job not found")
+    if resp.status_code != 200:
+        raise HTTPException(status_code=502, detail="PDF parser error")
+
+    data = resp.json()
+    return ParseStatusResponse(
+        job_id=data["job_id"],
+        status=data["status"],
+        error=data.get("error"),
+    )
+
+
 @router.get("/conversations/{conversation_id}/jobs", response_model=list[ArticleJobInfo])
 async def get_conversation_article_jobs(
     conversation_id: uuid.UUID,
