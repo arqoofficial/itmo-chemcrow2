@@ -18,7 +18,7 @@ def fetch_article(doi: str) -> bytes:
 
     try:
         logger.info("Fetching DOI %s via sci-hub", doi)
-        scihub_download(doi, paper_type="doi", out=tmp_path)
+        scihub_download(doi, paper_type="doi", scihub_url="https://sci-hub.ru", out=tmp_path)
 
         size = os.path.getsize(tmp_path)
         if size == 0:
