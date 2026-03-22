@@ -6,13 +6,10 @@ from app.main import app
 
 @pytest.fixture
 async def client():
-    with patch("app.main.job_store", new=MagicMock()), \
-         patch("app.main.minio", new=MagicMock()):
-        with patch("app.main.make_minio_store", return_value=MagicMock()), \
-             patch("app.main.Redis") as mock_redis_cls:
-            mock_redis_cls.from_url.return_value = AsyncMock()
-            async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
-                yield c
+    with patch("app.main.make_minio_store", return_value=MagicMock()), \
+         patch("redis.asyncio.Redis.from_url", return_value=AsyncMock(spec=["aclose"])):
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+            yield c
 
 
 async def test_health(client):
@@ -65,25 +62,19 @@ async def test_get_job_not_found(client):
 
 
 async def test_ingest_webhook_fired_on_completion(client):
-    """After successful parsing, POST /rag/ingest is called on ai-agent."""
-    from app.schemas import JobState, JobStatus
-    import time
-
-    mock_job = JobState(
-        job_id="j-completed",
-        status=JobStatus.COMPLETED,
-        doi="10.1234/test",
-        doc_key="10_1234_test",
-        conversation_id="conv-fire",
-        created_at=time.time(),
-        updated_at=time.time(),
-        artifacts={"chunk_000": "parsed-chunks/conv-fire/10_1234_test/_chunks/chunk_000.md"},
-    )
+    """After successful _run_parser, _notify_ai_agent is called with correct args."""
+    from app.main import _run_parser
 
     with patch("app.main.job_store") as mock_store, \
+         patch("app.main.minio") as mock_minio, \
+         patch("app.main.process_pdf_to_minio", new_callable=AsyncMock,
+               return_value={"chunk_000": "parsed-chunks/conv-fire/10_1234_test/_chunks/chunk_000.md"}), \
+         patch("app.main._build_llm", return_value=MagicMock()), \
+         patch("app.main._build_langfuse_handler", return_value=None), \
          patch("app.main._notify_ai_agent", new_callable=AsyncMock) as mock_notify:
-        mock_store.get = AsyncMock(return_value=mock_job)
         mock_store.update = AsyncMock()
-        # Simulate _run_parser calling _notify_ai_agent directly
-        await mock_notify("conv-fire", "10_1234_test")
+        mock_minio.download_pdf = MagicMock(return_value=b"%PDF fake")
+
+        await _run_parser("j-001", "j-001.pdf", "conv-fire", "10_1234_test")
+
         mock_notify.assert_called_once_with("conv-fire", "10_1234_test")

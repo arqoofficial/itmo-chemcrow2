@@ -68,7 +68,10 @@ def _build_langfuse_handler():
             secret_key=settings.LANGFUSE_SECRET_KEY,
             host=settings.LANGFUSE_BASE_URL,
         )
-        return CallbackHandler() if lf.auth_check() else None
+        if not lf.auth_check():
+            log.warning("Langfuse auth_check failed — tracing disabled")
+            return None
+        return CallbackHandler()
     except Exception:
         log.warning("Langfuse unavailable — tracing disabled")
         return None
@@ -108,7 +111,7 @@ async def _notify_ai_agent(conversation_id: str, doc_key: str) -> None:
 async def _run_parser(job_id: str, object_key: str, conversation_id: str, doc_key: str) -> None:
     await job_store.update(job_id, status=JobStatus.RUNNING)
     try:
-        pdf_bytes = minio.download_pdf(object_key)
+        pdf_bytes = await asyncio.to_thread(minio.download_pdf, object_key)
         llm = _build_llm()
         langfuse_handler = _build_langfuse_handler()
         artifacts = await process_pdf_to_minio(
