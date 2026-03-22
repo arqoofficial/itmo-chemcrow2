@@ -13,6 +13,7 @@ from app.config import settings
 from app.guard import scan_input, scan_output
 from app.hazard_checker import find_hazards
 from app.schemas import ChatRequest, ChatResponse
+from app.tracing import check_langfuse_auth, get_langfuse_config
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,7 @@ async def lifespan(app: FastAPI):
     import asyncio
     logger.info("AI Agent service starting (env=%s)", settings.ENVIRONMENT)
     asyncio.create_task(_warmup_guard())
+    check_langfuse_auth()
     yield
     logger.info("AI Agent service shutting down")
 
@@ -56,7 +58,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     import asyncio
 
-    messages_raw = [m.model_dump() for m in request.messages]
+    langchain_messages = convert_messages([m.model_dump() for m in request.messages])
     user_text = ""
     for m in reversed(langchain_messages):
         if hasattr(m, "type") and m.type == "human":
@@ -68,7 +70,11 @@ async def chat(request: ChatRequest) -> ChatResponse:
         return ChatResponse(content="Недопустимый запрос.")
 
     agent = get_agent(request.provider)
-    result = await agent.ainvoke({"messages": langchain_messages})
+    lf_config = get_langfuse_config()
+    result = await agent.ainvoke({"messages": langchain_messages}, config=lf_config)
+    for cb in lf_config.get("callbacks", []):
+        if hasattr(cb, "flush"):
+            cb.flush()
 
     final_messages = result["messages"]
     last_ai = None
@@ -101,6 +107,8 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
     agent = get_agent(request.provider)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
 
+    lf_config = get_langfuse_config()
+
     async def event_generator():
         try:
             # ── Input scan ────────────────────────────────────────────────
@@ -124,6 +132,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
 
             async for event in agent.astream_events(
                 {"messages": langchain_messages},
+                config=lf_config,
                 version="v2",
             ):
                 kind = event.get("event", "")
@@ -201,6 +210,10 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 "event": "error",
                 "data": json.dumps({"error": str(exc)}),
             }
+        finally:
+            for cb in lf_config.get("callbacks", []):
+                if hasattr(cb, "flush"):
+                    cb.flush()
 
     return EventSourceResponse(
         event_generator(),

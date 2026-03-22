@@ -11,6 +11,7 @@ def get_anthropic_model() -> ChatAnthropic:
         "api_key": settings.ANTHROPIC_API_KEY,
         "temperature": 0,
         "streaming": True,
+        "max_retries": 3,
     }
     if settings.ANTHROPIC_BASE_URL:
         kwargs["anthropic_api_url"] = settings.ANTHROPIC_BASE_URL

@@ -19,6 +19,7 @@ from langchain_core.messages import (
     SystemMessage,
     ToolMessage,
 )
+from langchain_core.runnables import RunnableConfig
 from langgraph.graph import END, START, StateGraph
 from typing_extensions import TypedDict
 
@@ -75,19 +76,19 @@ def _build_graph(llm: BaseChatModel) -> StateGraph:
     tools_by_name = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(tools)
 
-    def call_model(state: AgentState) -> dict[str, Any]:
+    def call_model(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
             messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
-        response = llm_with_tools.invoke(messages)
+        response = llm_with_tools.invoke(messages, config=config)
         return {"messages": [response]}
 
-    def call_tools(state: AgentState) -> dict[str, Any]:
+    def call_tools(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         last_message = state["messages"][-1]
         results = []
         for tool_call in last_message.tool_calls:
             tool = tools_by_name[tool_call["name"]]
-            observation = tool.invoke(tool_call["args"])
+            observation = tool.invoke(tool_call["args"], config=config)
             results.append(
                 ToolMessage(
                     content=str(observation),
