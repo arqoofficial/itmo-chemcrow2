@@ -155,3 +155,50 @@ def test_submit_article_jobs_handles_http_error_gracefully():
 
     assert result == []  # failed gracefully, no jobs returned
     r.rpush.assert_not_called()
+
+
+# ── _fetch_article_statuses ──────────────────────────────────────────────────
+
+def test_fetch_article_statuses_returns_jobs_with_status():
+    from app.worker.tasks.chat import _fetch_article_statuses
+
+    stored_jobs = [
+        {"doi": "10.1/a", "job_id": "uuid-1"},
+        {"doi": "10.1/b", "job_id": "uuid-2"},
+    ]
+    responses = [
+        {"job_id": "uuid-1", "status": "done", "url": "http://minio/uuid-1.pdf", "error": None},
+        {"job_id": "uuid-2", "status": "running", "url": None, "error": None},
+    ]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_get = MagicMock()
+        mock_get.side_effect = [
+            MagicMock(status_code=200, json=MagicMock(return_value=responses[0])),
+            MagicMock(status_code=200, json=MagicMock(return_value=responses[1])),
+        ]
+        mock_client.get = mock_get
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _fetch_article_statuses(stored_jobs)
+
+    assert result == [
+        {"doi": "10.1/a", "status": "done"},
+        {"doi": "10.1/b", "status": "running"},
+    ]
+
+
+def test_fetch_article_statuses_skips_failed_requests():
+    from app.worker.tasks.chat import _fetch_article_statuses
+
+    stored_jobs = [{"doi": "10.1/a", "job_id": "uuid-1"}]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.get.side_effect = Exception("timeout")
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _fetch_article_statuses(stored_jobs)
+
+    assert result == []  # failed requests are skipped

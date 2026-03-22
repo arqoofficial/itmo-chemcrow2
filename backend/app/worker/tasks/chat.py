@@ -122,6 +122,22 @@ def _submit_article_jobs(
     return results
 
 
+def _fetch_article_statuses(stored_jobs: list[dict]) -> list[dict]:
+    """Query article-fetcher for current status of each stored job. Skips on error."""
+    results: list[dict] = []
+    for job in stored_jobs:
+        try:
+            with httpx.Client(timeout=5.0) as client:
+                resp = client.get(f"{settings.ARTICLE_FETCHER_URL}/jobs/{job['job_id']}")
+            if resp.status_code == 200:
+                results.append({"doi": job["doi"], "status": resp.json()["status"]})
+            else:
+                logger.warning("article-fetcher returned %d for job %s", resp.status_code, job["job_id"])
+        except Exception:
+            logger.warning("Failed to fetch status for job %s", job.get("job_id"), exc_info=True)
+    return results
+
+
 def _process_streaming(
     conversation_id: str,
     messages_payload: list[dict],
@@ -263,6 +279,14 @@ def process_chat_message(
                 {"role": msg.role, "content": msg.content}
                 for msg in messages_db
             ]
+
+        # Inject article download status context
+        stored_jobs = _get_conversation_article_jobs(r, conversation_id)
+        if stored_jobs:
+            statuses = _fetch_article_statuses(stored_jobs)
+            status_block = _build_article_status_block(statuses)
+            if status_block:
+                messages_payload = [{"role": "user", "content": status_block}] + messages_payload
 
         try:
             assistant_content, tool_calls_raw = _process_streaming(
