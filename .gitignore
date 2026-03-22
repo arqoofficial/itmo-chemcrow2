@@ -1,3 +1,5 @@
+services/ai-agent/app/data
+
 .DS_Store
 data/*
 !data/*.md
