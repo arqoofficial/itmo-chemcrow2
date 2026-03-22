@@ -2,7 +2,7 @@
 data/*
 !data/*.md
 __pycache__
-
+services/ai-agent/app/data
 
 # fatsapi-fullstack
 .venv
