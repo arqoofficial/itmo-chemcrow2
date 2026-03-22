@@ -262,9 +262,9 @@ services:
       CLICKHOUSE_PASSWORD: ${LANGFUSE_CLICKHOUSE_PASSWORD:-clickhouse}
     volumes:
       - langfuse-clickhouse-data:/var/lib/clickhouse
-      - langfuse-clickhouse-logs:/var/log/clickhouse-server
       - ./deploy/langfuse-clickhouse/macros.xml:/etc/clickhouse-server/config.d/langfuse-macros.xml:ro
       - ./deploy/langfuse-clickhouse/zookeeper.xml:/etc/clickhouse-server/config.d/langfuse-zookeeper.xml:ro
+      - ./deploy/langfuse-clickhouse/logger-docker.xml:/etc/clickhouse-server/config.d/logger-docker.xml:ro
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8123/ping"]
       interval: 5s
@@ -435,5 +435,4 @@ volumes:
   langfuse-zookeeper-data:
   langfuse-zookeeper-datalog:
   langfuse-clickhouse-data:
-  langfuse-clickhouse-logs:
   langfuse-minio-data:

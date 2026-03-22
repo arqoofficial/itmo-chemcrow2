@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<clickhouse>
+  <!--
+    File logs under /var/log/clickhouse-server can fail on some hosts (permissions,
+    full disk, NFS/Ceph rename during Poco rotation). Docker collects stdout/stderr.
+  -->
+  <logger>
+    <level>information</level>
+    <log>/proc/self/fd/1</log>
+    <errorlog>/proc/self/fd/2</errorlog>
+    <console>false</console>
+  </logger>
+</clickhouse>
