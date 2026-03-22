@@ -14,9 +14,20 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 if settings.SENTRY_DSN and settings.ENVIRONMENT != "local":
     sentry_sdk.init(dsn=str(settings.SENTRY_DSN), enable_tracing=True)
 
+# В staging/production не отдаём схему и интерактивные docs (меньше поверхность для сканеров и DDoS).
+_openapi_url = (
+    f"{settings.API_V1_STR}/openapi.json"
+    if settings.ENVIRONMENT == "local"
+    else None
+)
+_docs_url = "/docs" if settings.ENVIRONMENT == "local" else None
+_redoc_url = "/redoc" if settings.ENVIRONMENT == "local" else None
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    openapi_url=_openapi_url,
+    docs_url=_docs_url,
+    redoc_url=_redoc_url,
     generate_unique_id_function=custom_generate_unique_id,
 )
 
