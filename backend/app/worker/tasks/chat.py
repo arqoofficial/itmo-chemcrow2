@@ -87,6 +87,41 @@ def _build_article_status_block(jobs: list[dict]) -> str:
     return "\n".join(lines)
 
 
+def _submit_article_jobs(
+    r: redis_lib.Redis,
+    conversation_id: str,
+    dois: list[str],
+) -> list[dict]:
+    """Submit new DOIs to article-fetcher, deduplicate against stored jobs, return new {doi, job_id} pairs."""
+    existing = _get_conversation_article_jobs(r, conversation_id)
+    existing_dois = {job["doi"] for job in existing}
+    new_dois = [d for d in dois if d not in existing_dois]
+
+    results: list[dict] = []
+    redis_key = f"conversation:{conversation_id}:article_jobs"
+
+    for doi in new_dois:
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.post(
+                    f"{settings.ARTICLE_FETCHER_URL}/fetch",
+                    json={"doi": doi},
+                )
+            if resp.status_code != 202:
+                logger.warning("article-fetcher returned %d for DOI %s", resp.status_code, doi)
+                continue
+            job_id = resp.json()["job_id"]
+            entry = {"doi": doi, "job_id": job_id}
+            r.rpush(redis_key, json.dumps(entry))
+            r.expire(redis_key, 7 * 24 * 3600)
+            results.append(entry)
+            logger.info("Queued article fetch job %s for DOI %s", job_id, doi)
+        except Exception:
+            logger.warning("Failed to submit article fetch for DOI %s", doi, exc_info=True)
+
+    return results
+
+
 def _process_streaming(
     conversation_id: str,
     messages_payload: list[dict],
@@ -140,11 +175,22 @@ def _process_streaming(
                     })
 
                 elif event_type == "tool_end":
+                    tool_name = data.get("tool", "")
+                    tool_output = data.get("output", "")
                     _publish(r, conversation_id, {
                         "event": "tool_end",
-                        "tool": data.get("tool", ""),
-                        "output": data.get("output", ""),
+                        "tool": tool_name,
+                        "output": tool_output,
                     })
+                    if tool_name == "literature_search":
+                        dois = _extract_dois(tool_output)
+                        if dois:
+                            new_jobs = _submit_article_jobs(r, conversation_id, dois)
+                            if new_jobs:
+                                _publish(r, conversation_id, {
+                                    "event": "article_downloads",
+                                    "jobs": new_jobs,
+                                })
 
                 elif event_type == "hazards":
                     _publish(r, conversation_id, {

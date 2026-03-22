@@ -93,3 +93,65 @@ def test_build_article_status_block_returns_empty_for_no_jobs():
     from app.worker.tasks.chat import _build_article_status_block
 
     assert _build_article_status_block([]) == ""
+
+
+# ── _submit_article_jobs ─────────────────────────────────────────────────────
+
+def test_submit_article_jobs_skips_already_stored_dois():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    # One DOI already stored
+    r.lrange.return_value = [json.dumps({"doi": "10.1/existing", "job_id": "old-uuid"})]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/existing", "10.1/new"])
+
+        # Only "10.1/new" should be POSTed
+        assert mock_client.post.call_count == 1
+        call_args = mock_client.post.call_args
+        assert call_args[1]["json"]["doi"] == "10.1/new"
+
+
+def test_submit_article_jobs_stores_new_jobs_in_redis():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = []  # nothing stored yet
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 202
+    mock_resp.json.return_value = {"job_id": "new-uuid", "status": "pending"}
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_resp
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/a"])
+
+    assert result == [{"doi": "10.1/a", "job_id": "new-uuid"}]
+    r.rpush.assert_called_once()
+    stored = json.loads(r.rpush.call_args[0][1])
+    assert stored == {"doi": "10.1/a", "job_id": "new-uuid"}
+    r.expire.assert_called_once_with("conversation:conv-1:article_jobs", 7 * 24 * 3600)
+
+
+def test_submit_article_jobs_handles_http_error_gracefully():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = []
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.post.side_effect = Exception("connection refused")
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/a"])
+
+    assert result == []  # failed gracefully, no jobs returned
+    r.rpush.assert_not_called()
