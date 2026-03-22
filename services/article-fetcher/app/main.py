@@ -31,6 +31,7 @@ JOB_TTL = 7 * 24 * 3600  # 7 days in seconds
 
 class FetchRequest(BaseModel):
     doi: str
+    conversation_id: Optional[str] = None
 
 
 class JobResponse(BaseModel):
@@ -56,13 +57,14 @@ def post_fetch(req: FetchRequest, background_tasks: BackgroundTasks):
     job = {
         "job_id": job_id,
         "doi": req.doi,
+        "conversation_id": req.conversation_id,
         "status": "pending",
         "object_key": None,
         "error": None,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     redis_client.set(f"job:{job_id}", json.dumps(job), ex=JOB_TTL)
-    background_tasks.add_task(_run_fetch, job_id, req.doi)
+    background_tasks.add_task(_run_fetch, job_id, req.doi, req.conversation_id)
     logger.info("Queued fetch job %s for DOI %s", job_id, req.doi)
     return JobResponse(job_id=job_id, status="pending")
 
@@ -95,7 +97,7 @@ def _update_job(job_id: str, **kwargs) -> None:
     redis_client.set(f"job:{job_id}", json.dumps(job), ex=JOB_TTL)
 
 
-def _run_fetch(job_id: str, doi: str) -> None:
+def _run_fetch(job_id: str, doi: str, conversation_id: Optional[str] = None) -> None:
     _update_job(job_id, status="running")
     try:
         pdf_bytes = fetch_article(doi)
@@ -104,15 +106,18 @@ def _run_fetch(job_id: str, doi: str) -> None:
         _update_job(job_id, status="done", object_key=object_key)
         logger.info("Job %s completed for DOI %s", job_id, doi)
         if settings.article_processor_webhook_url:
-            try:
-                requests.post(
-                    settings.article_processor_webhook_url,
-                    json={"job_id": job_id, "doi": doi, "object_key": object_key, "status": "done"},
-                    timeout=5,
-                )
-                logger.info("Webhook fired for job %s", job_id)
-            except Exception:
-                logger.warning("Webhook POST failed for job %s", job_id, exc_info=True)
+            if not conversation_id:
+                logger.warning("Job %s: skipping webhook — no conversation_id provided", job_id)
+            else:
+                try:
+                    requests.post(
+                        settings.article_processor_webhook_url,
+                        json={"job_id": job_id, "doi": doi, "object_key": object_key, "conversation_id": conversation_id},
+                        timeout=5,
+                    )
+                    logger.info("Webhook fired for job %s", job_id)
+                except Exception:
+                    logger.warning("Webhook POST failed for job %s", job_id, exc_info=True)
     except FetchError as e:
         _update_job(job_id, status="failed", error=str(e))
         logger.warning("Job %s failed for DOI %s: %s", job_id, doi, e)

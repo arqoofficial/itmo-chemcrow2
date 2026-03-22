@@ -6,7 +6,10 @@ import tempfile
 
 logger = logging.getLogger(__name__)
 
-_SCIHUB_URL = "https://sci-hub.ru"
+_SCIHUB_MIRRORS = [
+    "https://sci-hub.ru",
+    "https://sci-hub.ee",
+]
 _USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
 _CURL_BASE = ["curl", "-L", "-A", _USER_AGENT, "--max-time", "30", "-s", "-f"]
 
@@ -27,53 +30,77 @@ def _curl_get_bytes(url: str) -> bytes:
     return result.stdout
 
 
-def _extract_pdf_url(html: str) -> str:
-    """Extract PDF path from sci-hub page citation_pdf_url meta tag."""
+def _extract_pdf_url(html: str, mirror: str) -> str:
+    """Extract PDF URL from a sci-hub page.
+
+    Handles two known layouts:
+    - <meta name="citation_pdf_url" content="..."> (older layout)
+    - <iframe src="//...pdf..."> (newer layout, PDF served from CDN)
+    """
+    # Layout 1: citation_pdf_url meta tag (both attribute orders)
     match = re.search(r'<meta[^>]+name=["\']citation_pdf_url["\'][^>]+content=["\']([^"\']+)["\']', html)
     if not match:
-        # Also try reversed attribute order
         match = re.search(r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+name=["\']citation_pdf_url["\']', html)
+
+    # Layout 2: iframe whose src ends with .pdf (strip fragment); allow spaces around =
     if not match:
-        raise FetchError("Article not available on sci-hub")
-    pdf_path = match.group(1)
+        match = re.search(r'<iframe[^>]+src\s*=\s*["\']([^"\']+\.pdf[^"\']*)["\']', html, re.IGNORECASE)
+
+    if not match:
+        return None
+
+    pdf_path = match.group(1).split("#")[0]  # strip #view=FitH etc.
     if pdf_path.startswith("//"):
         return "https:" + pdf_path
     if pdf_path.startswith("/"):
-        return _SCIHUB_URL + pdf_path
+        return mirror + pdf_path
     return pdf_path
 
 
 def fetch_article(doi: str) -> bytes:
-    """Download a PDF for the given DOI from sci-hub. Returns raw PDF bytes."""
-    logger.info("Fetching DOI %s via sci-hub", doi)
+    """Download a PDF for the given DOI from sci-hub. Tries mirrors in order."""
+    last_error: Exception = FetchError("No mirrors configured")
 
-    try:
-        page_bytes = _curl_get_bytes("%s/%s" % (_SCIHUB_URL, doi))
-    except FetchError:
-        raise
-    except Exception as e:
-        logger.exception("Failed to fetch sci-hub page for DOI %s", doi)
-        raise FetchError("Failed to reach sci-hub") from e
+    for mirror in _SCIHUB_MIRRORS:
+        logger.info("Trying mirror %s for DOI %s", mirror, doi)
+        try:
+            page_bytes = _curl_get_bytes("%s/%s" % (mirror, doi))
+        except FetchError as e:
+            logger.warning("Mirror %s unreachable for DOI %s: %s", mirror, doi, e)
+            last_error = e
+            continue
+        except Exception as e:
+            logger.warning("Mirror %s failed for DOI %s", mirror, doi, exc_info=True)
+            last_error = FetchError("Failed to reach %s" % mirror)
+            continue
 
-    html = page_bytes.decode("utf-8", errors="replace")
+        html = page_bytes.decode("utf-8", errors="replace")
+        pdf_url = _extract_pdf_url(html, mirror)
 
-    try:
-        pdf_url = _extract_pdf_url(html)
-    except FetchError:
-        raise
+        if not pdf_url:
+            logger.warning("No PDF URL found on mirror %s for DOI %s", mirror, doi)
+            last_error = FetchError("Article not available on sci-hub")
+            continue
 
-    logger.info("Found PDF URL for DOI %s: %s", doi, pdf_url)
+        logger.info("Found PDF URL for DOI %s: %s", doi, pdf_url)
 
-    try:
-        pdf_bytes = _curl_get_bytes(pdf_url)
-    except FetchError:
-        raise
-    except Exception as e:
-        logger.exception("Failed to download PDF for DOI %s from %s", doi, pdf_url)
-        raise FetchError("Failed to download PDF from sci-hub") from e
+        try:
+            pdf_bytes = _curl_get_bytes(pdf_url)
+        except FetchError as e:
+            logger.warning("PDF download failed from %s for DOI %s: %s", pdf_url, doi, e)
+            last_error = e
+            continue
+        except Exception as e:
+            logger.warning("PDF download failed from %s for DOI %s", pdf_url, doi, exc_info=True)
+            last_error = FetchError("Failed to download PDF")
+            continue
 
-    if len(pdf_bytes) == 0 or not pdf_bytes.startswith(b"%PDF"):
-        raise FetchError("Downloaded file is not a valid PDF — article may not be available on sci-hub")
+        if len(pdf_bytes) == 0 or not pdf_bytes.startswith(b"%PDF"):
+            logger.warning("Invalid PDF from %s for DOI %s", mirror, doi)
+            last_error = FetchError("Downloaded file is not a valid PDF")
+            continue
 
-    logger.info("Fetched %d bytes for DOI %s", len(pdf_bytes), doi)
-    return pdf_bytes
+        logger.info("Fetched %d bytes for DOI %s via %s", len(pdf_bytes), doi, mirror)
+        return pdf_bytes
+
+    raise last_error

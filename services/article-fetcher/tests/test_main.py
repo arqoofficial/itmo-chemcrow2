@@ -106,7 +106,7 @@ def test_get_job_not_found(client, mock_deps):
 
 
 def test_run_fetch_fires_webhook_on_done(mock_redis, mock_s3):
-    """When ARTICLE_PROCESSOR_WEBHOOK_URL is set, it is POSTed on job done."""
+    """When ARTICLE_PROCESSOR_WEBHOOK_URL is set and conversation_id provided, webhook is POSTed."""
     mock_redis.get.return_value = '{"job_id":"j1","doi":"10.1/x","status":"running","object_key":null,"error":null,"created_at":"2026-01-01T00:00:00Z"}'
     mock_redis.set.return_value = True
 
@@ -122,11 +122,36 @@ def test_run_fetch_fires_webhook_on_done(mock_redis, mock_s3):
         mock_s3.presign_url.return_value = "http://minio/j1.pdf"
 
         from app.main import _run_fetch
-        _run_fetch("j1", "10.1/x")
+        _run_fetch("j1", "10.1/x", conversation_id="conv-abc")
 
         mock_requests.post.assert_called_once()
         call_kwargs = mock_requests.post.call_args
         assert call_kwargs[0][0] == "http://processor/ingest"
+        payload = call_kwargs[1]["json"]
+        assert payload["conversation_id"] == "conv-abc"
+        assert payload["doi"] == "10.1/x"
+        assert payload["job_id"] == "j1"
+
+
+def test_run_fetch_skips_webhook_when_no_conversation_id(mock_redis, mock_s3):
+    """When conversation_id is not provided, webhook is skipped even if URL is set."""
+    mock_redis.get.return_value = '{"job_id":"j1","doi":"10.1/x","status":"running","object_key":null,"error":null,"created_at":"2026-01-01T00:00:00Z"}'
+    mock_redis.set.return_value = True
+
+    with (
+        patch("app.main.redis_client", mock_redis),
+        patch("app.main.storage", mock_s3),
+        patch("app.main.fetch_article", return_value=b"%PDF"),
+        patch("app.main.settings") as mock_settings,
+        patch("app.main.requests") as mock_requests,
+    ):
+        mock_settings.article_processor_webhook_url = "http://processor/ingest"
+        mock_s3.upload_pdf.return_value = None
+
+        from app.main import _run_fetch
+        _run_fetch("j1", "10.1/x")  # no conversation_id
+
+        mock_requests.post.assert_not_called()
 
 
 def test_run_fetch_skips_webhook_when_url_empty(mock_redis, mock_s3):
