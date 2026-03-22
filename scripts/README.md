@@ -62,6 +62,9 @@ docker compose run --rm ai-agent python scripts/download_embedding_model.py
 # всё (~554 MiB), в data/retrocast
 bash scripts/get-data-project-procrustes.sh all
 
+# только стоки бенчмарков (~53 MiB), каталог 1-benchmarks/stocks
+bash scripts/get-data-project-procrustes.sh stocks
+
 # без скачивания — только список
 bash scripts/get-data-project-procrustes.sh all --dry-run
 
@@ -69,7 +72,7 @@ bash scripts/get-data-project-procrustes.sh all --dry-run
 bash scripts/get-data-project-procrustes.sh benchmarks --dir=/tmp/retrocast
 ```
 
-Цели: `all`, `benchmarks`, `definitions`, `stocks`, `raw`, `processed`, `scored`, `results`, а также `mkt-lin-500`, `mkt-cnv-160`, `ref-lin-600`, `ref-cnv-400`, `ref-lng-84`. Каталог по умолчанию переопределяется переменной `RETROCAST_DATA_DIR`.
+Цели: `all`, `benchmarks`, `definitions`, `stocks`, `raw`, `processed`, `scored`, `results`, а также `mkt-lin-500`, `mkt-cnv-160`, `ref-lin-600`, `ref-cnv-400`, `ref-lng-84`. Для **только стоков** используйте цель **`stocks`** (подмножество `benchmarks`; не путать с полным `benchmarks`, куда входят ещё `definitions`). Каталог по умолчанию переопределяется переменной `RETROCAST_DATA_DIR`.
 
 Полная документация: [docs/data-retrocast.md](../docs/data-retrocast.md).
 
