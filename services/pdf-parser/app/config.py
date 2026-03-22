@@ -1,7 +1,4 @@
 from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 class Settings(BaseSettings):
@@ -21,7 +18,7 @@ class Settings(BaseSettings):
     AI_AGENT_INGEST_URL: str = "http://ai-agent:8000"
 
     # LLM (OpenAI-compatible)
-    OPENAI_API_KEY: str = "sk-placeholder"
+    OPENAI_API_KEY: str | None = None
     OPENAI_BASE_URL: str | None = None
     OPENAI_MODEL: str = "openai/gpt-3.5-turbo"
 
