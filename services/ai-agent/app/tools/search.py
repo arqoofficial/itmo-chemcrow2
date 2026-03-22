@@ -90,8 +90,9 @@ def literature_search(query: str, max_results: int = 5) -> str:
             "fields": "title,authors,abstract,year,citationCount,url,externalIds",
         }
 
-        # Retry with exponential backoff — S2 has a global rate limit (~1 req/s shared)
-        max_retries = 4
+        # Retry with increasing waits — S2 free tier rate-limits aggressively
+        _retry_waits = [10, 20, 30, 60, 120]
+        max_retries = len(_retry_waits)
         for attempt in range(max_retries):
             r = requests.get(
                 f"{_S2_API_BASE}/paper/search",
@@ -101,7 +102,7 @@ def literature_search(query: str, max_results: int = 5) -> str:
             )
             if r.status_code != 429:
                 break
-            wait = 2 ** attempt
+            wait = _retry_waits[attempt]
             logger.warning("Semantic Scholar 429, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
             time.sleep(wait)
 

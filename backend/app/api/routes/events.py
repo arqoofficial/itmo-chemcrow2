@@ -174,6 +174,9 @@ async def conversation_events(
                 "SSE stream cancelled for conversation %s", conversation_id
             )
             raise
+        except Exception:
+            logger.exception("SSE pubsub loop crashed for conversation %s", conversation_id)
+            raise
         finally:
             await pubsub.unsubscribe(channel)
             await pubsub.aclose()

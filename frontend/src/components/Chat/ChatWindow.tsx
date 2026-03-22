@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Bot, Loader2 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { OpenAPI } from "@/client"
 import { ConversationsService } from "@/client/chatService"
 import type { ArticleDownloadJob, ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
 import { ArticleDownloadsCard } from "./ArticleDownloadsCard"
@@ -101,6 +102,28 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         limit: 200,
       }),
   })
+
+  const { data: persistedJobs } = useQuery({
+    queryKey: ["article-jobs", conversationId],
+    queryFn: async () => {
+      const token =
+        typeof OpenAPI.TOKEN === "function"
+          ? await OpenAPI.TOKEN({} as never)
+          : (OpenAPI.TOKEN ?? "")
+      const resp = await fetch(`/api/v1/articles/conversations/${conversationId}/jobs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!resp.ok) return [] as ArticleDownloadJob[]
+      return resp.json() as Promise<ArticleDownloadJob[]>
+    },
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (persistedJobs && persistedJobs.length > 0) {
+      setArticleDownloadBatches([persistedJobs])
+    }
+  }, [persistedJobs])
 
   useEffect(() => {
     setLocalMessages([])
