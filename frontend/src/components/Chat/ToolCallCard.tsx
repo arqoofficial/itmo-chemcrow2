@@ -11,18 +11,26 @@ const statusIcon = {
   failed: <XCircle className="h-3.5 w-3.5 text-destructive" />,
 } as const
 
+const RAG_TOOL_NAMES = new Set(["rag_search"])
+
 interface ToolCallCardProps {
   toolCall: ToolCallInfo
 }
 
 export function ToolCallCard({ toolCall }: ToolCallCardProps) {
   const status = toolCall.status ?? "completed"
+  const isRagTool = RAG_TOOL_NAMES.has(toolCall.name)
 
   return (
     <Card className="my-2 overflow-hidden border-muted bg-muted/30 p-0" data-testid="tool-call-card">
       <div className="flex items-center gap-2 border-b border-muted px-3 py-2">
         {statusIcon[status]}
         <span className="text-xs font-medium">{toolCall.name}</span>
+        {isRagTool && (
+          <Badge variant="secondary" className="text-[10px] bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20">
+            RAG
+          </Badge>
+        )}
         <Badge variant="outline" className="ml-auto text-[10px]">
           tool
         </Badge>

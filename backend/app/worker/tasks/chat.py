@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 import httpx
 import redis as redis_lib
@@ -54,6 +55,87 @@ def _iter_sse_events(response: httpx.Response):
 
     if data_buf:
         yield event_type, "\n".join(data_buf)
+
+
+def _extract_dois(tool_output: str) -> list[str]:
+    """Extract unique, non-N/A DOIs from a literature_search tool output string."""
+    seen: set[str] = set()
+    result: list[str] = []
+    for match in re.finditer(r"DOI:\s*(\S+)", tool_output):
+        doi = match.group(1).rstrip(".,;)(")
+        if doi != "N/A" and doi not in seen:
+            seen.add(doi)
+            result.append(doi)
+    return result
+
+
+def _get_conversation_article_jobs(r: redis_lib.Redis, conversation_id: str) -> list[dict]:
+    """Return all stored {doi, job_id} pairs for a conversation from Redis."""
+    raw = r.lrange(f"conversation:{conversation_id}:article_jobs", 0, -1)
+    return [json.loads(item) for item in raw]
+
+
+def _build_article_status_block(jobs: list[dict]) -> str:
+    """Format a status summary string for injection into the AI agent context."""
+    if not jobs:
+        return ""
+    label_map = {"done": "available", "failed": "failed"}
+    lines = ["[Article Download Status]"]
+    for job in jobs:
+        label = label_map.get(job.get("status", ""), "downloading")
+        lines.append(f"- {job['doi']}: {label}")
+    return "\n".join(lines)
+
+
+def _submit_article_jobs(
+    r: redis_lib.Redis,
+    conversation_id: str,
+    dois: list[str],
+) -> list[dict]:
+    """Submit new DOIs to article-fetcher, deduplicate against stored jobs, return new {doi, job_id} pairs."""
+    existing = _get_conversation_article_jobs(r, conversation_id)
+    existing_dois = {job["doi"] for job in existing}
+    new_dois = [d for d in dois if d not in existing_dois]
+
+    results: list[dict] = []
+    redis_key = f"conversation:{conversation_id}:article_jobs"
+
+    for doi in new_dois:
+        try:
+            with httpx.Client(timeout=10.0) as client:
+                resp = client.post(
+                    f"{settings.ARTICLE_FETCHER_URL}/fetch",
+                    json={"doi": doi, "conversation_id": conversation_id},
+                )
+            if resp.status_code != 202:
+                logger.warning("article-fetcher returned %d for DOI %s", resp.status_code, doi)
+                continue
+            job_id = resp.json()["job_id"]
+            entry = {"doi": doi, "job_id": job_id}
+            r.rpush(redis_key, json.dumps(entry))
+            r.expire(redis_key, 7 * 24 * 3600)
+            results.append(entry)
+            logger.info("Queued article fetch job %s for DOI %s", job_id, doi)
+        except Exception:
+            logger.warning("Failed to submit article fetch for DOI %s", doi, exc_info=True)
+
+    return results
+
+
+def _fetch_article_statuses(stored_jobs: list[dict]) -> list[dict]:
+    """Query article-fetcher for current status of each stored job. Skips on error."""
+    results: list[dict] = []
+    for job in stored_jobs:
+        try:
+            with httpx.Client(timeout=5.0) as client:
+                resp = client.get(f"{settings.ARTICLE_FETCHER_URL}/jobs/{job['job_id']}")
+            if resp.status_code == 200:
+                results.append({"doi": job["doi"], "status": resp.json()["status"]})
+            else:
+                logger.warning("article-fetcher returned %d for job %s", resp.status_code, job["job_id"])
+        except Exception:
+            logger.warning("Failed to fetch status for job %s", job.get("job_id"), exc_info=True)
+    return results
 
 
 def _process_streaming(
@@ -126,6 +208,15 @@ def _process_streaming(
                         "result": output,
                         "status": "completed",
                     })
+                    if name == "literature_search":
+                        dois = _extract_dois(output)
+                        if dois:
+                            new_jobs = _submit_article_jobs(r, conversation_id, dois)
+                            if new_jobs:
+                                _publish(r, conversation_id, {
+                                    "event": "article_downloads",
+                                    "jobs": new_jobs,
+                                })
 
                 elif event_type == "hazards":
                     _publish(r, conversation_id, {
@@ -198,6 +289,14 @@ def process_chat_message(
                 {"role": msg.role, "content": msg.content}
                 for msg in messages_db
             ]
+
+        # Inject article download status context
+        stored_jobs = _get_conversation_article_jobs(r, conversation_id)
+        if stored_jobs:
+            statuses = _fetch_article_statuses(stored_jobs)
+            status_block = _build_article_status_block(statuses)
+            if status_block:
+                messages_payload = [{"role": "user", "content": status_block}] + messages_payload
 
         try:
             assistant_content, tool_calls_raw = _process_streaming(

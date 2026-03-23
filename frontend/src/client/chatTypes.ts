@@ -62,6 +62,11 @@ export type HazardChemical = {
   description: string
 }
 
+export type ArticleDownloadJob = {
+  doi: string
+  job_id: string
+}
+
 export type SSEEvent =
   | { event: "connected"; data: { conversation_id: string } }
   | { event: "thinking"; data: Record<string, unknown> }
@@ -80,4 +85,5 @@ export type SSEEvent =
     }
   | { event: "tool_call"; data: ToolCallInfo }
   | { event: "hazards"; data: { chemicals: HazardChemical[] } }
+  | { event: "article_downloads"; data: { jobs: ArticleDownloadJob[] } }
   | { event: "error"; data: { detail: string } }

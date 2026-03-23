@@ -20,7 +20,11 @@ def get_all_tools() -> list[BaseTool]:
     # Core tools (RDKit, PubChem — always available)
     try:
         from app.tools.admet import smiles_to_admet
-        from app.tools.converters import query2cas_tool, query2smiles_tool, smiles2name_tool
+        from app.tools.converters import (
+            query2cas_tool,
+            query2smiles_tool,
+            smiles2name_tool,
+        )
         from app.tools.rdkit_tools import func_groups, mol_similarity, smiles2weight
         from app.tools.safety import (
             control_chem_check,
@@ -83,6 +87,14 @@ def get_all_tools() -> list[BaseTool]:
         tools.extend([reaction_predict, reaction_retrosynthesis])
     except ImportError:
         logger.exception("Failed to load reaction tools")
+
+    # RAG tool (local corpus + hybrid retrieval)
+    try:
+        from app.tools.rag import rag_search
+
+        tools.append(rag_search)
+    except ImportError:
+        logger.exception("Failed to load RAG tool")
 
     # Optional: molecule pricing (needs CHEMSPACE_API_KEY)
     if settings.CHEMSPACE_API_KEY:

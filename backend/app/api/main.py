@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.routes import (
+    articles,
     conversations,
     events,
     items,
@@ -22,6 +23,7 @@ api_router.include_router(tasks.router)
 api_router.include_router(retrosynthesis.router)
 api_router.include_router(conversations.router)
 api_router.include_router(events.router)
+api_router.include_router(articles.router)
 
 
 if settings.ENVIRONMENT == "local":

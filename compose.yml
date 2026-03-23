@@ -94,6 +94,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      - ARTICLE_FETCHER_URL=http://article-fetcher:8200
+      - PDF_PARSER_URL=http://pdf-parser:8300
       - SMTP_HOST=mailcatcher
       - SMTP_PORT=1025
       - SMTP_TLS=false
@@ -135,6 +137,8 @@ services:
       - REDIS_URL=redis://redis:6379/0
       - AI_AGENT_URL=http://ai-agent:8100
       - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      - ARTICLE_FETCHER_URL=http://article-fetcher:8200
+      - PDF_PARSER_URL=http://pdf-parser:8300
 
   ai-agent:
     build:
@@ -146,6 +150,9 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+    volumes:
+      # WORKDIR=/app, app code at /app/app/ → data-rag resolves to /app/app/data-rag
+      - ./services/ai-agent/app/data-rag:/app/app/data-rag
     develop:
       watch:
         - path: ./services/ai-agent
@@ -153,6 +160,7 @@ services:
           target: /app
           ignore:
             - .venv
+            - app/data-rag
         - path: ./services/ai-agent/pyproject.toml
           action: rebuild
     env_file:
@@ -165,6 +173,12 @@ services:
       # .env часто задаёт LANGFUSE_HOST=http://localhost:3000 для UI с хоста;
       # внутри контейнера localhost — не Langfuse, OTEL/SDK получают connection refused.
       - LANGFUSE_HOST=http://langfuse-server:3000
+      - RAG_ENABLED=true
+      - RAG_FORCE_REBUILD_INDEXES=false
+      - ARTICLES_MINIO_ENDPOINT=articles-minio:9000
+      - ARTICLES_MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - ARTICLES_MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - ARTICLES_MINIO_PARSED_BUCKET=parsed-chunks
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
       interval: 10s
@@ -420,6 +434,98 @@ services:
     volumes:
       - ./frontend/nginx-ip.conf:/etc/nginx/conf.d/default.conf:ro
 
+  articles-minio:
+    image: minio/minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+    ports:
+      - "9092:9000"
+      - "9093:9001"
+    volumes:
+      - articles-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  article-fetcher:
+    build:
+      context: .
+      dockerfile: services/article-fetcher/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8200:8200"
+    depends_on:
+      redis:
+        condition: service_healthy
+      articles-minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_ENDPOINT=articles-minio:9000
+      - MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - MINIO_BUCKET=articles
+      - MINIO_PUBLIC_ENDPOINT=http://localhost:9092
+      - ARTICLE_PROCESSOR_WEBHOOK_URL=http://pdf-parser:8300/jobs
+    develop:
+      watch:
+        - path: ./services/article-fetcher
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/article-fetcher/pyproject.toml
+          action: rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8200/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pdf-parser:
+    build:
+      context: .
+      dockerfile: services/pdf-parser/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8300:8300"
+    depends_on:
+      redis:
+        condition: service_healthy
+      articles-minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/1
+      - ARTICLES_MINIO_ENDPOINT=articles-minio:9000
+      - ARTICLES_MINIO_ACCESS_KEY=${ARTICLES_MINIO_ACCESS_KEY:-minioadmin}
+      - ARTICLES_MINIO_SECRET_KEY=${ARTICLES_MINIO_SECRET_KEY:-minioadmin}
+      - ARTICLES_MINIO_INPUT_BUCKET=articles
+      - ARTICLES_MINIO_OUTPUT_BUCKET=parsed-chunks
+      - AI_AGENT_INGEST_URL=http://ai-agent:8100
+    develop:
+      watch:
+        - path: ./services/pdf-parser
+          action: sync
+          target: /app
+          ignore:
+            - .venv
+        - path: ./services/pdf-parser/pyproject.toml
+          action: rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8300/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
   app-db-data:
   redis-data:
@@ -429,3 +535,4 @@ volumes:
   langfuse-clickhouse-data:
   langfuse-clickhouse-logs:
   langfuse-minio-data:
+  articles-minio-data:

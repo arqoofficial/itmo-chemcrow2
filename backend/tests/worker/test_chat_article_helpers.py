@@ -1,0 +1,204 @@
+"""Unit tests for article helper functions in the chat Celery task."""
+import json
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+
+# ── _extract_dois ────────────────────────────────────────────────────────────
+
+def test_extract_dois_finds_dois_in_tool_output():
+    from app.worker.tasks.chat import _extract_dois
+
+    output = (
+        "- **Paper One** (2023)\n"
+        "  DOI: 10.1038/s41586-021-03819-2\n"
+        "- **Paper Two** (2022)\n"
+        "  DOI: 10.1021/acs.nanolett.1c02548\n"
+    )
+    result = _extract_dois(output)
+    assert result == ["10.1038/s41586-021-03819-2", "10.1021/acs.nanolett.1c02548"]
+
+
+def test_extract_dois_skips_na():
+    from app.worker.tasks.chat import _extract_dois
+
+    output = "  DOI: N/A\n  DOI: 10.1234/test\n"
+    result = _extract_dois(output)
+    assert result == ["10.1234/test"]
+
+
+def test_extract_dois_returns_empty_when_none():
+    from app.worker.tasks.chat import _extract_dois
+
+    result = _extract_dois("No DOIs here at all.")
+    assert result == []
+
+
+def test_extract_dois_deduplicates():
+    from app.worker.tasks.chat import _extract_dois
+
+    output = "  DOI: 10.1/a\n  DOI: 10.1/a\n"
+    result = _extract_dois(output)
+    assert result == ["10.1/a"]
+
+
+# ── _get_conversation_article_jobs ──────────────────────────────────────────
+
+def test_get_conversation_article_jobs_returns_parsed_list():
+    from app.worker.tasks.chat import _get_conversation_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = [
+        json.dumps({"doi": "10.1/a", "job_id": "uuid-1"}),
+        json.dumps({"doi": "10.1/b", "job_id": "uuid-2"}),
+    ]
+    result = _get_conversation_article_jobs(r, "conv-123")
+    assert result == [
+        {"doi": "10.1/a", "job_id": "uuid-1"},
+        {"doi": "10.1/b", "job_id": "uuid-2"},
+    ]
+    r.lrange.assert_called_once_with("conversation:conv-123:article_jobs", 0, -1)
+
+
+def test_get_conversation_article_jobs_returns_empty_when_key_absent():
+    from app.worker.tasks.chat import _get_conversation_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = []
+    result = _get_conversation_article_jobs(r, "conv-empty")
+    assert result == []
+
+
+# ── _build_article_status_block ─────────────────────────────────────────────
+
+def test_build_article_status_block_formats_statuses():
+    from app.worker.tasks.chat import _build_article_status_block
+
+    jobs = [
+        {"doi": "10.1/a", "status": "done"},
+        {"doi": "10.1/b", "status": "running"},
+        {"doi": "10.1/c", "status": "failed"},
+        {"doi": "10.1/d", "status": "pending"},
+    ]
+    block = _build_article_status_block(jobs)
+    assert "[Article Download Status]" in block
+    assert "10.1/a: available" in block
+    assert "10.1/b: downloading" in block
+    assert "10.1/c: failed" in block
+    assert "10.1/d: downloading" in block
+
+
+def test_build_article_status_block_returns_empty_for_no_jobs():
+    from app.worker.tasks.chat import _build_article_status_block
+
+    assert _build_article_status_block([]) == ""
+
+
+# ── _submit_article_jobs ─────────────────────────────────────────────────────
+
+def test_submit_article_jobs_skips_already_stored_dois():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    # One DOI already stored
+    r.lrange.return_value = [json.dumps({"doi": "10.1/existing", "job_id": "old-uuid"})]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/existing", "10.1/new"])
+
+        # Only "10.1/new" should be POSTed
+        assert mock_client.post.call_count == 1
+        call_args = mock_client.post.call_args
+        assert call_args[1]["json"]["doi"] == "10.1/new"
+
+
+def test_submit_article_jobs_stores_new_jobs_in_redis():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = []  # nothing stored yet
+
+    mock_resp = MagicMock()
+    mock_resp.status_code = 202
+    mock_resp.json.return_value = {"job_id": "new-uuid", "status": "pending"}
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.post.return_value = mock_resp
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/a"])
+
+    assert result == [{"doi": "10.1/a", "job_id": "new-uuid"}]
+    r.rpush.assert_called_once()
+    stored = json.loads(r.rpush.call_args[0][1])
+    assert stored == {"doi": "10.1/a", "job_id": "new-uuid"}
+    r.expire.assert_called_once_with("conversation:conv-1:article_jobs", 7 * 24 * 3600)
+
+
+def test_submit_article_jobs_handles_http_error_gracefully():
+    from app.worker.tasks.chat import _submit_article_jobs
+
+    r = MagicMock()
+    r.lrange.return_value = []
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.post.side_effect = Exception("connection refused")
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _submit_article_jobs(r, "conv-1", ["10.1/a"])
+
+    assert result == []  # failed gracefully, no jobs returned
+    r.rpush.assert_not_called()
+
+
+# ── _fetch_article_statuses ──────────────────────────────────────────────────
+
+def test_fetch_article_statuses_returns_jobs_with_status():
+    from app.worker.tasks.chat import _fetch_article_statuses
+
+    stored_jobs = [
+        {"doi": "10.1/a", "job_id": "uuid-1"},
+        {"doi": "10.1/b", "job_id": "uuid-2"},
+    ]
+    responses = [
+        {"job_id": "uuid-1", "status": "done", "url": "http://minio/uuid-1.pdf", "error": None},
+        {"job_id": "uuid-2", "status": "running", "url": None, "error": None},
+    ]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_get = MagicMock()
+        mock_get.side_effect = [
+            MagicMock(status_code=200, json=MagicMock(return_value=responses[0])),
+            MagicMock(status_code=200, json=MagicMock(return_value=responses[1])),
+        ]
+        mock_client.get = mock_get
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _fetch_article_statuses(stored_jobs)
+
+    assert result == [
+        {"doi": "10.1/a", "status": "done"},
+        {"doi": "10.1/b", "status": "running"},
+    ]
+
+
+def test_fetch_article_statuses_skips_failed_requests():
+    from app.worker.tasks.chat import _fetch_article_statuses
+
+    stored_jobs = [{"doi": "10.1/a", "job_id": "uuid-1"}]
+
+    with patch("app.worker.tasks.chat.httpx.Client") as mock_client_cls:
+        mock_client = MagicMock()
+        mock_client.get.side_effect = Exception("timeout")
+        mock_client_cls.return_value.__enter__.return_value = mock_client
+
+        result = _fetch_article_statuses(stored_jobs)
+
+    assert result == []  # failed requests are skipped

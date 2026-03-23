@@ -37,7 +37,7 @@ You help researchers with:
 - Safety checks (controlled chemicals, explosives, GHS classification)
 - Retrosynthetic analysis (breaking down target molecules into precursors)
 - Reaction outcome prediction
-- Literature search (Semantic Scholar)
+- Literature search (local corpus via rag_search; external papers via literature_search)
 - Patent checking
 - ADMET prediction (absorption, distribution, metabolism, excretion, toxicity) from SMILES
 - ¹H NMR spectrum prediction from SMILES (predict_nmr tool)
@@ -64,7 +64,16 @@ or products are explosive. If any are, include a warning in your final answer.
 or products are explosive. If any are, ask the user for permission to continue.
 Do not skip these steps.
 
-Always respond in the same language the user is writing in."""
+Always respond in the same language the user is writing in.
+
+LITERATURE TOOL ROUTING:
+1. If the user asks for literature citations, references, or sources about a topic,
+    call `rag_search` to search the local corpus first.
+2. If local corpus coverage is weak or empty, call `literature_search` as fallback
+    to fetch external papers from Semantic Scholar.
+3. In final answers, cite the sources returned by tools and clearly distinguish
+    local-corpus results from external Semantic Scholar results.
+"""
 
 
 class AgentState(TypedDict):

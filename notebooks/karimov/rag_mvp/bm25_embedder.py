@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter
+from typing import Any
 
 from .base import Document, SparseEmbedder
 
@@ -104,3 +105,32 @@ class BM25SparseEmbedder(SparseEmbedder):
             scores[i] = score
 
         return scores
+
+    def to_state(self) -> dict[str, Any]:
+        """Serialize fitted BM25 state for disk persistence."""
+        if self._doc_count == 0:
+            raise ValueError("Cannot serialize an unfitted BM25 model")
+
+        return {
+            "k1": self.k1,
+            "b": self.b,
+            "doc_count": self._doc_count,
+            "avg_doc_len": self._avg_doc_len,
+            "doc_lengths": self._doc_lengths,
+            "idf": self._idf,
+            "doc_term_freqs": [dict(tf) for tf in self._doc_term_freqs],
+        }
+
+    @classmethod
+    def from_state(cls, state: dict[str, Any]) -> "BM25SparseEmbedder":
+        """Restore BM25 model from serialized state."""
+        embedder = cls(k1=float(state["k1"]), b=float(state["b"]))
+        embedder._doc_count = int(state["doc_count"])
+        embedder._avg_doc_len = float(state["avg_doc_len"])
+        embedder._doc_lengths = [int(v) for v in state["doc_lengths"]]
+        embedder._idf = {str(k): float(v) for k, v in state["idf"].items()}
+        embedder._doc_term_freqs = [
+            Counter({str(k): int(v) for k, v in tf.items()})
+            for tf in state["doc_term_freqs"]
+        ]
+        return embedder

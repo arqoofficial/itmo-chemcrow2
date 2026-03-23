@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import BackgroundTasks, FastAPI
 from langchain_core.messages import AIMessage
+from pydantic import BaseModel
 from sse_starlette import EventSourceResponse
 
 from app.agent import convert_messages, get_agent
@@ -14,6 +16,7 @@ from app.guard import scan_input, scan_output
 from app.hazard_checker import find_hazards
 from app.schemas import ChatRequest, ChatResponse
 from app.tracing import check_langfuse_auth, get_langfuse_config
+from app.tools.rag import _CURRENT_CONV_ID, ingest_conversation_document
 
 logger = logging.getLogger(__name__)
 
@@ -65,6 +68,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     import asyncio
 
+    _CURRENT_CONV_ID.set(request.conversation_id)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
     user_text = ""
     for m in reversed(langchain_messages):
@@ -111,6 +115,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
     """
     Streaming chat via SSE. Streams intermediate steps (tool calls, partial responses).
     """
+    _CURRENT_CONV_ID.set(request.conversation_id)
     agent = get_agent(request.provider)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
 
@@ -229,3 +234,29 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
             "Cache-Control": "no-cache, no-store, must-revalidate",
         },
     )
+
+
+@app.get("/config/article-fetcher-url")
+def get_article_fetcher_url():
+    return {"article_fetcher_url": settings.ARTICLE_FETCHER_URL}
+
+
+class IngestRequest(BaseModel):
+    conversation_id: str
+    doc_key: str
+
+
+@app.post("/rag/ingest", status_code=202)
+async def rag_ingest(payload: IngestRequest, background_tasks: BackgroundTasks):
+    """
+    Called by pdf-parser after parsing completes.
+    Downloads chunks from MinIO and builds an in-memory retriever for the conversation.
+    """
+    background_tasks.add_task(
+        asyncio.to_thread,
+        ingest_conversation_document,
+        payload.conversation_id,
+        payload.doc_key,
+    )
+    logger.info("rag/ingest queued for conv=%s doc=%s", payload.conversation_id, payload.doc_key)
+    return {"status": "queued", "conversation_id": payload.conversation_id, "doc_key": payload.doc_key}

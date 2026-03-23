@@ -2,8 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { Bot, Loader2 } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
+import { OpenAPI } from "@/client"
 import { ConversationsService } from "@/client/chatService"
-import type { ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
+import type { ArticleDownloadJob, ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
+import { ArticleDownloadsCard } from "./ArticleDownloadsCard"
 import {
   type StreamingState,
   useConversationSSE,
@@ -79,6 +81,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const [localMessages, setLocalMessages] = useState<ChatMessagePublic[]>([])
   const [pendingToolCalls, setPendingToolCalls] = useState<ToolCallInfo[]>([])
   const [hazardChemicals, setHazardChemicals] = useState<HazardChemical[]>([])
+  const [articleDownloadBatches, setArticleDownloadBatches] = useState<ArticleDownloadJob[][]>([])
   const [sseEnabled, setSseEnabled] = useState(false)
   const [isRecovering, setIsRecovering] = useState(false)
   const messageCountBeforeSend = useRef(0)
@@ -100,10 +103,33 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
       }),
   })
 
+  const { data: persistedJobs } = useQuery({
+    queryKey: ["article-jobs", conversationId],
+    queryFn: async () => {
+      const token =
+        typeof OpenAPI.TOKEN === "function"
+          ? await OpenAPI.TOKEN({} as never)
+          : (OpenAPI.TOKEN ?? "")
+      const resp = await fetch(`/api/v1/articles/conversations/${conversationId}/jobs`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!resp.ok) return [] as ArticleDownloadJob[]
+      return resp.json() as Promise<ArticleDownloadJob[]>
+    },
+    staleTime: Infinity,
+  })
+
+  useEffect(() => {
+    if (persistedJobs && persistedJobs.length > 0) {
+      setArticleDownloadBatches([persistedJobs])
+    }
+  }, [persistedJobs])
+
   useEffect(() => {
     setLocalMessages([])
     setPendingToolCalls([])
     setHazardChemicals([])
+    setArticleDownloadBatches([])
     stopPolling()
   }, [conversationId, stopPolling])
 
@@ -169,6 +195,12 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     if (chemicals.length > 0) setHazardChemicals(chemicals)
   }, [])
 
+  const handleArticleDownloads = useCallback((jobs: ArticleDownloadJob[]) => {
+    if (jobs.length > 0) {
+      setArticleDownloadBatches((prev) => [...prev, jobs])
+    }
+  }, [])
+
   const handleError = useCallback(
     (_err: string) => {
       setSseEnabled(false)
@@ -198,6 +230,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     onMessage: handleSSEMessage,
     onToolCall: handleToolCall,
     onHazards: handleHazards,
+    onArticleDownloads: handleArticleDownloads,
     onError: handleError,
   })
 
@@ -250,6 +283,10 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
           <div className="mx-auto max-w-3xl py-4">
             {localMessages.map((msg) => (
               <MessageBubble key={msg.id} message={msg} />
+            ))}
+
+            {articleDownloadBatches.map((batch, i) => (
+              <ArticleDownloadsCard key={i} jobs={batch} />
             ))}
 
             {(streamingState === "thinking" || isRecovering) && (

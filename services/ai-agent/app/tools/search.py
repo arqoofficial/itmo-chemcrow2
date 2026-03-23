@@ -13,7 +13,7 @@ import molbloom
 import requests
 from langchain.tools import tool
 
-from app.tools.utils import is_multiple_smiles, is_smiles, split_smiles
+from app.tools.utils import _scrape_doi_from_url, is_multiple_smiles, is_smiles, split_smiles
 
 logger = logging.getLogger(__name__)
 
@@ -87,11 +87,12 @@ def literature_search(query: str, max_results: int = 5) -> str:
         params = {
             "query": query,
             "limit": min(max_results, 10),
-            "fields": "title,authors,abstract,year,citationCount,url",
+            "fields": "title,authors,abstract,year,citationCount,url,externalIds",
         }
 
-        # Retry with exponential backoff — S2 has a global rate limit (~1 req/s shared)
-        max_retries = 4
+        # Retry with increasing waits — S2 free tier rate-limits aggressively
+        _retry_waits = [10, 20, 30, 60, 120]
+        max_retries = len(_retry_waits)
         for attempt in range(max_retries):
             r = requests.get(
                 f"{_S2_API_BASE}/paper/search",
@@ -101,7 +102,7 @@ def literature_search(query: str, max_results: int = 5) -> str:
             )
             if r.status_code != 429:
                 break
-            wait = 2 ** attempt
+            wait = _retry_waits[attempt]
             logger.warning("Semantic Scholar 429, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
             time.sleep(wait)
 
@@ -120,10 +121,19 @@ def literature_search(query: str, max_results: int = 5) -> str:
             abstract = p.get("abstract") or "No abstract available."
             if len(abstract) > 300:
                 abstract = abstract[:300] + "..."
+            # Resolve DOI: prefer externalIds from API, fall back to HTML scraping
+            ext_ids = p.get("externalIds") or {}
+            doi = ext_ids.get("DOI")
+            if not doi:
+                paper_url = p.get("url")
+                if paper_url and "semanticscholar.org" not in paper_url:
+                    doi = _scrape_doi_from_url(paper_url)
+
             results.append(
                 f"- **{p.get('title', 'Untitled')}** ({p.get('year', 'N/A')})\n"
                 f"  Authors: {authors}\n"
                 f"  Citations: {p.get('citationCount', 0)}\n"
+                f"  DOI: {doi or 'N/A'}\n"
                 f"  Abstract: {abstract}\n"
                 f"  URL: {p.get('url', 'N/A')}"
             )
