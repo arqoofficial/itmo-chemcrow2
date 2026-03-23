@@ -78,6 +78,7 @@ LITERATURE TOOL ROUTING:
 
 class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], operator.add]
+    conversation_id: str | None
 
 
 def _build_graph(llm: BaseChatModel) -> StateGraph:
@@ -96,9 +97,14 @@ def _build_graph(llm: BaseChatModel) -> StateGraph:
     def call_tools(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         last_message = state["messages"][-1]
         results = []
+        conversation_id = state.get("conversation_id")
         for tool_call in last_message.tool_calls:
             tool = tools_by_name[tool_call["name"]]
-            observation = tool.invoke(tool_call["args"], config=config)
+            tool_args = tool_call["args"].copy()
+            # Thread conversation_id to RAG tool if available
+            if tool_call["name"] == "rag_search" and conversation_id:
+                tool_args["conversation_id"] = conversation_id
+            observation = tool.invoke(tool_args, config=config)
             results.append(
                 ToolMessage(
                     content=str(observation),

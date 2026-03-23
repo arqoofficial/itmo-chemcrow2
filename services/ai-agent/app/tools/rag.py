@@ -855,7 +855,7 @@ def ingest_conversation_document(conversation_id: str, doc_key: str) -> None:
     )
 
 
-def _run_rag_query(query: str, top_k: int) -> str:
+def _run_rag_query(query: str, top_k: int, conversation_id: str | None = None) -> str:
     from app.config import settings
 
     if not settings.RAG_ENABLED:
@@ -864,7 +864,7 @@ def _run_rag_query(query: str, top_k: int) -> str:
         return "Query must be a non-empty string."
 
     safe_top_k = min(max(int(top_k), 1), 10)
-    conv_id = _CURRENT_CONV_ID.get()
+    conv_id = conversation_id or _CURRENT_CONV_ID.get()
 
     all_results: list[RetrievalResult] = []
 
@@ -912,11 +912,15 @@ def _run_rag_query(query: str, top_k: int) -> str:
 
 
 @tool
-def rag_search(query: str, top_k: int = 4) -> str:
+def rag_search(query: str, top_k: int = 4, conversation_id: str | None = None) -> str:
     """Search internal chemistry corpus with a hybrid BM25+dense retriever.
 
     Args:
         query: Natural-language chemistry question or retrieval query.
         top_k: Number of documents to return (default 4, max 10).
+        conversation_id: Optional conversation scope for retriever isolation.
     """
-    return _run_rag_query(query=query, top_k=top_k)
+    # If conversation_id not explicitly provided, try to get from context
+    if conversation_id is None:
+        conversation_id = _CURRENT_CONV_ID.get()
+    return _run_rag_query(query=query, top_k=top_k, conversation_id=conversation_id)

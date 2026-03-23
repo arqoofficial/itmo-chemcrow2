@@ -52,6 +52,69 @@ uv run python scripts/evaluate_rag.py --top-k 5 --max-queries 12
 The script compares BM25, dense (Nomic), and fusion (RRF), and writes a JSON report to
 `app/data-rag/benchmarks/latest_eval_results.json`.
 
+## Pipeline evaluation (multi-agent vs direct LLM)
+Evaluate and compare the multi-agent system (with chemistry tools) against a direct LLM baseline using RAGAS metrics.
+
+**Overview:**
+- `evaluate_pipeline_ragas.py` runs identical questions through both pipelines
+- Multi-agent: ReAct-based system with tool calling (RDKit, PubChem, ADMET profiling, safety checks, etc.)
+- Direct LLM: raw LLM without tools, for latency and capability comparison
+- Results include RAGAS metrics: ResponseRelevancy, AnswerCorrectness, SemanticSimilarity, and latency deltas
+
+**Core parameters:**
+- `--eval-set <JSON_FILE>`: Path to evaluation questions (JSON format with `questions` array)
+- `--agent-url <URL>`: Agent endpoint (default: `http://127.0.0.1:8100/api/v1/chat`)
+- `--provider <openai|anthropic>`: LLM provider for generation (default: openai)
+- `--judge-provider <openai|anthropic>`: LLM provider for RAGAS scoring (default: openai)
+- `--max-questions <N>`: Evaluate only first N questions (useful for quick iteration)
+- `--timeout-seconds <SEC>`: Request timeout (default: 300)
+- `--judge-max-tokens <N>`: Max tokens for judge model (default: 1024)
+- `--judge-temperature <FLOAT>`: Temperature for judge scoring (default: 0.0)
+- `--judge-only`: Score existing raw results without regenerating answers
+
+**Quick examples:**
+
+*Full evaluation on default agent:*
+```bash
+cd services/ai-agent
+uv run python scripts/evaluate_pipeline_ragas.py \
+  --eval-set app/data-rag/benchmarks/ragas_eval_set.example.json
+```
+
+*Quick check with just 3 questions:*
+```bash
+cd services/ai-agent
+uv run python scripts/evaluate_pipeline_ragas.py \
+  --eval-set app/data-rag/benchmarks/ragas_eval_set.example.json \
+  --max-questions 3
+```
+
+*Custom agent URL and longer timeout:*
+```bash
+cd services/ai-agent
+uv run python scripts/evaluate_pipeline_ragas.py \
+  --eval-set app/data-rag/benchmarks/chapter_eval_queries.json \
+  --agent-url http://127.0.0.1:8101/api/v1/chat \
+  --timeout-seconds 600
+```
+
+*Re-score existing raw results without re-running generation (fast):*
+```bash
+cd services/ai-agent
+uv run python scripts/evaluate_pipeline_ragas.py \
+  --eval-set app/data-rag/benchmarks/ragas_eval_set.example.json \
+  --judge-only \
+  --judge-temperature 0.5
+```
+
+
+**Output artifacts:**
+- `app/data-rag/benchmarks/pipeline_eval_raw.json`: Raw answers for both pipelines (each row includes error, latency_ms, answer text)
+- `app/data-rag/benchmarks/pipeline_eval_summary.json`: Aggregated metrics (per-pipeline averages, deltas, error counts)
+
+**Environment setup:**
+Ensure `OPENAI_API_KEY` and/or `ANTHROPIC_API_KEY` are set. Auto-start will launch ai-agent if `--agent-url` points to localhost and no server is listening.
+
 ## Query fused retrieval manually
 Use `query_fused_rag.py` to run one-off hybrid retrieval and inspect top sources.
 

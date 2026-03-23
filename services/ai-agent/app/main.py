@@ -82,7 +82,10 @@ async def chat(request: ChatRequest) -> ChatResponse:
 
     agent = get_agent(request.provider)
     lf_config = get_langfuse_config()
-    result = await agent.ainvoke({"messages": langchain_messages}, config=lf_config)
+    result = await agent.ainvoke({
+        "messages": langchain_messages,
+        "conversation_id": request.conversation_id,
+    }, config=lf_config)
     for cb in lf_config.get("callbacks", []):
         if hasattr(cb, "flush"):
             cb.flush()
@@ -143,7 +146,10 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
             full_content: list[str] = []
 
             async for event in agent.astream_events(
-                {"messages": langchain_messages},
+                {
+                    "messages": langchain_messages,
+                    "conversation_id": request.conversation_id,
+                },
                 config=lf_config,
                 version="v2",
             ):
