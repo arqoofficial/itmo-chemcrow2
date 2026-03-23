@@ -719,7 +719,7 @@ def _format_retrieval_results(results: list[RetrievalResult]) -> str:
     return "\n".join(lines)
 
 
-def _run_rag_query(query: str, top_k: int) -> str:
+def _run_rag_query(query: str, top_k: int, conversation_id: str | None = None) -> str:
     from app.config import settings
 
     if not settings.RAG_ENABLED:
@@ -728,12 +728,14 @@ def _run_rag_query(query: str, top_k: int) -> str:
         return "Query must be a non-empty string."
 
     safe_top_k = min(max(int(top_k), 1), 10)
+    # Use conversation_id as scope if provided, otherwise use default source
+    scope = conversation_id if conversation_id else settings.RAG_DEFAULT_SOURCE
     try:
-        retriever = _get_retriever_for_scope(settings.RAG_DEFAULT_SOURCE)
+        retriever = _get_retriever_for_scope(scope)
         results = retriever.retrieve(query.strip(), top_k=safe_top_k)
         return _format_retrieval_results(results)
     except FileNotFoundError as exc:
-        logger.exception("RAG data is missing")
+        logger.exception("RAG data is missing for scope=%s", scope)
         return (
             "RAG data is not initialized correctly. "
             f"Missing path: {exc}."
@@ -746,16 +748,17 @@ def _run_rag_query(query: str, top_k: int) -> str:
             f"Details: {exc}"
         )
     except Exception as exc:
-        logger.exception("RAG search failed")
+        logger.exception("RAG search failed for scope=%s", scope)
         return f"RAG search failed: {exc}"
 
 
 @tool
-def rag_search(query: str, top_k: int = 4) -> str:
+def rag_search(query: str, top_k: int = 4, conversation_id: str | None = None) -> str:
     """Search internal chemistry corpus with a hybrid BM25+dense retriever.
 
     Args:
         query: Natural-language chemistry question or retrieval query.
         top_k: Number of documents to return (default 4, max 10).
+        conversation_id: Optional conversation scope for retriever isolation.
     """
-    return _run_rag_query(query=query, top_k=top_k)
+    return _run_rag_query(query=query, top_k=top_k, conversation_id=conversation_id)

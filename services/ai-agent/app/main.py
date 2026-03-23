@@ -43,7 +43,10 @@ async def chat(request: ChatRequest) -> ChatResponse:
     """
     agent = get_agent(request.provider)
     langchain_messages = convert_messages([m.model_dump() for m in request.messages])
-    result = await agent.ainvoke({"messages": langchain_messages})
+    result = await agent.ainvoke({
+        "messages": langchain_messages,
+        "conversation_id": request.conversation_id,
+    })
 
     final_messages = result["messages"]
     last_ai = None
@@ -81,7 +84,10 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
             full_content: list[str] = []
 
             async for event in agent.astream_events(
-                {"messages": langchain_messages},
+                {
+                    "messages": langchain_messages,
+                    "conversation_id": request.conversation_id,
+                },
                 version="v2",
             ):
                 kind = event.get("event", "")
