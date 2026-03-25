@@ -1,7 +1,7 @@
 services:
 
   redis:
-    image: redis:7-alpine
+    image: redis:8-alpine
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -284,7 +284,7 @@ services:
       start_period: 1s
 
   langfuse-cache:
-    image: redis:7
+    image: redis:8
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
