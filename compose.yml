@@ -242,7 +242,7 @@ services:
       start_period: 30s
 
   langfuse-clickhouse:
-    image: clickhouse/clickhouse-server:25.8
+    image: clickhouse/clickhouse-server:26.2
     restart: unless-stopped
     user: "101:101"
     depends_on:
