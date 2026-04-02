@@ -58,10 +58,9 @@ run_agent_continuation (Celery, chat queue)
   │ forward tokens → Redis pubsub → frontend
   └ save assistant message to DB
 
-/rag/ingest (ai-agent)
+/rag/ingest (ai-agent)  ← now receives query threaded from literature_search
   │ build RAG index (existing)
-  │ fetch last user message from DB
-  │ call rag_search(query, conversation_id) directly
+  │ call rag_search(query, conversation_id) directly  ← query from request body
   │ POST backend /internal/queue-background-tool {type: rag_result, ...}
   ▼
 backend saves role="background" message + dispatches run_agent_continuation
@@ -74,15 +73,15 @@ backend saves role="background" message + dispatches run_agent_continuation
 | File | Change |
 |---|---|
 | `app/config.py` | Add `BACKEND_INTERNAL_URL = "http://backend:8000"` |
-| `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint, returns `"Literature search queued. Results will appear in this conversation shortly."` |
-| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` calls `rag_search` after build + notifies backend |
+| `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint with `{conversation_id, query}`, returns `"Literature search queued. Results will appear in this conversation shortly."` |
+| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` accepts optional `query` field, calls `rag_search(query)` after build + notifies backend |
 | `app/agent.py` | `convert_messages`: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")` |
 
 ### backend (`backend/`)
 
 | File | Change |
 |---|---|
-| `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Routes to Celery task by `type` field. `GET /internal/conversations/{id}/last-user-message` — returns last human message content for RAG query. |
+| `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Routes to Celery task by `type` field. |
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search` and `run_agent_continuation` tasks. |
@@ -95,6 +94,24 @@ backend saves role="background" message + dispatches run_agent_continuation
 | `src/components/Chat/MessageBubble.tsx` | Detect `role="background"`, render as muted info card |
 | `src/components/Chat/BackgroundMessageCard.tsx` | New component. Shows background update content. Error variant shows Retry button. |
 | `src/hooks/useConversationSSE.ts` | Handle `background_update` event (triggers scroll) |
+
+## Query Threading
+
+The search query must be carried through the entire pipeline so `/rag/ingest` uses the correct query regardless of what the user does in the meantime.
+
+```
+literature_search(query="X")
+  → POST /internal/queue-background-tool  {query: "X", ...}
+    → run_s2_search(conversation_id, query="X")
+      → article-fetcher job {doi, conversation_id, doc_key, query="X"}
+        → pdf-parser job {object_key, conversation_id, doc_key, query="X"}
+          → POST /rag/ingest {conversation_id, doc_key, query="X"}
+            → rag_search(query="X", conversation_id)
+```
+
+Each service passes `query` as an optional string field. If absent (e.g. manual upload), `/rag/ingest` skips the RAG trigger step entirely.
+
+Services requiring schema changes: article-fetcher job model, pdf-parser job model, `/rag/ingest` request body.
 
 ## Internal Endpoint Contract
 
