@@ -58,12 +58,12 @@ run_agent_continuation (Celery, chat queue)
   │ forward tokens → Redis pubsub → frontend
   └ save assistant message to DB
 
-/rag/ingest (ai-agent)  ← now receives query threaded from literature_search
+/rag/ingest (ai-agent)
   │ build RAG index (existing)
-  │ call rag_search(query, conversation_id) directly  ← query from request body
-  │ POST backend /internal/queue-background-tool {type: rag_result, ...}
+  │ POST backend /internal/queue-background-tool {type: "rag_ready", conversation_id}
   ▼
 backend saves role="background" message + dispatches run_agent_continuation
+  │ agent sees full conversation history, writes its own rag_search query
 ```
 
 ## Component Changes
@@ -74,7 +74,7 @@ backend saves role="background" message + dispatches run_agent_continuation
 |---|---|
 | `app/config.py` | Add `BACKEND_INTERNAL_URL = "http://backend:8000"` |
 | `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint with `{conversation_id, query}`, returns `"Literature search queued. Results will appear in this conversation shortly."` |
-| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` accepts optional `query` field, calls `rag_search(query)` after build + notifies backend |
+| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` POSTs `{type: "rag_ready", conversation_id}` to backend after building RAG index — agent generates its own RAG query when re-invoked |
 | `app/agent.py` | `convert_messages`: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")` |
 
 ### backend (`backend/`)
@@ -95,23 +95,6 @@ backend saves role="background" message + dispatches run_agent_continuation
 | `src/components/Chat/BackgroundMessageCard.tsx` | New component. Shows background update content. Error variant shows Retry button. |
 | `src/hooks/useConversationSSE.ts` | Handle `background_update` event (triggers scroll) |
 
-## Query Threading
-
-The search query must be carried through the entire pipeline so `/rag/ingest` uses the correct query regardless of what the user does in the meantime.
-
-```
-literature_search(query="X")
-  → POST /internal/queue-background-tool  {query: "X", ...}
-    → run_s2_search(conversation_id, query="X")
-      → article-fetcher job {doi, conversation_id, doc_key, query="X"}
-        → pdf-parser job {object_key, conversation_id, doc_key, query="X"}
-          → POST /rag/ingest {conversation_id, doc_key, query="X"}
-            → rag_search(query="X", conversation_id)
-```
-
-Each service passes `query` as an optional string field. If absent (e.g. manual upload), `/rag/ingest` skips the RAG trigger step entirely.
-
-Services requiring schema changes: article-fetcher job model, pdf-parser job model, `/rag/ingest` request body.
 
 ## Internal Endpoint Contract
 
@@ -155,20 +138,17 @@ Please analyze these results and provide relevant information.
 Semantic Scholar returned an error: {reason}.
 ```
 
-**RAG result:**
+**RAG ready:**
 ```
-[Background: RAG Search Results]
-New documents are available. Relevant content for "{query}":
-
-{rag_results}
-
-Please provide a deeper analysis based on these document contents.
+[Background: New Documents Available]
+Articles from your earlier literature search have been parsed and added to the knowledge base.
+Please search the RAG corpus for information relevant to this conversation.
 ```
 
-**RAG empty:**
+**RAG empty (agent skips continuation):**
 ```
-[Background: RAG Search - No Results]
-No relevant content found in the newly parsed documents.
+[Background: RAG - No New Content]
+The parsed documents contained no content for the knowledge base.
 ```
 
 ## Error Handling
