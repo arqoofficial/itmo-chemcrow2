@@ -54,26 +54,27 @@ backend /internal router
   ▼
 run_s2_search (Celery, chat queue)
   │ POST ai-agent /internal/s2-search  ← blocking, ≤15s
-  │ save role="background" message to DB
-  │ publish background_update SSE event
-  │ dispatch run_agent_continuation
-  ▼
-run_agent_continuation (Celery, chat queue)
-  │ load conversation history
-  │ call ai-agent SSE stream
-  │ forward tokens → Redis pubsub → frontend
-  └ save assistant message to DB
-
-run_s2_search
-  │ also submits article downloads (_submit_article_jobs reuse)
-  │ saves article-fetcher job IDs → dispatches monitor_ingestion(conversation_id, job_ids)
-  ▼
+  ├─ FAILURE/NO PAPERS → save error background message, publish event, STOP
+  │                       user can retry via "Retry Search" button
+  └─ SUCCESS → save S2 results background message
+             │ publish background_update SSE event
+             │ submit article downloads (_submit_article_jobs reuse)
+             │ dispatch run_agent_continuation  ← abstract response
+             └ dispatch monitor_ingestion(conversation_id, job_ids)
+                      ↓
 monitor_ingestion (Celery, retries every 10s, max 20 min)
   │ polls GET http://pdf-parser:8300/jobs/{job_id} for each job_id
-  │ when all "completed" → save role="background" message
-  │                      → dispatch run_agent_continuation
+  │ when all "completed" → save [Background: New Papers Available] message
+  │                      → dispatch run_agent_continuation  ← RAG response
   │ /rag/ingest stays untouched — no notification logic inside it
   └ pdf-parser stays untouched
+
+run_agent_continuation (Celery, chat queue)
+  │ acquire conv_processing lock (or queue if busy)
+  │ load conversation history
+  │ call ai-agent SSE stream (all tools available)
+  │ forward tokens → Redis pubsub → frontend
+  └ save assistant message to DB
 ```
 
 ## Component Changes
@@ -170,9 +171,9 @@ One or more articles could not be parsed.
 
 | Scenario | Behaviour |
 |---|---|
-| S2 fails | Save error background message, show to user with Retry button, do NOT dispatch continuation |
-| S2 returns 0 papers | Info card (no Retry button — not an error), no continuation |
-| Parsing fails | Error background message, no continuation |
+| S2 fails | Error background message + Retry button. No article downloads, no monitor_ingestion, no continuation. User retries manually. |
+| S2 returns 0 papers | Info card (no Retry button). No article downloads, no monitor_ingestion, no continuation. |
+| Parsing fails | Error background message, no RAG continuation. |
 | monitor_ingestion times out (20 min) | Task exhausts retries, silently dropped |
 | Continuation task times out | Frontend already has initial response; follow-up silently dropped |
 | New user message races with continuation | `process_chat_message` sets `conv_processing`; continuation queues itself in `conv_pending` and runs after |
