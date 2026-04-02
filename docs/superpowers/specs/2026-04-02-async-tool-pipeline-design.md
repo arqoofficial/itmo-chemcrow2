@@ -95,6 +95,7 @@ monitor_ingestion (Celery, retries every 10s, max 20 min)
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
+| `app/worker/prompts.py` | New file. Background message prompt templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`. |
 | `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` lock at start, releases and drains `conv_pending` at end. |
 | `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
 
@@ -126,6 +127,10 @@ POST /internal/s2-search  (ai-agent)
 }
 → { "papers": [...] }
 ```
+
+## Prompt Templates
+
+All background message content is defined in `backend/app/worker/prompts.py` and imported by `run_s2_search` and `monitor_ingestion`. Templates use Python f-string interpolation.
 
 ## Background Message Formats
 
