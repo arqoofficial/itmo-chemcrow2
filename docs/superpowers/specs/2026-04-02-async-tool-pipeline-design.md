@@ -31,7 +31,13 @@ Fast tools (RAG, chemistry tools) produce an immediate agent response. Slow oper
 
 ### Background Messages (`role="background"`)
 
-Messages injected into the conversation by the pipeline, not by the user. Stored in the `chat_message` table with `role="background"` and a `metadata` JSON field. The agent sees them as `HumanMessage` with a `[Background Update]` prefix. The frontend reads `metadata.variant` (`"info"` or `"error"`) to choose card style — avoids fragile string-prefix parsing.
+Messages injected into the conversation by the pipeline when the **agent needs to act**. Stored in the `chat_message` table with `role="background"`. The agent sees them as `HumanMessage` with a `[Background Update]` prefix.
+
+Two cases only:
+1. S2 search succeeded → agent receives papers and analyzes them
+2. Articles parsed → agent receives "new docs available" prompt and searches RAG
+
+**Failures are not background messages.** S2 failure, download failure, and parse failure are communicated to the frontend via a dedicated SSE event (`background_error`). The frontend renders an error card. The agent is never involved — it cannot act on a failure.
 
 ### `run_agent_continuation` Celery Task
 
@@ -54,9 +60,9 @@ backend /internal router
   ▼
 run_s2_search (Celery, chat queue)
   │ POST ai-agent /internal/s2-search  ← blocking, ≤15s
-  ├─ FAILURE/NO PAPERS → save error background message, publish event, STOP
-  │                       user can retry via "Retry Search" button
-  └─ SUCCESS → save S2 results background message
+  ├─ FAILURE/NO PAPERS → publish background_error SSE event, STOP
+  │                       frontend shows error card + Retry button
+  └─ SUCCESS → save role="background" message (S2 results)
              │ publish background_update SSE event
              │ submit article downloads (_submit_article_jobs reuse)
              │ dispatch run_agent_continuation  ← abstract response
@@ -68,12 +74,12 @@ monitor_ingestion (Celery, retries every 10s, max 20 min)
   │       404 must be treated as "pending", not "failed".
   │       Only check pdf-parser status for jobs where article-fetcher is "done".
   │
-  │ STOP if ALL article-fetcher jobs failed (nothing downloaded)
-  │       → error background message
+  │ STOP if ALL article-fetcher jobs failed
+  │       → publish background_error SSE event (frontend shows error card)
   │
   │ STOP if ANY pdf-parser job failed
-  │       → error background message
-  │       → user can retry parse via ArticleDownloadsCard
+  │       → publish background_error SSE event
+  │       → frontend ArticleDownloadsCard already shows per-job parse status
   │       → "Notify Agent" button appears when all terminal + ≥1 succeeded
   │
   │ WAIT while any article-fetcher job still running
@@ -110,7 +116,7 @@ run_agent_continuation (Celery, chat queue)
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/trigger-rag-continuation` — saves `[Background: New Papers Available]` message + dispatches `run_agent_continuation`. Shares `_trigger_rag_continuation` helper with `monitor_ingestion` success path. |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
-| `app/worker/prompts.py` | New file. Templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`, `DOWNLOAD_ALL_FAILED`. |
+| `app/worker/prompts.py` | New file. Two templates: `S2_RESULTS`, `PAPERS_INGESTED`. Failures use SSE events, not prompts. |
 | `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` via `SET NX EX` in `try/finally`. Remove dead `_extract_dois` branch for `literature_search` (now returns "queued", no DOIs). |
 | `app/models.py` | Allow `"background"` as message role. Add nullable `metadata` JSON column to `ChatMessage` for `variant` field. |
 
@@ -146,11 +152,9 @@ POST /internal/s2-search  (ai-agent)
 
 ## Prompt Templates
 
-All background message content is defined in `backend/app/worker/prompts.py` and imported by `run_s2_search` and `monitor_ingestion`. Templates use Python f-string interpolation.
+Defined in `backend/app/worker/prompts.py`. Two templates only — failures are SSE events, not prompts.
 
-## Background Message Formats
-
-**S2 success:**
+**S2 success** (`S2_RESULTS`):
 ```
 [Background: Literature Search Results]
 Your earlier search for "{query}" found {n} papers:
@@ -158,39 +162,24 @@ Your earlier search for "{query}" found {n} papers:
 1. Title — Authors (Year) — DOI
    Abstract: ...
 
-2. ...
-
 Please analyze these results and provide relevant information.
 ```
 
-**S2 failure:**
-```
-[Background: Literature Search Failed]
-Semantic Scholar returned an error: {reason}.
-```
-
-**Papers ingested (triggers RAG continuation):**
+**Papers ingested** (`PAPERS_INGESTED`):
 ```
 [Background: New Papers Available]
 Articles from your earlier literature search have been parsed and added to the knowledge base.
 Please search the RAG corpus for information relevant to this conversation.
 ```
 
-**Parsing failed:**
-```
-[Background: Parsing Failed]
-One or more articles could not be parsed.
-```
-
 ## Error Handling
 
 | Scenario | Behaviour |
 |---|---|
-| S2 fails | Error background message + Retry button. No article downloads, no monitor_ingestion, no continuation. User retries manually. |
-| S2 returns 0 papers | Info card (no Retry button). No article downloads, no monitor_ingestion, no continuation. |
-| All downloads fail | Error background message, pipeline stops. |
-| ≥1 download succeeds | Pipeline continues with successfully downloaded articles only. |
-| Any parse fails | Error background message, no RAG continuation. User retries via ArticleDownloadsCard → "Notify Agent" button on success. |
+| S2 fails | `background_error` SSE → frontend error card + Retry button. Pipeline stops. |
+| S2 returns 0 papers | `background_error` SSE → frontend info card. Pipeline stops. |
+| All downloads fail | `background_error` SSE → frontend error card. Pipeline stops. |
+| Any parse fails | `background_error` SSE → frontend error card. ArticleDownloadsCard shows per-job status. "Notify Agent" button appears when all terminal + ≥1 succeeded. |
 | monitor_ingestion times out (20 min) | `on_failure` logs WARNING — not ERROR (user already has initial response). No alarm in task monitoring. |
 | s2_last_query Redis key expired (24h) | Retry endpoint returns 410 Gone with message "Search query expired" |
 | Multiple `literature_search` calls in one turn | DOI dedup prevents duplicate downloads. Overlapping `monitor_ingestion` tasks are harmless (each dispatches `run_agent_continuation` which serializes via `conv_pending`). |
