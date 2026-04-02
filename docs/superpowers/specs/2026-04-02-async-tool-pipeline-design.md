@@ -94,6 +94,7 @@ run_agent_continuation (Celery, chat queue)
 |---|---|
 | `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Queues `run_s2_search` Celery task. |
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
+| `app/api/routes/conversations.py` (or articles) | Add `POST /api/v1/conversations/{id}/trigger-rag-continuation` — saves `[Background: New Papers Available]` message + dispatches `run_agent_continuation`. Shares helper with `monitor_ingestion` success path. |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
 | `app/worker/prompts.py` | New file. Background message prompt templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`. |
@@ -106,6 +107,7 @@ run_agent_continuation (Celery, chat queue)
 |---|---|
 | `src/components/Chat/MessageBubble.tsx` | Detect `role="background"`, render as muted info card |
 | `src/components/Chat/BackgroundMessageCard.tsx` | New component. Shows background update content. Error variant shows Retry button. |
+| `src/components/Chat/ArticleDownloadsCard.tsx` | Track reparsed jobs that reach "completed". Show "Notify Agent" button when ≥1 exists. Button calls `POST /api/v1/conversations/{id}/trigger-rag-continuation`. |
 | `src/hooks/useConversationSSE.ts` | Handle `background_update` event (triggers scroll) |
 
 
