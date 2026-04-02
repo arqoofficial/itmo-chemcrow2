@@ -58,12 +58,16 @@ run_agent_continuation (Celery, chat queue)
   │ forward tokens → Redis pubsub → frontend
   └ save assistant message to DB
 
-/rag/ingest (ai-agent)
-  │ build RAG index (existing)
-  │ POST backend /internal/conversations/{id}/rag-ready
+run_s2_search
+  │ also submits article downloads (_submit_article_jobs reuse)
+  │ saves article-fetcher job IDs → dispatches monitor_ingestion(conversation_id, job_ids)
   ▼
-backend saves role="background" message + dispatches run_agent_continuation
-  │ agent sees full conversation history, writes its own rag_search query
+monitor_ingestion (Celery, retries every 10s, max 20 min)
+  │ polls GET http://pdf-parser:8300/jobs/{job_id} for each job_id
+  │ when all "completed" → save role="background" message
+  │                      → dispatch run_agent_continuation
+  │ /rag/ingest stays untouched — no notification logic inside it
+  └ pdf-parser stays untouched
 ```
 
 ## Component Changes
@@ -74,17 +78,17 @@ backend saves role="background" message + dispatches run_agent_continuation
 |---|---|
 | `app/config.py` | Add `BACKEND_INTERNAL_URL = "http://backend:8000"` |
 | `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint with `{conversation_id, query}`, returns `"Literature search queued. Results will appear in this conversation shortly."` |
-| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` POSTs to `backend/internal/conversations/{id}/rag-ready` after building RAG index **only if `conversation_id` is present** — skipped silently for manual uploads |
+| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON). `/rag/ingest` unchanged. |
 | `app/agent.py` | `convert_messages`: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")` |
 
 ### backend (`backend/`)
 
 | File | Change |
 |---|---|
-| `app/api/routes/internal.py` | New file. Two endpoints — no auth, Docker-internal only: `POST /internal/queue-background-tool` (queues S2 search Celery task); `POST /internal/conversations/{id}/rag-ready` (saves background message + dispatches `run_agent_continuation`). |
+| `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Queues `run_s2_search` Celery task. |
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
 | `app/api/main.py` | Mount `/internal` router |
-| `app/worker/tasks/continuation.py` | New file. `run_s2_search` and `run_agent_continuation` tasks. |
+| `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
 | `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
 
 ### frontend (`frontend/`)
@@ -106,10 +110,6 @@ POST /internal/queue-background-tool
   "query": "string",
   "max_results": 5
 }
-→ 202 Accepted
-
-POST /internal/conversations/{id}/rag-ready
-{}  (no body needed)
 → 202 Accepted
 
 POST /internal/s2-search  (ai-agent)
@@ -141,17 +141,17 @@ Please analyze these results and provide relevant information.
 Semantic Scholar returned an error: {reason}.
 ```
 
-**RAG ready:**
+**Papers ingested (triggers RAG continuation):**
 ```
-[Background: New Documents Available]
+[Background: New Papers Available]
 Articles from your earlier literature search have been parsed and added to the knowledge base.
 Please search the RAG corpus for information relevant to this conversation.
 ```
 
-**RAG empty (agent skips continuation):**
+**Parsing failed:**
 ```
-[Background: RAG - No New Content]
-The parsed documents contained no content for the knowledge base.
+[Background: Parsing Failed]
+One or more articles could not be parsed.
 ```
 
 ## Error Handling
@@ -160,9 +160,9 @@ The parsed documents contained no content for the knowledge base.
 |---|---|
 | S2 fails | Save error background message, show to user with Retry button, do NOT dispatch continuation |
 | S2 returns 0 papers | Info card (no Retry button — not an error), no continuation |
-| RAG search empty after ingest | Info card (no Retry button), no continuation |
+| Parsing fails | Error background message, no continuation |
+| monitor_ingestion times out (20 min) | Task exhausts retries, silently dropped |
 | Continuation task times out | Frontend already has initial response; follow-up silently dropped |
-| Multiple PDFs parsed (double-trigger) | Each triggers its own continuation — acceptable, each brings new content |
 | New user message races with continuation | Both tasks run; conversation is append-only; both responses saved — acceptable for now |
 
 ## Testing
