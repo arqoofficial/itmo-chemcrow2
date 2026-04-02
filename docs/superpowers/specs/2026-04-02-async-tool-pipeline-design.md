@@ -1,195 +1,186 @@
 # Async Tool Pipeline Design
 
-**Date:** 2026-04-02  
-**Status:** Approved  
-**Scope:** ChemCrow2 — multi-turn async agent responses for slow tools
-
----
+**Date:** 2026-04-02
+**Status:** Approved
+**Branch:** osn-pre-main
 
 ## Problem
 
-`literature_search` (Semantic Scholar API) blocks the entire LangGraph agent loop for up to 125 seconds due to rate-limit retries. The user sees nothing until all retries exhaust. Similarly, article parsing (Docling) takes tens of seconds — when it finishes and new RAG content is available, the agent is never told.
-
----
+`literature_search` blocks the LangGraph agent for up to 125 seconds (5 × S2 retry waits). The user sees nothing until the entire ReAct loop completes. Article parsing (Docling) similarly produces RAG content that the agent never uses in its response because it arrives after the agent has already replied.
 
 ## Goal
 
-Fast tools (RAG, RDKit, safety checks) produce an immediate agent response. Slow operations (S2 search, PDF parsing) run in the background and trigger follow-up agent responses automatically when they complete.
+Fast tools (RAG, chemistry tools) produce an immediate agent response. Slow operations (S2 search, article parsing) run in the background and trigger follow-up agent responses when they complete.
 
----
+## User-visible Flow
 
-## User-Visible Flow
-
-1. User sends a message asking for literature on topic X
-2. Agent calls `rag_search` (fast), calls `literature_search` → returns **"Search queued"** immediately
-3. Agent responds with initial answer using RAG results only (~5s)
-4. *(background)* S2 search completes → follow-up agent message appears with abstract analysis
-5. *(background)* PDF parsing completes → RAG index updated → follow-up agent message with deep document analysis
-
----
+```
+1.  User sends request
+2.  Agent calls literature_search → returns "Search queued" immediately
+3.  Agent calls other tools (rag_search, chemistry tools)
+4.  Agent responds with initial answer  ← user sees this fast
+5.  [background] S2 search completes
+6.  Background message injected: "Literature Search Results: ..."
+7.  Agent re-invoked → responds with abstract-level analysis
+8.  [background] Article parsing finishes, RAG index updated
+9.  Background worker calls rag_search programmatically, injects result
+10. Agent re-invoked → responds with document-level analysis
+```
 
 ## New Concepts
 
-### Background Messages (`role="background:{type}"`)
+### Background Messages (`role="background"`)
 
-Messages injected into the conversation by the pipeline, not by the user. Stored in DB alongside regular messages. The role string encodes the variant: `background:s2_success`, `background:s2_failed`, `background:rag_result`, `background:rag_empty`. The agent sees them as `HumanMessage` with a `[Background Update]` prefix (role variant stripped). The frontend checks `role.startsWith("background")` and splits on `:` to pick the card style.
+Messages injected into the conversation by the pipeline, not by the user. Stored in the `chat_message` table with `role="background"`. The agent sees them as `HumanMessage` with a `[Background Update]` prefix. The frontend renders them as info cards (not user/assistant bubbles).
 
-Examples:
+### `run_agent_continuation` Celery Task
+
+Re-invokes the agent when background work completes. Loads full conversation history (including the newly saved background message), calls ai-agent SSE stream, forwards tokens to Redis pubsub (same path as `process_chat_message`), saves the assistant response to DB.
+
+## Architecture
+
 ```
-role="background:s2_success"
+literature_search tool
+  │ POST /internal/queue-background-tool
+  ▼
+backend /internal router
+  │ dispatches Celery task
+  ▼
+run_s2_search (Celery, chat queue)
+  │ POST ai-agent /internal/s2-search  ← blocking, ≤15s
+  │ save role="background" message to DB
+  │ publish background_update SSE event
+  │ dispatch run_agent_continuation
+  ▼
+run_agent_continuation (Celery, chat queue)
+  │ load conversation history
+  │ call ai-agent SSE stream
+  │ forward tokens → Redis pubsub → frontend
+  └ save assistant message to DB
+
+/rag/ingest (ai-agent)
+  │ build RAG index (existing)
+  │ fetch last user message from DB
+  │ call rag_search(query, conversation_id) directly
+  │ POST backend /internal/queue-background-tool {type: rag_result, ...}
+  ▼
+backend saves role="background" message + dispatches run_agent_continuation
+```
+
+## Component Changes
+
+### ai-agent (`services/ai-agent/`)
+
+| File | Change |
+|---|---|
+| `app/config.py` | Add `BACKEND_INTERNAL_URL = "http://backend:8000"` |
+| `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint, returns `"Literature search queued. Results will appear in this conversation shortly."` |
+| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` calls `rag_search` after build + notifies backend |
+| `app/agent.py` | `convert_messages`: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")` |
+
+### backend (`backend/`)
+
+| File | Change |
+|---|---|
+| `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Routes to Celery task by `type` field. `GET /internal/conversations/{id}/last-user-message` — returns last human message content for RAG query. |
+| `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
+| `app/api/main.py` | Mount `/internal` router |
+| `app/worker/tasks/continuation.py` | New file. `run_s2_search` and `run_agent_continuation` tasks. |
+| `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
+
+### frontend (`frontend/`)
+
+| File | Change |
+|---|---|
+| `src/components/Chat/MessageBubble.tsx` | Detect `role="background"`, render as muted info card |
+| `src/components/Chat/BackgroundMessageCard.tsx` | New component. Shows background update content. Error variant shows Retry button. |
+| `src/hooks/useConversationSSE.ts` | Handle `background_update` event (triggers scroll) |
+
+## Internal Endpoint Contract
+
+```
+POST /internal/queue-background-tool
+{
+  "type": "s2_search" | "rag_result",
+  "conversation_id": "uuid",
+  "query": "string",          // s2_search only
+  "max_results": 5,           // s2_search only
+  "content": "string"         // rag_result only
+}
+→ 202 Accepted
+
+POST /internal/s2-search  (ai-agent)
+{
+  "query": "string",
+  "max_results": 5
+}
+→ { "papers": [...] }
+```
+
+## Background Message Formats
+
+**S2 success:**
+```
 [Background: Literature Search Results]
-Found 5 papers on synthesis of X:
-- Paper 1 ...
+Your earlier search for "{query}" found {n} papers:
 
-role="background:s2_failed"
+1. Title — Authors (Year) — DOI
+   Abstract: ...
+
+2. ...
+
+Please analyze these results and provide relevant information.
+```
+
+**S2 failure:**
+```
 [Background: Literature Search Failed]
-Semantic Scholar returned a 429 after all retries.
+Semantic Scholar returned an error: {reason}.
+```
 
-role="background:rag_empty"
+**RAG result:**
+```
+[Background: RAG Search Results]
+New documents are available. Relevant content for "{query}":
+
+{rag_results}
+
+Please provide a deeper analysis based on these document contents.
+```
+
+**RAG empty:**
+```
 [Background: RAG Search - No Results]
 No relevant content found in the newly parsed documents.
 ```
 
-### `run_agent_continuation` Celery Task
-
-Re-invokes the agent when background work completes. Loads full conversation history (which now includes the background message), calls the ai-agent SSE stream, forwards tokens to Redis pubsub (user sees tokens streaming), saves the assistant response to DB. Behaves identically to `process_chat_message` except it is triggered by the pipeline, not by a user message.
-
----
-
-## Architecture
-
-### Data Flow
-
-```
-── Fast path (unchanged except literature_search) ──────────────────────────
-
-User → backend → process_chat_message Celery task
-               → ai-agent SSE stream → LangGraph loop:
-                   rag_search            (~1s, unchanged)
-                   literature_search     → POST backend /internal/queue-background-tool
-                                         ← "Search queued"
-                   [other fast tools]
-                   LLM final answer      → streamed to user
-
-── S2 background path ──────────────────────────────────────────────────────
-
-run_s2_search Celery task
-  → POST ai-agent /internal/s2-search   (blocking, max ~15s)
-  ← papers JSON
-  → save role="background" message to DB
-  → publish background_update SSE event
-  → dispatch run_agent_continuation
-      → load full conversation history
-      → call ai-agent SSE stream
-      → stream tokens to frontend
-      → save assistant message to DB
-
-── RAG ingest path (modified) ──────────────────────────────────────────────
-
-pdf-parser → POST ai-agent /rag/ingest  (existing endpoint, modified)
-  → build RAG index                     (existing)
-  → fetch last user message from conversation history
-  → call rag_search(query, conversation_id) programmatically
-  → if results non-empty:
-      POST backend /internal/queue-background-tool
-          {type: "rag_result", conversation_id, content: rag_results}
-      → backend saves role="background" message
-      → dispatches run_agent_continuation
-  → if results empty:
-      POST backend /internal/queue-background-tool
-          {type: "rag_no_results", conversation_id}
-      → backend saves informational background message
-      → no run_agent_continuation dispatched
-```
-
----
-
-## Component Changes
-
-### ai-agent service
-
-**`config.py`**
-- Add `BACKEND_INTERNAL_URL: str = "http://backend:8000"`
-
-**`tools/search.py`** — `literature_search` tool
-- Remove blocking S2 logic from tool body
-- Get `conversation_id` from `_CURRENT_CONV_ID` ContextVar
-- POST to `BACKEND_INTERNAL_URL/internal/queue-background-tool` with `{type: "s2_search", conversation_id, query, max_results}`
-- Return `"Literature search queued. Results will appear in this conversation shortly."`
-
-**`main.py`** — new internal endpoint
-- `POST /internal/s2-search` — runs the actual blocking S2 API call (logic extracted from old `literature_search`), returns raw papers JSON. Called only by the backend Celery task; not exposed externally.
-
-**`main.py`** — `/rag/ingest` (modified)
-- After building RAG index, fetch last human message from conversation history via `GET BACKEND_INTERNAL_URL/internal/conversations/{id}/last-user-message`
-- Call `rag_search(query=last_user_message, conversation_id=conversation_id)` directly (not via LLM)
-- POST result (or no-result signal) to `BACKEND_INTERNAL_URL/internal/queue-background-tool`
-
-**`agent.py`** — `convert_messages`
-- Add case: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")`
-
-### backend service
-
-**`app/api/routes/internal.py`** (new file)
-- `POST /internal/queue-background-tool` — accepts `{type, conversation_id, ...}`, dispatches appropriate Celery task. No auth (Docker-internal only). Mount at `/internal`.
-- `GET /internal/conversations/{id}/last-user-message` — returns last message with `role="user"` for a conversation.
-
-**`app/worker/tasks/continuation.py`** (new file)
-- `run_s2_search(conversation_id, query, max_results)` — stores `query` in Redis at `conversation:{id}:last_s2_query` (TTL 7d), calls `AI_AGENT_URL/internal/s2-search`, formats result, saves `role="background:s2_success"` message, dispatches `run_agent_continuation`. On failure: saves `role="background:s2_failed"` message, does NOT dispatch continuation.
-- `run_agent_continuation(conversation_id)` — loads history, calls ai-agent SSE stream via `_process_streaming` (shared from `chat.py`), saves assistant message, publishes SSE events.
-
-**`app/models.py`**
-- `ChatMessage.role` — verify it's a plain `str` field (no enum constraint). No migration needed.
-
-**`app/api/routes/conversations.py`** (or new file)
-- `POST /api/v1/conversations/{id}/retry-s2-search` — frontend-facing proxy; reads original query from Redis key `conversation:{id}:last_s2_query`, dispatches a new `run_s2_search` task.
-
-### frontend
-
-**`MessageBubble.tsx`**
-- Detect `message.role.startsWith("background")`, render as muted info card instead of chat bubble.
-- Split role on `:` to get variant: `s2_success` (teal), `s2_failed` (red + Retry button), `rag_result` (teal), `rag_empty` (muted grey).
-
-**`useConversationSSE.ts`**
-- Handle new `background_update` SSE event — triggers scroll to bottom; no additional state change needed (content arrives via normal `token`/`message` events from `run_agent_continuation`).
-
----
-
 ## Error Handling
 
-| Scenario | Action |
+| Scenario | Behaviour |
 |---|---|
-| S2 search fails (network / all retries exhausted) | Save error background message, publish SSE, show Retry button in UI. No continuation dispatched. |
-| S2 returns 0 papers | Save "no papers found" background message. No continuation dispatched. |
-| RAG search returns empty after ingest | Save "no results" background message. No continuation dispatched. |
-| `run_agent_continuation` times out | Uses same `CHAT_TASK_SOFT_TIME_LIMIT` as `process_chat_message`. Initial response already visible; follow-up silently dropped. |
-| Multiple PDFs parsed for same conversation | Each triggers its own `run_agent_continuation`. Accepted — each brings new content. |
-| New user message arrives while continuation pending | Celery processes both independently; both responses saved. Acceptable race for now. |
-
----
+| S2 fails | Save error background message, show to user with Retry button, do NOT dispatch continuation |
+| S2 returns 0 papers | Info card (no Retry button — not an error), no continuation |
+| RAG search empty after ingest | Info card (no Retry button), no continuation |
+| Continuation task times out | Frontend already has initial response; follow-up silently dropped |
+| Multiple PDFs parsed (double-trigger) | Each triggers its own continuation — acceptable, each brings new content |
+| New user message races with continuation | Both tasks run; conversation is append-only; both responses saved — acceptable for now |
 
 ## Testing
 
 ### Unit tests (no running stack)
-- `run_s2_search`: mock S2 HTTP → assert background message saved, continuation dispatched; mock failure → assert error message saved, continuation NOT dispatched
-- `run_agent_continuation`: mock ai-agent SSE → assert tokens forwarded to Redis, assistant message saved
+
+- `run_s2_search`: mock S2 call → assert background message saved, continuation dispatched; mock failure → assert error message saved, continuation NOT dispatched
+- `run_agent_continuation`: mock ai-agent stream → assert tokens forwarded to pubsub, assistant message saved
 - `convert_messages`: `role="background"` → `HumanMessage` with `[Background Update]` prefix
-- `literature_search` tool: mock backend endpoint → assert returns "queued", assert POST sent with correct payload
-- `/rag/ingest` modification: mock rag_search empty → assert no continuation; mock non-empty → assert background message + continuation dispatched
+- `literature_search` tool: mock backend endpoint → assert returns "queued", assert POST made with correct payload
 
 ### Integration tests (running stack)
-- Full S2 path: send literature query → assert initial response arrives → assert background message appears → assert follow-up response arrives
-- RAG path: upload PDF → wait for parse → assert RAG background card appears → assert follow-up response
+
+- Send literature query → assert initial response → assert background message → assert follow-up response
+- Upload PDF → wait for parse → assert RAG background message → assert follow-up response
 
 ### Frontend
-- Background message with `role="background"` renders as info card
+
+- `role="background"` message renders as info card, not chat bubble
 - Error card shows Retry button; click POSTs to correct endpoint
-- Playwright regression: existing chat flow unaffected
-
----
-
-## Out of Scope
-
-- Deduplication of concurrent `run_agent_continuation` tasks for the same conversation
-- Cancelling a queued S2 search after the user sends a new message
-- Async handling for tools other than `literature_search`
+- Existing E2E chat flow passes (regression)
