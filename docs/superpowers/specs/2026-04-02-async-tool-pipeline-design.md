@@ -117,7 +117,7 @@ run_agent_continuation (Celery, chat queue)
 |---|---|
 | `src/components/Chat/MessageBubble.tsx` | Detect `role="background"`, render as muted info card |
 | `src/components/Chat/BackgroundMessageCard.tsx` | New component. Shows background update content. Error variant shows Retry button. |
-| `src/components/Chat/ArticleDownloadsCard.tsx` | Track reparsed jobs that reach "completed". Show "Notify Agent" button when ≥1 exists. Button calls `POST /api/v1/conversations/{id}/trigger-rag-continuation`. |
+| `src/components/Chat/ArticleDownloadsCard.tsx` | Show "Notify Agent" button when: all jobs terminal (completed or failed) AND ≥1 failed AND ≥1 succeeded. This is exactly when `monitor_ingestion` stopped and there's still something in RAG. Button calls `POST /api/v1/conversations/{id}/trigger-rag-continuation`. |
 | `src/hooks/useConversationSSE.ts` | Handle `background_update` event (triggers scroll) |
 
 
