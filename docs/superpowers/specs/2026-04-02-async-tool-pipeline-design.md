@@ -60,7 +60,7 @@ run_agent_continuation (Celery, chat queue)
 
 /rag/ingest (ai-agent)
   │ build RAG index (existing)
-  │ POST backend /internal/queue-background-tool {type: "rag_ready", conversation_id}
+  │ POST backend /internal/conversations/{id}/rag-ready
   ▼
 backend saves role="background" message + dispatches run_agent_continuation
   │ agent sees full conversation history, writes its own rag_search query
@@ -81,7 +81,7 @@ backend saves role="background" message + dispatches run_agent_continuation
 
 | File | Change |
 |---|---|
-| `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Routes to Celery task by `type` field. |
+| `app/api/routes/internal.py` | New file. Two endpoints — no auth, Docker-internal only: `POST /internal/queue-background-tool` (queues S2 search Celery task); `POST /internal/conversations/{id}/rag-ready` (saves background message + dispatches `run_agent_continuation`). |
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search` and `run_agent_continuation` tasks. |
@@ -101,11 +101,15 @@ backend saves role="background" message + dispatches run_agent_continuation
 ```
 POST /internal/queue-background-tool
 {
-  "type": "s2_search" | "rag_ready",
+  "type": "s2_search",
   "conversation_id": "uuid",
-  "query": "string",          // s2_search only
-  "max_results": 5            // s2_search only
+  "query": "string",
+  "max_results": 5
 }
+→ 202 Accepted
+
+POST /internal/conversations/{id}/rag-ready
+{}  (no body needed)
 → 202 Accepted
 
 POST /internal/s2-search  (ai-agent)
