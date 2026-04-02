@@ -108,7 +108,7 @@ run_agent_continuation (Celery, chat queue)
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
 | `app/worker/prompts.py` | New file. Background message prompt templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`. |
-| `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` lock at start, releases and drains `conv_pending` at end. |
+| `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` in `try/finally` — always released even on timeout or crash. `run_s2_search` and `monitor_ingestion` never touch this lock. |
 | `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
 
 ### frontend (`frontend/`)
@@ -190,7 +190,9 @@ One or more articles could not be parsed.
 | Any parse fails | Error background message, no RAG continuation. User retries via ArticleDownloadsCard → "Notify Agent" button on success. |
 | monitor_ingestion times out (20 min) | Task exhausts retries, silently dropped |
 | Continuation task times out | Frontend already has initial response; follow-up silently dropped |
-| New user message races with continuation | `process_chat_message` sets `conv_processing`; continuation queues itself in `conv_pending` and runs after |
+| New user message races with continuation | `process_chat_message` sets `conv_processing`; continuation queues in `conv_pending` and runs after |
+| `process_chat_message` crashes / times out | `try/finally` releases lock unconditionally — conversation unblocked |
+| Background pipeline error (S2/parse failure) | Fully isolated — saves background message, returns normally, never touches `conv_processing` |
 
 ## Testing
 
