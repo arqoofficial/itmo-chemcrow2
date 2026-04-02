@@ -74,7 +74,7 @@ backend saves role="background" message + dispatches run_agent_continuation
 |---|---|
 | `app/config.py` | Add `BACKEND_INTERNAL_URL = "http://backend:8000"` |
 | `app/tools/search.py` | `literature_search` POSTs to backend internal endpoint with `{conversation_id, query}`, returns `"Literature search queued. Results will appear in this conversation shortly."` |
-| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` POSTs `{type: "rag_ready", conversation_id}` to backend after building RAG index — agent generates its own RAG query when re-invoked |
+| `app/main.py` | New `POST /internal/s2-search` endpoint (blocking S2 search, returns raw JSON); `/rag/ingest` POSTs to `backend/internal/conversations/{id}/rag-ready` after building RAG index **only if `conversation_id` is present** — skipped silently for manual uploads |
 | `app/agent.py` | `convert_messages`: `role="background"` → `HumanMessage(content=f"[Background Update]\n{content}")` |
 
 ### backend (`backend/`)
