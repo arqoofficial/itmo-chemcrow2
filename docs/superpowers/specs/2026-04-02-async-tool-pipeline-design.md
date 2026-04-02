@@ -37,6 +37,12 @@ Messages injected into the conversation by the pipeline, not by the user. Stored
 
 Re-invokes the agent when background work completes. Loads full conversation history (including the newly saved background message), calls ai-agent SSE stream, forwards tokens to Redis pubsub (same path as `process_chat_message`), saves the assistant response to DB.
 
+Uses a per-conversation queue to prevent concurrent streaming to the same channel:
+- Redis key `conv_processing:{conversation_id}` — set while a task is active (SETNX)
+- Redis list `conv_pending:{conversation_id}` — queued continuation signals
+
+If `conv_processing` is already set, the task pushes a signal to `conv_pending` and exits. When the active task finishes, it pops from `conv_pending` and dispatches a new `run_agent_continuation` if needed. The dispatched task always reads fresh history, so it picks up all background messages that arrived while waiting.
+
 ## Architecture
 
 ```
@@ -89,6 +95,7 @@ monitor_ingestion (Celery, retries every 10s, max 20 min)
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
+| `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` lock at start, releases and drains `conv_pending` at end. |
 | `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
 
 ### frontend (`frontend/`)
@@ -163,7 +170,7 @@ One or more articles could not be parsed.
 | Parsing fails | Error background message, no continuation |
 | monitor_ingestion times out (20 min) | Task exhausts retries, silently dropped |
 | Continuation task times out | Frontend already has initial response; follow-up silently dropped |
-| New user message races with continuation | Both tasks run; conversation is append-only; both responses saved — acceptable for now |
+| New user message races with continuation | `process_chat_message` sets `conv_processing`; continuation queues itself in `conv_pending` and runs after |
 
 ## Testing
 
