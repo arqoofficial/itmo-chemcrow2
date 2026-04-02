@@ -23,8 +23,8 @@ Fast tools (RAG, chemistry tools) produce an immediate agent response. Slow oper
 6.  Background message injected: "Literature Search Results: ..."
 7.  Agent re-invoked → responds with abstract-level analysis
 8.  [background] Article parsing finishes, RAG index updated
-9.  Background worker calls rag_search programmatically, injects result
-10. Agent re-invoked → responds with document-level analysis
+9.  Background message injected: "New papers available, please search RAG"
+10. Agent re-invoked → calls rag_search itself → responds with document-level analysis
 ```
 
 ## New Concepts
@@ -38,7 +38,7 @@ Messages injected into the conversation by the pipeline, not by the user. Stored
 Re-invokes the agent when background work completes. Loads full conversation history (including the newly saved background message), calls ai-agent SSE stream, forwards tokens to Redis pubsub (same path as `process_chat_message`), saves the assistant response to DB.
 
 Uses a per-conversation queue to prevent concurrent streaming to the same channel:
-- Redis key `conv_processing:{conversation_id}` — set while a task is active (SETNX)
+- Redis key `conv_processing:{conversation_id}` — set atomically with `SET NX EX 600` while a task is active (single command — avoids permanent lock if process dies between SETNX and EXPIRE)
 - Redis list `conv_pending:{conversation_id}` — queued continuation signals
 
 If `conv_processing` is already set, the task pushes a signal to `conv_pending` and exits. When the active task finishes, it pops from `conv_pending` and dispatches a new `run_agent_continuation` if needed. The dispatched task always reads fresh history, so it picks up all background messages that arrived while waiting.
@@ -64,17 +64,20 @@ run_s2_search (Celery, chat queue)
                       ↓
 monitor_ingestion (Celery, retries every 10s, max 20 min)
   │ polls article-fetcher AND pdf-parser status for each job_id
+  │ NOTE: pdf-parser returns 404 until article-fetcher fires its webhook.
+  │       404 must be treated as "pending", not "failed".
+  │       Only check pdf-parser status for jobs where article-fetcher is "done".
   │
   │ STOP if ALL article-fetcher jobs failed (nothing downloaded)
   │       → error background message
   │
-  │ STOP if ANY pdf-parser job failed (partial content untrustworthy)
+  │ STOP if ANY pdf-parser job failed
   │       → error background message
   │       → user can retry parse via ArticleDownloadsCard
-  │       → "Notify Agent" button appears on successful retry
+  │       → "Notify Agent" button appears when all terminal + ≥1 succeeded
   │
-  │ continue while any article-fetcher job still running (wait for downloads)
-  │ continue while any pdf-parser job still running  (wait for parsing)
+  │ WAIT while any article-fetcher job still running
+  │ WAIT while any pdf-parser job (for completed fetches) still running
   │
   └ when all pdf-parser jobs "completed" → save [Background: New Papers Available]
                                          → dispatch run_agent_continuation
@@ -104,12 +107,12 @@ run_agent_continuation (Celery, chat queue)
 |---|---|
 | `app/api/routes/internal.py` | New file. `POST /internal/queue-background-tool` — no auth, Docker-internal only. Queues `run_s2_search` Celery task. |
 | `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/retry-s2-search` proxy (exposed to frontend for retry button) |
-| `app/api/routes/conversations.py` (or articles) | Add `POST /api/v1/conversations/{id}/trigger-rag-continuation` — saves `[Background: New Papers Available]` message + dispatches `run_agent_continuation`. Shares helper with `monitor_ingestion` success path. |
+| `app/api/routes/articles.py` | Add `POST /api/v1/conversations/{id}/trigger-rag-continuation` — saves `[Background: New Papers Available]` message + dispatches `run_agent_continuation`. Shares `_trigger_rag_continuation` helper with `monitor_ingestion` success path. |
 | `app/api/main.py` | Mount `/internal` router |
 | `app/worker/tasks/continuation.py` | New file. `run_s2_search`, `monitor_ingestion`, and `run_agent_continuation` tasks. |
-| `app/worker/prompts.py` | New file. Background message prompt templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`. |
-| `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` in `try/finally` — always released even on timeout or crash. `run_s2_search` and `monitor_ingestion` never touch this lock. |
-| `app/models.py` | Allow `"background"` as message role (string field, no migration needed if unconstrained) |
+| `app/worker/prompts.py` | New file. Templates: `S2_RESULTS`, `S2_NO_RESULTS`, `S2_FAILURE`, `PAPERS_INGESTED`, `PARSING_FAILED`, `DOWNLOAD_ALL_FAILED`. |
+| `app/worker/tasks/chat.py` | `process_chat_message` acquires `conv_processing` via `SET NX EX` in `try/finally`. Remove dead `_extract_dois` branch for `literature_search` (now returns "queued", no DOIs). |
+| `app/models.py` | Allow `"background"` as message role. Add nullable `metadata` JSON column to `ChatMessage` for `variant` field. |
 
 ### frontend (`frontend/`)
 
@@ -188,7 +191,9 @@ One or more articles could not be parsed.
 | All downloads fail | Error background message, pipeline stops. |
 | ≥1 download succeeds | Pipeline continues with successfully downloaded articles only. |
 | Any parse fails | Error background message, no RAG continuation. User retries via ArticleDownloadsCard → "Notify Agent" button on success. |
-| monitor_ingestion times out (20 min) | Task exhausts retries, silently dropped |
+| monitor_ingestion times out (20 min) | `on_failure` logs WARNING — not ERROR (user already has initial response). No alarm in task monitoring. |
+| s2_last_query Redis key expired (24h) | Retry endpoint returns 410 Gone with message "Search query expired" |
+| Multiple `literature_search` calls in one turn | DOI dedup prevents duplicate downloads. Overlapping `monitor_ingestion` tasks are harmless (each dispatches `run_agent_continuation` which serializes via `conv_pending`). |
 | Continuation task times out | Frontend already has initial response; follow-up silently dropped |
 | New user message races with continuation | `process_chat_message` sets `conv_processing`; continuation queues in `conv_pending` and runs after |
 | `process_chat_message` crashes / times out | `try/finally` releases lock unconditionally — conversation unblocked |
