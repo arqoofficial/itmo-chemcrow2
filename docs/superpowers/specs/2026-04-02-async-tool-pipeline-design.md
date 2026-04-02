@@ -101,11 +101,10 @@ backend saves role="background" message + dispatches run_agent_continuation
 ```
 POST /internal/queue-background-tool
 {
-  "type": "s2_search" | "rag_result",
+  "type": "s2_search" | "rag_ready",
   "conversation_id": "uuid",
   "query": "string",          // s2_search only
-  "max_results": 5,           // s2_search only
-  "content": "string"         // rag_result only
+  "max_results": 5            // s2_search only
 }
 → 202 Accepted
 
