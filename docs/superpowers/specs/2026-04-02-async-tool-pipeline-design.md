@@ -168,9 +168,15 @@ Please analyze these results and provide relevant information.
 **Papers ingested** (`PAPERS_INGESTED`):
 ```
 [Background: New Papers Available]
-Articles from your earlier literature search have been parsed and added to the knowledge base.
-Please search the RAG corpus for information relevant to this conversation.
+The following articles from your earlier search have been parsed and added to the knowledge base:
+
+1. {Title} — {Authors} ({Year}) — {DOI}
+2. ...
+
+Please search the RAG corpus for detailed information from these documents relevant to this conversation.
 ```
+
+`run_s2_search` saves paper metadata to Redis at `s2_paper_meta:{job_id}` (JSON, 48h TTL) when submitting article downloads. `monitor_ingestion` looks up metadata for the successfully completed job IDs to build the list.
 
 ## Error Handling
 
