@@ -31,7 +31,7 @@ Fast tools (RAG, chemistry tools) produce an immediate agent response. Slow oper
 
 ### Background Messages (`role="background"`)
 
-Messages injected into the conversation by the pipeline, not by the user. Stored in the `chat_message` table with `role="background"`. The agent sees them as `HumanMessage` with a `[Background Update]` prefix. The frontend renders them as info cards (not user/assistant bubbles).
+Messages injected into the conversation by the pipeline, not by the user. Stored in the `chat_message` table with `role="background"` and a `metadata` JSON field. The agent sees them as `HumanMessage` with a `[Background Update]` prefix. The frontend reads `metadata.variant` (`"info"` or `"error"`) to choose card style — avoids fragile string-prefix parsing.
 
 ### `run_agent_continuation` Celery Task
 
