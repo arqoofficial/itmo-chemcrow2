@@ -3,7 +3,10 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import time
 from contextlib import asynccontextmanager
+
+import requests
 
 from fastapi import BackgroundTasks, FastAPI
 from langchain_core.messages import AIMessage
@@ -167,12 +170,14 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                 elif kind == "on_tool_start":
                     tool_name = event.get("name", "")
                     tool_input = event.get("data", {}).get("input", {})
+                    run_id = event.get("run_id", "")
                     logger.info("TOOL CALL: %s | input: %s", tool_name, tool_input)
                     yield {
                         "event": "tool_start",
                         "data": json.dumps({
                             "tool": tool_name,
                             "input": tool_input,
+                            "run_id": run_id,
                         }),
                     }
 
@@ -180,6 +185,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                     tool_name = event.get("name", "")
                     tool_output = str(event.get("data", {}).get("output", ""))
                     tool_input = event.get("data", {}).get("input", {})
+                    run_id = event.get("run_id", "")
                     smiles = tool_input.get("smiles", "")
                     if tool_name == "predict_nmr":
                         try:
@@ -203,6 +209,7 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
                         "data": json.dumps({
                             "tool": tool_name,
                             "output": tool_output,
+                            "run_id": run_id,
                         }),
                     }
 
@@ -223,11 +230,27 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
             yield {"event": "done", "data": json.dumps({"status": "completed"})}
 
         except Exception as exc:
-            logger.exception("Streaming error")
-            yield {
-                "event": "error",
-                "data": json.dumps({"error": str(exc)}),
-            }
+            from openai import BadRequestError, AuthenticationError
+            if isinstance(exc, BadRequestError) and exc.status_code == 400:
+                logger.error("LLM bad request (model config issue?): %s", exc)
+                yield {
+                    "event": "token",
+                    "data": json.dumps({"content": "Не удалось обратиться к модели: проверьте настройки провайдера (модель недоступна или не поддерживается)."}),
+                }
+                yield {"event": "done", "data": json.dumps({"status": "completed"})}
+            elif isinstance(exc, AuthenticationError):
+                logger.error("LLM authentication failed: %s", exc)
+                yield {
+                    "event": "token",
+                    "data": json.dumps({"content": "Ошибка аутентификации: проверьте API-ключ провайдера."}),
+                }
+                yield {"event": "done", "data": json.dumps({"status": "completed"})}
+            else:
+                logger.exception("Streaming error")
+                yield {
+                    "event": "error",
+                    "data": json.dumps({"error": str(exc)}),
+                }
         finally:
             for cb in lf_config.get("callbacks", []):
                 if hasattr(cb, "flush"):
@@ -245,6 +268,68 @@ async def chat_stream(request: ChatRequest) -> EventSourceResponse:
 @app.get("/config/article-fetcher-url")
 def get_article_fetcher_url():
     return {"article_fetcher_url": settings.ARTICLE_FETCHER_URL}
+
+
+_S2_API_BASE = "https://api.semanticscholar.org/graph/v1"
+
+
+class S2SearchRequest(BaseModel):
+    query: str
+    max_results: int = 5
+
+
+@app.post("/internal/s2-search")
+def s2_search(payload: S2SearchRequest) -> dict:
+    """Blocking S2 search called by backend Celery worker. No auth — Docker-internal only."""
+    headers: dict[str, str] = {}
+    if settings.SEMANTIC_SCHOLAR_API_KEY:
+        headers["x-api-key"] = settings.SEMANTIC_SCHOLAR_API_KEY
+
+    params = {
+        "query": payload.query,
+        "limit": min(payload.max_results, 10),
+        "fields": "title,authors,abstract,year,citationCount,url,externalIds",
+    }
+
+    if settings.SEMANTIC_SCHOLAR_API_KEY:
+        retry_waits = [1, 2, 3, 4, 5]
+    else:
+        retry_waits = [5, 10, 20, 30, 60]
+
+    for attempt, wait in enumerate(retry_waits):
+        r = requests.get(f"{_S2_API_BASE}/paper/search", params=params, headers=headers, timeout=15)
+        if r.status_code != 429:
+            break
+        logger.warning("S2 429, retrying in %ds (attempt %d/%d)", wait, attempt + 1, len(retry_waits))
+        time.sleep(wait)
+
+    r.raise_for_status()
+    raw_papers = r.json().get("data", [])
+
+    papers = []
+    for p in raw_papers:
+        authors_list = p.get("authors") or []
+        author_names = [a["name"] for a in authors_list[:3]]
+        if len(authors_list) > 3:
+            author_names.append("et al.")
+        authors_str = ", ".join(author_names)
+
+        ext_ids = p.get("externalIds") or {}
+        doi = ext_ids.get("DOI")
+
+        abstract = p.get("abstract") or ""
+
+        papers.append({
+            "title": p.get("title", "Untitled"),
+            "authors": authors_str,
+            "year": p.get("year"),
+            "doi": doi,
+            "abstract": abstract,
+            "citation_count": p.get("citationCount", 0),
+            "url": p.get("url"),
+        })
+
+    return {"papers": papers, "query": payload.query}
 
 
 class IngestRequest(BaseModel):
