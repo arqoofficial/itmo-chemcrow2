@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime, timezone
 
 from pydantic import EmailStr
-from sqlalchemy import DateTime, Text
+from sqlalchemy import Column, DateTime, JSON, Text
 from sqlmodel import Field, Relationship, SQLModel
 
 
@@ -176,6 +176,9 @@ class ChatMessage(SQLModel, table=True):
     role: str = Field(max_length=20)
     content: str = Field(sa_type=Text())  # type: ignore
     tool_calls: str | None = Field(default=None, sa_type=Text())  # type: ignore
+    msg_metadata: dict | None = Field(
+        default=None, sa_column=Column("metadata", JSON, nullable=True)
+    )
     created_at: datetime | None = Field(
         default_factory=get_datetime_utc,
         sa_type=DateTime(timezone=True),  # type: ignore
@@ -189,6 +192,7 @@ class ChatMessagePublic(SQLModel):
     role: str
     content: str
     tool_calls: str | None = None
+    metadata: dict | None = None
     created_at: datetime | None = None
 
 
