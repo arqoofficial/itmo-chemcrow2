@@ -8,6 +8,7 @@ celery_app = Celery(
     backend=settings.REDIS_URL,
     include=[
         "app.worker.tasks.chat",
+        "app.worker.tasks.continuation",
         "app.worker.tasks.example",
         "app.worker.tasks.retrosynthesis",
     ],
