@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     # Internal service URLs
     BACKEND_URL: str = "http://backend:8000"
+    BACKEND_INTERNAL_URL: str = "http://backend:8000"
 
     # Optional tool API keys
     SERP_API_KEY: str = ""

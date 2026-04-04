@@ -132,3 +132,16 @@ def test_convert_messages_large_list():
     for i, msg in enumerate(result):
         assert isinstance(msg, HumanMessage)
         assert msg.content == f"Message {i}"
+
+
+def test_convert_messages_background_role():
+    """role='background' must become HumanMessage with [Background Update] prefix."""
+    from app.agent import convert_messages
+    from langchain_core.messages import HumanMessage
+
+    msgs = [{"role": "background", "content": "Some background info"}]
+    result = convert_messages(msgs)
+    assert len(result) == 1
+    assert isinstance(result[0], HumanMessage)
+    assert result[0].content.startswith("[Background Update]")
+    assert "Some background info" in result[0].content

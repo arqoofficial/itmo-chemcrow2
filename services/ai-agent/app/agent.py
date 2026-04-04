@@ -161,6 +161,8 @@ def convert_messages(raw_messages: list[dict]) -> list[AnyMessage]:
                     tool_call_id=msg.get("tool_call_id", "unknown"),
                 )
             )
+        elif role == "background":
+            result.append(HumanMessage(content=f"[Background Update]\n{content}"))
         else:
             result.append(HumanMessage(content=content))
     return result

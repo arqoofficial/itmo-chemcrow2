@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 import time
 
+import httpx
 import molbloom
 import requests
 from langchain.tools import tool
@@ -70,74 +71,32 @@ def web_search(query: str) -> str:
 def literature_search(query: str, max_results: int = 5) -> str:
     """Search scientific literature for chemistry-related papers.
 
-    Uses Semantic Scholar API (free, open access) to find relevant
-    papers and return titles, authors, abstracts, and citation counts.
+    Results are delivered asynchronously — you will receive them as a background
+    update in this conversation shortly after calling this tool.
 
     Args:
         query: Search query describing the topic of interest.
         max_results: Maximum number of results to return (default 5).
     """
     from app.config import settings
+    from app.tools.rag import _CURRENT_CONV_ID
+
+    conversation_id = _CURRENT_CONV_ID.get(None)
+    if not conversation_id:
+        return "Literature search unavailable: no conversation context."
 
     try:
-        headers = {}
-        if settings.SEMANTIC_SCHOLAR_API_KEY:
-            headers["x-api-key"] = settings.SEMANTIC_SCHOLAR_API_KEY
-
-        params = {
-            "query": query,
-            "limit": min(max_results, 10),
-            "fields": "title,authors,abstract,year,citationCount,url,externalIds",
-        }
-
-        # Retry with increasing waits — S2 free tier rate-limits aggressively
-        _retry_waits = [10, 20, 30, 60, 120]
-        max_retries = len(_retry_waits)
-        for attempt in range(max_retries):
-            r = requests.get(
-                f"{_S2_API_BASE}/paper/search",
-                params=params,
-                headers=headers,
-                timeout=15,
-            )
-            if r.status_code != 429:
-                break
-            wait = _retry_waits[attempt]
-            logger.warning("Semantic Scholar 429, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
-            time.sleep(wait)
-
-        r.raise_for_status()
-        data = r.json()
-
-        papers = data.get("data", [])
-        if not papers:
-            return "No papers found for this query."
-
-        results = []
-        for p in papers:
-            authors = ", ".join(a["name"] for a in (p.get("authors") or [])[:3])
-            if len(p.get("authors") or []) > 3:
-                authors += " et al."
-            abstract = p.get("abstract") or "No abstract available."
-            if len(abstract) > 300:
-                abstract = abstract[:300] + "..."
-            # Resolve DOI: prefer externalIds from API, fall back to HTML scraping
-            ext_ids = p.get("externalIds") or {}
-            doi = ext_ids.get("DOI")
-            if not doi:
-                paper_url = p.get("url")
-                if paper_url and "semanticscholar.org" not in paper_url:
-                    doi = _scrape_doi_from_url(paper_url)
-
-            results.append(
-                f"- **{p.get('title', 'Untitled')}** ({p.get('year', 'N/A')})\n"
-                f"  Authors: {authors}\n"
-                f"  Citations: {p.get('citationCount', 0)}\n"
-                f"  DOI: {doi or 'N/A'}\n"
-                f"  Abstract: {abstract}\n"
-                f"  URL: {p.get('url', 'N/A')}"
-            )
-        return "\n\n".join(results)
-    except requests.RequestException as e:
-        logger.exception("Semantic Scholar API error")
-        return f"Literature search error: {e}"
+        httpx.post(
+            f"{settings.BACKEND_INTERNAL_URL}/internal/queue-background-tool",
+            json={
+                "type": "s2_search",
+                "conversation_id": conversation_id,
+                "query": query,
+                "max_results": max_results,
+            },
+            timeout=5,
+        )
+        return "Literature search queued. Results will appear in this conversation shortly."
+    except Exception:
+        logger.exception("Failed to queue literature search")
+        return "Literature search unavailable: could not reach the queue endpoint."
