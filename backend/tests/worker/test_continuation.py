@@ -216,3 +216,105 @@ def test_run_s2_search_s2_call_fails_publishes_error(
     assert published["event"] == "background_error"
     assert published["retry_available"] is True
     mock_continuation.apply_async.assert_not_called()
+
+
+@patch("app.worker.tasks.continuation.get_sync_redis")
+@patch("app.worker.tasks.continuation.Session")
+@patch("app.worker.tasks.continuation._process_streaming")
+def test_run_agent_continuation_acquires_lock_streams_saves(
+    mock_streaming, mock_session, mock_redis
+):
+    """Continuation acquires lock, loads history, streams, saves assistant message."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.set.return_value = True  # lock acquired
+    mock_r.llen.return_value = 0  # no pending
+
+    mock_db = MagicMock()
+    mock_session.return_value.__enter__ = lambda s: mock_db
+    mock_session.return_value.__exit__ = MagicMock(return_value=False)
+
+    msg1 = MagicMock()
+    msg1.role = "user"
+    msg1.content = "What is aspirin?"
+    msg2 = MagicMock()
+    msg2.role = "background"
+    msg2.content = "[Background: Literature Search Results]\n..."
+    mock_db.exec.return_value.all.return_value = [msg1, msg2]
+    mock_db.get.return_value = MagicMock()  # Conversation
+
+    mock_streaming.return_value = ("Aspirin is an analgesic.", None)
+
+    def _refresh(obj):
+        obj.id = "msg-uuid"
+        obj.created_at = "2026-04-02T12:00:00"
+
+    mock_db.refresh.side_effect = _refresh
+
+    from app.worker.tasks.continuation import run_agent_continuation
+    run_agent_continuation("conv-123")
+
+    # Lock acquired and released
+    mock_r.set.assert_called_with("conv_processing:conv-123", "1", nx=True, ex=600)
+    mock_r.delete.assert_any_call("conv_processing:conv-123")
+
+    # Streaming called with correct message payload
+    mock_streaming.assert_called_once()
+    call_args = mock_streaming.call_args[0]
+    assert call_args[0] == "conv-123"
+
+    # Assistant message saved
+    mock_db.add.assert_called()
+    saved = next(
+        call[0][0] for call in mock_db.add.call_args_list
+        if hasattr(call[0][0], 'role') and call[0][0].role == "assistant"
+    )
+    assert saved.content == "Aspirin is an analgesic."
+
+
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_run_agent_continuation_queues_if_locked(mock_redis):
+    """If lock is taken, push to conv_pending and return without streaming."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.set.return_value = None  # lock NOT acquired
+
+    with patch("app.worker.tasks.continuation._process_streaming") as mock_streaming:
+        from app.worker.tasks.continuation import run_agent_continuation
+        run_agent_continuation("conv-123")
+
+    mock_r.rpush.assert_called_once_with("conv_pending:conv-123", "1")
+    mock_streaming.assert_not_called()
+
+
+@patch("app.worker.tasks.continuation.get_sync_redis")
+@patch("app.worker.tasks.continuation.Session")
+@patch("app.worker.tasks.continuation._process_streaming")
+def test_run_agent_continuation_drains_pending_queue(
+    mock_streaming, mock_session, mock_redis
+):
+    """After finishing, drain conv_pending and dispatch one new continuation."""
+    import app.worker.tasks.continuation as cont_mod
+
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.set.return_value = True  # lock acquired
+    mock_r.llen.return_value = 3   # 3 pending signals
+
+    mock_db = MagicMock()
+    mock_session.return_value.__enter__ = lambda s: mock_db
+    mock_session.return_value.__exit__ = MagicMock(return_value=False)
+    mock_db.exec.return_value.all.return_value = []
+    mock_db.get.return_value = MagicMock()
+    mock_db.refresh.side_effect = lambda obj: setattr(obj, "id", "x")
+    mock_streaming.return_value = ("", None)
+
+    # Patch only apply_async to prevent real dispatch while still running the real function
+    mock_apply_async = MagicMock()
+    real_fn = cont_mod.run_agent_continuation
+    with patch.object(real_fn, "apply_async", mock_apply_async):
+        cont_mod.run_agent_continuation("conv-123")
+
+    # Full queue deleted, single continuation dispatched
+    mock_r.delete.assert_any_call("conv_pending:conv-123")
+    mock_apply_async.assert_called_once_with(args=["conv-123"], countdown=0)

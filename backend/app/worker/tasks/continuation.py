@@ -13,7 +13,7 @@ from app.core.redis import get_sync_redis
 from app.models import ChatMessage, Conversation, get_datetime_utc
 from app.worker import prompts
 from app.worker.celery_app import celery_app
-from app.worker.tasks.chat import _submit_article_jobs
+from app.worker.tasks.chat import _process_streaming, _submit_article_jobs
 
 logger = logging.getLogger(__name__)
 
@@ -128,10 +128,85 @@ def run_s2_search(conversation_id: str, query: str, max_results: int = 5) -> Non
     )
 
 
-# Forward declarations — full implementations in Tasks 6 and 7
 @celery_app.task(queue="chat", ignore_result=True)
 def run_agent_continuation(conversation_id: str) -> None:
-    raise NotImplementedError("Task 7")
+    """Re-invoke the agent with fresh history (includes background messages).
+
+    Uses per-conversation lock to prevent concurrent streaming:
+    - conv_processing:{id} — SET NX EX 600 (atomic, avoids permanent lock on crash)
+    - conv_pending:{id}    — Redis list for queued signals
+    """
+    r = get_sync_redis()
+    lock_key = f"conv_processing:{conversation_id}"
+    pending_key = f"conv_pending:{conversation_id}"
+
+    # Atomic acquire — single command, avoids SETNX+EXPIRE race condition
+    acquired = r.set(lock_key, "1", nx=True, ex=600)
+    if not acquired:
+        r.rpush(pending_key, "1")
+        logger.info("run_agent_continuation queued for conv=%s (already processing)", conversation_id)
+        return
+
+    try:
+        with Session(engine) as db:
+            messages_db = db.exec(
+                select(ChatMessage)
+                .where(ChatMessage.conversation_id == conversation_id)
+                .order_by(col(ChatMessage.created_at).asc())
+            ).all()
+            messages_payload = [
+                {"role": msg.role, "content": msg.content}
+                for msg in messages_db
+            ]
+
+        _publish_sync(conversation_id, {"event": "thinking", "conversation_id": conversation_id})
+
+        try:
+            assistant_content, tool_calls_raw = _process_streaming(
+                conversation_id, messages_payload, r,
+            )
+        except Exception:
+            logger.exception("Streaming failed in run_agent_continuation conv=%s", conversation_id)
+            return
+
+        tool_calls_json = json.dumps(tool_calls_raw) if tool_calls_raw else None
+
+        with Session(engine) as db:
+            assistant_message = ChatMessage(
+                conversation_id=conversation_id,
+                role="assistant",
+                content=assistant_content,
+                tool_calls=tool_calls_json,
+            )
+            db.add(assistant_message)
+
+            conv = db.get(Conversation, conversation_id)
+            if conv:
+                conv.updated_at = get_datetime_utc()
+                db.add(conv)
+
+            db.commit()
+            db.refresh(assistant_message)
+            msg_id = str(assistant_message.id)
+
+        _publish_sync(conversation_id, {
+            "event": "message",
+            "id": msg_id,
+            "conversation_id": conversation_id,
+            "role": "assistant",
+            "content": assistant_content,
+            "tool_calls": tool_calls_json,
+            "created_at": str(assistant_message.created_at),
+        })
+
+        logger.info("run_agent_continuation complete conv=%s msg=%s", conversation_id, msg_id)
+
+    finally:
+        r.delete(lock_key)
+        # Drain entire pending queue into a single dispatch
+        if r.llen(pending_key) > 0:
+            r.delete(pending_key)
+            run_agent_continuation.apply_async(args=[conversation_id], countdown=0)
 
 
 def _get_fetch_status(client: httpx.Client, job_id: str) -> str:
