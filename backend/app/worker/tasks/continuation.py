@@ -134,6 +134,114 @@ def run_agent_continuation(conversation_id: str) -> None:
     raise NotImplementedError("Task 7")
 
 
-@celery_app.task(bind=True, queue="chat", max_retries=120, default_retry_delay=10, ignore_result=True)
+def _get_fetch_status(client: httpx.Client, job_id: str) -> str:
+    """Get article-fetcher status. Returns 'pending'|'done'|'failed'."""
+    try:
+        resp = client.get(f"{settings.ARTICLE_FETCHER_URL}/jobs/{job_id}", timeout=5.0)
+        if resp.status_code == 200:
+            return resp.json().get("status", "pending")
+        return "pending"
+    except Exception:
+        logger.warning("Failed to get fetch status for job %s", job_id, exc_info=True)
+        return "pending"
+
+
+def _get_parse_status(client: httpx.Client, job_id: str) -> str:
+    """Get pdf-parser status. Returns 'pending' on HTTP 404 — job not yet created."""
+    try:
+        resp = client.get(f"{settings.PDF_PARSER_URL}/jobs/{job_id}", timeout=5.0)
+        if resp.status_code == 404:
+            return "pending"  # not yet created — never treat as failed
+        if resp.status_code == 200:
+            return resp.json().get("status", "pending")
+        return "pending"
+    except Exception:
+        logger.warning("Failed to get parse status for job %s", job_id, exc_info=True)
+        return "pending"
+
+
+def _trigger_rag_continuation(conversation_id: str, completed_job_ids: list[str] | None = None) -> None:
+    """Build PAPERS_INGESTED message from Redis metadata and dispatch continuation.
+
+    completed_job_ids is optional. When None (manual trigger), uses generic message.
+    """
+    r = get_sync_redis()
+    lines = []
+    for i, job_id in enumerate(completed_job_ids or [], 1):
+        raw = r.get(f"s2_paper_meta:{job_id}")
+        if raw:
+            p = json.loads(raw)
+            doi = p.get("doi") or "N/A"
+            title = p.get("title") or "Untitled"
+            authors = p.get("authors") or "Unknown"
+            year = p.get("year") or "N/A"
+            lines.append(f"{i}. {title} — {authors} ({year}) — DOI: {doi}")
+    papers_formatted = "\n".join(lines) if lines else "recently parsed articles"
+    content = prompts.PAPERS_INGESTED.format(papers_formatted=papers_formatted)
+    save_background_message(conversation_id, content, variant="info")
+    _publish_sync(conversation_id, {"event": "background_update"})
+    run_agent_continuation.apply_async(args=[conversation_id], countdown=1)
+
+
+@celery_app.task(
+    bind=True,
+    queue="chat",
+    max_retries=120,
+    default_retry_delay=10,
+    ignore_result=True,
+)
 def monitor_ingestion(self, conversation_id: str, job_ids: list[str]) -> None:
-    raise NotImplementedError("Task 6")
+    """Poll article-fetcher and pdf-parser until all jobs complete, then trigger RAG continuation."""
+    logger.debug("monitor_ingestion poll conv=%s job_ids=%s", conversation_id, job_ids)
+
+    with httpx.Client(timeout=10.0) as client:
+        fetch_statuses = {jid: _get_fetch_status(client, jid) for jid in job_ids}
+
+        # STOP: all downloads failed
+        if all(s == "failed" for s in fetch_statuses.values()):
+            logger.warning("All article downloads failed for conv=%s", conversation_id)
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": "All article downloads failed.",
+                "retry_available": False,
+            })
+            return
+
+        # Only check pdf-parser for jobs where article-fetcher is done
+        done_fetch = [jid for jid, s in fetch_statuses.items() if s == "done"]
+        parse_statuses = {jid: _get_parse_status(client, jid) for jid in done_fetch}
+
+        # STOP: any parse failed
+        if any(s == "failed" for s in parse_statuses.values()):
+            logger.warning("Parse failure detected for conv=%s", conversation_id)
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": "One or more articles failed to parse.",
+                "retry_available": False,
+            })
+            return
+
+        # WAIT: any download still running
+        if any(s not in ("done", "failed") for s in fetch_statuses.values()):
+            raise self.retry()
+
+        # WAIT: any parse not yet completed
+        if any(s != "completed" for s in parse_statuses.values()):
+            raise self.retry()
+
+    # SUCCESS: all fetched + all parsed
+    completed_jobs = [jid for jid, s in parse_statuses.items() if s == "completed"]
+    _trigger_rag_continuation(conversation_id, completed_jobs)
+    logger.info("monitor_ingestion complete conv=%s", conversation_id)
+
+
+def _on_monitor_ingestion_failure(self, exc, task_id, args, kwargs, einfo):
+    """Called when monitor_ingestion exhausts retries. Log WARNING only."""
+    conversation_id = args[0] if args else "unknown"
+    logger.warning(
+        "monitor_ingestion timed out after max retries for conv=%s — user already has initial response",
+        conversation_id,
+    )
+
+
+monitor_ingestion.on_failure = _on_monitor_ingestion_failure

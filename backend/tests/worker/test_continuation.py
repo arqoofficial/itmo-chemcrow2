@@ -3,6 +3,103 @@ import json
 import pytest
 
 
+@patch("app.worker.tasks.continuation.run_agent_continuation")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+@patch("app.worker.tasks.continuation.httpx")
+def test_monitor_ingestion_success_all_done(mock_httpx, mock_redis, mock_continuation):
+    """All jobs fetched+parsed → save background message, dispatch continuation."""
+    mock_client = MagicMock()
+    mock_httpx.Client.return_value.__enter__ = lambda s: mock_client
+    mock_httpx.Client.return_value.__exit__ = MagicMock(return_value=False)
+
+    fetch_resp = MagicMock()
+    fetch_resp.status_code = 200
+    fetch_resp.json.return_value = {"status": "done"}
+
+    parse_resp = MagicMock()
+    parse_resp.status_code = 200
+    parse_resp.json.return_value = {"status": "completed"}
+
+    def _mock_get(url, **kwargs):
+        # article-fetcher uses port 8200; pdf-parser uses port 8300
+        if "8200" in url or "article-fetcher" in url:
+            return fetch_resp
+        return parse_resp
+
+    mock_client.get.side_effect = _mock_get
+
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.get.return_value = json.dumps({
+        "title": "Paper A", "authors": "Alice", "year": 2023, "doi": "10.1/a"
+    })
+
+    with patch("app.worker.tasks.continuation.save_background_message") as mock_save, \
+         patch("app.worker.tasks.continuation._publish_sync"):
+        from app.worker.tasks.continuation import monitor_ingestion
+        monitor_ingestion("conv-123", ["job-1"])
+
+    mock_save.assert_called_once()
+    args = mock_save.call_args[0]
+    assert args[0] == "conv-123"
+    assert "[Background: New Papers Available]" in args[1]
+    mock_continuation.apply_async.assert_called_once()
+
+
+@patch("app.worker.tasks.continuation.httpx")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_monitor_ingestion_404_is_pending_not_failed(mock_redis, mock_httpx):
+    """pdf-parser 404 means 'not yet created' — treat as pending, not failed."""
+    mock_client = MagicMock()
+    mock_httpx.Client.return_value.__enter__ = lambda s: mock_client
+    mock_httpx.Client.return_value.__exit__ = MagicMock(return_value=False)
+
+    def _mock_get(url, **kwargs):
+        resp = MagicMock()
+        # article-fetcher uses port 8200; pdf-parser uses port 8300
+        if "8200" in url or "article-fetcher" in url:
+            resp.status_code = 200
+            resp.json.return_value = {"status": "done"}
+        else:
+            resp.status_code = 404  # pdf-parser not yet created
+        return resp
+
+    mock_client.get.side_effect = _mock_get
+    mock_redis.return_value = MagicMock()
+
+    from celery.exceptions import Retry
+    from app.worker.tasks.continuation import monitor_ingestion
+
+    with patch.object(monitor_ingestion, "retry", side_effect=Retry) as mock_retry:
+        with pytest.raises(Retry):
+            monitor_ingestion("conv-123", ["job-1"])
+    mock_retry.assert_called_once()
+
+
+@patch("app.worker.tasks.continuation.run_agent_continuation")
+@patch("app.worker.tasks.continuation.httpx")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_monitor_ingestion_all_fetch_failed_publishes_error(mock_redis, mock_httpx, mock_continuation):
+    """All article-fetcher jobs failed → publish background_error, stop pipeline."""
+    mock_client = MagicMock()
+    mock_httpx.Client.return_value.__enter__ = lambda s: mock_client
+    mock_httpx.Client.return_value.__exit__ = MagicMock(return_value=False)
+
+    fetch_resp = MagicMock()
+    fetch_resp.status_code = 200
+    fetch_resp.json.return_value = {"status": "failed"}
+    mock_client.get.return_value = fetch_resp
+    mock_redis.return_value = MagicMock()
+
+    with patch("app.worker.tasks.continuation._publish_sync") as mock_pub:
+        from app.worker.tasks.continuation import monitor_ingestion
+        monitor_ingestion("conv-123", ["job-1"])
+
+    published = mock_pub.call_args[0][1]
+    assert published["event"] == "background_error"
+    mock_continuation.apply_async.assert_not_called()
+
+
 def _make_papers():
     return [
         {
