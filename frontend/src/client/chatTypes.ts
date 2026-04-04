@@ -31,6 +31,7 @@ export type ChatMessagePublic = {
   content: string
   tool_calls: string | null
   created_at: string | null
+  metadata: Record<string, unknown> | null
 }
 
 export type ChatMessagesPublic = {
@@ -46,6 +47,7 @@ export type ChatMessageCreate = {
 export type ToolCallInfo = {
   name: string
   args: Record<string, unknown>
+  call_id?: string
   result?: string
   status?: "running" | "completed" | "failed"
 }
@@ -87,3 +89,8 @@ export type SSEEvent =
   | { event: "hazards"; data: { chemicals: HazardChemical[] } }
   | { event: "article_downloads"; data: { jobs: ArticleDownloadJob[] } }
   | { event: "error"; data: { detail: string } }
+  | { event: "background_update"; data: Record<string, unknown> }
+  | {
+      event: "background_error"
+      data: { detail: string; retry_available: boolean }
+    }
