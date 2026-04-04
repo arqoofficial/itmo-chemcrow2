@@ -318,3 +318,60 @@ def test_run_agent_continuation_drains_pending_queue(
     # Full queue deleted, single continuation dispatched
     mock_r.delete.assert_any_call("conv_pending:conv-123")
     mock_apply_async.assert_called_once_with(args=["conv-123"], countdown=0)
+
+
+# ── _format_s2_results ────────────────────────────────────────────────────────
+
+def test_format_s2_results_happy_path():
+    """Single paper with all fields → correct heading and content."""
+    from app.worker.tasks.continuation import _format_s2_results
+    papers = [{
+        "title": "Aspirin Synthesis Review",
+        "authors": "Alice, Bob",
+        "year": 2023,
+        "doi": "10.1234/asp",
+        "abstract": "A review of aspirin synthesis.",
+    }]
+    result = _format_s2_results(papers, "aspirin")
+    assert "[Background: Literature Search Results]" in result
+    assert 'search for "aspirin" found 1 paper' in result
+    assert "Aspirin Synthesis Review" in result
+    assert "10.1234/asp" in result
+    assert "2023" in result
+    assert "Alice, Bob" in result
+    assert "A review of aspirin synthesis." in result
+
+
+def test_format_s2_results_truncates_abstract_at_400_chars():
+    """Abstract longer than 400 chars gets truncated with '...'."""
+    from app.worker.tasks.continuation import _format_s2_results
+    long_abstract = "x" * 500
+    papers = [{"title": "T", "authors": "A", "year": 2024, "doi": "10.1/x", "abstract": long_abstract}]
+    result = _format_s2_results(papers, "query")
+    assert "x" * 400 + "..." in result
+    assert "x" * 401 not in result
+
+
+def test_format_s2_results_missing_optional_fields():
+    """Paper with no doi, abstract, year → uses fallback strings, no crash."""
+    from app.worker.tasks.continuation import _format_s2_results
+    papers = [{"title": "Minimal Paper"}]
+    result = _format_s2_results(papers, "query")
+    assert "Minimal Paper" in result
+    assert "DOI: N/A" in result      # doi fallback
+    assert "(N/A)" in result          # year fallback
+    assert "No abstract." in result  # abstract fallback
+
+
+def test_format_s2_results_multiple_papers():
+    """Multiple papers are numbered sequentially."""
+    from app.worker.tasks.continuation import _format_s2_results
+    papers = [
+        {"title": "Paper One", "doi": "10.1/1"},
+        {"title": "Paper Two", "doi": "10.1/2"},
+        {"title": "Paper Three", "doi": "10.1/3"},
+    ]
+    result = _format_s2_results(papers, "q")
+    assert "1. **Paper One**" in result
+    assert "2. **Paper Two**" in result
+    assert "3. **Paper Three**" in result
