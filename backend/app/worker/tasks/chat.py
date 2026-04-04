@@ -16,6 +16,7 @@ import re
 
 import httpx
 import redis as redis_lib
+from sqlalchemy.exc import OperationalError
 from sqlmodel import Session, col, select
 
 from app.core.config import settings
@@ -183,21 +184,24 @@ def _process_streaming(
                 elif event_type == "tool_start":
                     name = data.get("tool", "")
                     args = data.get("input", {})
-                    tool_calls.append({"name": name, "args": args})
-                    pending_tool_args[name] = args
+                    run_id = data.get("run_id", "")
+                    tool_calls.append({"name": name, "args": args, "run_id": run_id})
+                    pending_tool_args[run_id or name] = args
                     _publish(r, conversation_id, {
                         "event": "tool_call",
                         "name": name,
                         "args": args,
+                        "call_id": run_id,
                         "status": "running",
                     })
 
                 elif event_type == "tool_end":
                     name = data.get("tool", "")
                     output = data.get("output", "")
-                    args = pending_tool_args.get(name, {})
+                    run_id = data.get("run_id", "")
+                    args = pending_tool_args.get(run_id or name, {})
                     for tc in tool_calls:
-                        if tc["name"] == name:
+                        if tc.get("run_id") == run_id or tc["name"] == name:
                             tc["result"] = output
                             tc["status"] = "completed"
                             break
@@ -205,18 +209,10 @@ def _process_streaming(
                         "event": "tool_call",
                         "name": name,
                         "args": args,
+                        "call_id": run_id,
                         "result": output,
                         "status": "completed",
                     })
-                    if name == "literature_search":
-                        dois = _extract_dois(output)
-                        if dois:
-                            new_jobs = _submit_article_jobs(r, conversation_id, dois)
-                            if new_jobs:
-                                _publish(r, conversation_id, {
-                                    "event": "article_downloads",
-                                    "jobs": new_jobs,
-                                })
 
                 elif event_type == "hazards":
                     _publish(r, conversation_id, {
@@ -256,6 +252,9 @@ def _process_sync(
     queue="chat",
     soft_time_limit=settings.CHAT_TASK_SOFT_TIME_LIMIT,
     time_limit=settings.CHAT_TASK_HARD_TIME_LIMIT,
+    autoretry_for=(OperationalError,),
+    max_retries=3,
+    retry_backoff=2,
 )
 def process_chat_message(
     self,
@@ -267,6 +266,12 @@ def process_chat_message(
     forward tokens via Redis, save final response to DB.
     """
     r = _get_redis()
+    lock_key = f"conv_processing:{conversation_id}"
+    pending_key = f"conv_pending:{conversation_id}"
+
+    # Atomic SET NX EX — prevents concurrent streaming on the same conversation.
+    # Best-effort: if already set (continuation running), we still proceed.
+    r.set(lock_key, "1", nx=True, ex=600)
 
     _publish(r, conversation_id, {
         "event": "thinking",
@@ -367,3 +372,12 @@ def process_chat_message(
             "detail": error_msg,
         })
         raise
+
+    finally:
+        # Always release lock — even on crash/timeout
+        r.delete(lock_key)
+        # If a continuation was queued while we were processing, dispatch it now
+        if r.llen(pending_key) > 0:
+            r.delete(pending_key)
+            from app.worker.tasks.continuation import run_agent_continuation
+            run_agent_continuation.apply_async(args=[conversation_id], countdown=0)

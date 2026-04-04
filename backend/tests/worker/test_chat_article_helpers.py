@@ -202,3 +202,13 @@ def test_fetch_article_statuses_skips_failed_requests():
         result = _fetch_article_statuses(stored_jobs)
 
     assert result == []  # failed requests are skipped
+
+
+def test_literature_search_tool_end_does_not_submit_jobs():
+    """literature_search now returns 'queued' — _process_streaming must not extract DOIs from it."""
+    import inspect
+    from app.worker.tasks import chat
+    source = inspect.getsource(chat._process_streaming)
+    assert 'name == "literature_search"' not in source, (
+        "Dead code: literature_search DOI extraction branch must be removed from _process_streaming"
+    )
