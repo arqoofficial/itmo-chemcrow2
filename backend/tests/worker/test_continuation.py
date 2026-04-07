@@ -375,3 +375,76 @@ def test_format_s2_results_multiple_papers():
     assert "1. **Paper One**" in result
     assert "2. **Paper Two**" in result
     assert "3. **Paper Three**" in result
+
+
+# ── _trigger_rag_continuation ─────────────────────────────────────────────────
+
+@patch("app.worker.tasks.continuation.run_agent_continuation")
+@patch("app.worker.tasks.continuation.save_background_message")
+@patch("app.worker.tasks.continuation._publish_sync")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_trigger_rag_continuation_with_redis_metadata(
+    mock_redis, mock_publish, mock_save, mock_continuation
+):
+    """Job IDs with Redis metadata → paper titles in PAPERS_INGESTED message."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.get.return_value = json.dumps({
+        "title": "Aspirin Review", "authors": "Alice", "year": 2023, "doi": "10.1/asp"
+    })
+
+    from app.worker.tasks.continuation import _trigger_rag_continuation
+    _trigger_rag_continuation("conv-abc", ["job-1"])
+
+    # Background message saved with PAPERS_INGESTED content
+    mock_save.assert_called_once()
+    conv_id, content = mock_save.call_args[0]
+    assert conv_id == "conv-abc"
+    assert "[Background: New Papers Available]" in content
+    assert "Aspirin Review" in content
+    assert mock_save.call_args.kwargs.get("variant") == "info"
+
+    # background_update SSE published
+    mock_publish.assert_called_once_with("conv-abc", {"event": "background_update"})
+
+    # Continuation dispatched with countdown=1
+    mock_continuation.apply_async.assert_called_once_with(args=["conv-abc"], countdown=1)
+
+
+@patch("app.worker.tasks.continuation.run_agent_continuation")
+@patch("app.worker.tasks.continuation.save_background_message")
+@patch("app.worker.tasks.continuation._publish_sync")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_trigger_rag_continuation_missing_redis_metadata(
+    mock_redis, mock_publish, mock_save, mock_continuation
+):
+    """When Redis has no metadata for a job_id → uses fallback 'recently parsed articles'."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.get.return_value = None  # metadata expired or missing
+
+    from app.worker.tasks.continuation import _trigger_rag_continuation
+    _trigger_rag_continuation("conv-abc", ["job-orphan"])
+
+    conv_id, content = mock_save.call_args[0]
+    assert "recently parsed articles" in content
+
+
+@patch("app.worker.tasks.continuation.run_agent_continuation")
+@patch("app.worker.tasks.continuation.save_background_message")
+@patch("app.worker.tasks.continuation._publish_sync")
+@patch("app.worker.tasks.continuation.get_sync_redis")
+def test_trigger_rag_continuation_no_job_ids(
+    mock_redis, mock_publish, mock_save, mock_continuation
+):
+    """Called with completed_job_ids=None (manual trigger) → generic fallback message."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+
+    from app.worker.tasks.continuation import _trigger_rag_continuation
+    _trigger_rag_continuation("conv-abc", None)
+
+    conv_id, content = mock_save.call_args[0]
+    assert "[Background: New Papers Available]" in content
+    assert "recently parsed articles" in content
+    mock_continuation.apply_async.assert_called_once()
