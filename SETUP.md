@@ -5,6 +5,7 @@
 - [Пререквизиты](#пререквизиты)
 - [Настройка окружения](#настройка-окружения)
 - [Вариант A: Локально с Docker](#вариант-a-локально-с-docker)
+- [Вариант A1: Легковесный локальный запуск (compose.lite.yml)](#вариант-a1-легковесный-локальный-запуск-composeliteyml)
 - [Сборка Docker без кэша](#сборка-образов-без-кэша)
 - [Вариант B: Локально без Docker](#вариант-b-локально-без-docker)
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
@@ -66,6 +67,21 @@ docker compose up --build -d
 ```
 
 Docker соберёт и запустит: PostgreSQL, backend (с hot reload), frontend (nginx), Adminer, Mailcatcher.
+
+## Вариант A1: Легковесный локальный запуск (compose.lite.yml)
+
+Если нужен более быстрый и менее ресурсоемкий старт, используйте облегченный стек:
+
+```bash
+docker compose -f compose.lite.yml up --build -d
+```
+
+В `compose.lite.yml` отключено:
+
+- весь стек Langfuse (`langfuse-db`, `langfuse-zookeeper`, `langfuse-clickhouse`, `langfuse-minio`, `langfuse-cache`, `langfuse-server`, `langfuse-worker`);
+- отправка Langfuse-трейсов из `ai-agent` (в lite-конфиге принудительно пустые `LANGFUSE_PUBLIC_KEY` и `LANGFUSE_SECRET_KEY`).
+
+> В lite-режиме URL `http://localhost:3000` (Langfuse) недоступен по определению.
 
 ### Управление контейнерами
 
@@ -299,6 +315,14 @@ docker compose -f compose.production.yml up -d --build
 ```bash
 bash scripts/up-server-ip.sh
 ```
+
+**Легковесный production** (`compose.production.lite.yml`) — тот же стек, что и `compose.production.yml`, но без Langfuse и без отправки трейсов из `ai-agent` (пустые `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY`). Удобно для VPS с ограниченными ресурсами:
+
+```bash
+docker compose -f compose.production.lite.yml up -d --build
+```
+
+Скрипт `scripts/up-server-ip.sh` по умолчанию использует полный `compose.production.yml`; для lite-версии вызывайте `docker compose` с `-f compose.production.lite.yml` вручную.
 
 ### 4. Просмотр логов
 

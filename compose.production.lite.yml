@@ -1,0 +1,169 @@
+# Облегчённый production-стек: без Langfuse (ClickHouse, MinIO, Zookeeper и т.д.).
+# По смыслу — compose.production.yml минус langfuse-* сервисы.
+# Запуск: docker compose -f compose.production.lite.yml up -d --build
+
+services:
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
+
+  db:
+    image: postgres:17
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      retries: 5
+      start_period: 10s
+      timeout: 5s
+    volumes:
+      - app-db-data:/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data/pgdata
+
+  prestart:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+    command: bash scripts/prestart.sh
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+
+  backend:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+        restart: true
+      prestart:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/utils/health-check/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+  celery-worker:
+    image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+    restart: always
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    command: celery -A app.worker.celery_app worker -l info -c 4 -Q default,chat
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      prestart:
+        condition: service_completed_successfully
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_SERVER=db
+      - REDIS_URL=redis://redis:6379/0
+      - AI_AGENT_URL=http://ai-agent:8100
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+    deploy:
+      replicas: 2
+
+  ai-agent:
+    build:
+      context: .
+      dockerfile: services/ai-agent/Dockerfile
+    restart: always
+    depends_on:
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - BACKEND_URL=http://backend:8000
+      - REACTION_PREDICT_URL=http://reaction-predict:8051
+      - RETROSYNTHESIS_URL=http://retrosynthesis:8052
+      - LANGFUSE_PUBLIC_KEY=
+      - LANGFUSE_SECRET_KEY=
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8100/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  reaction-predict:
+    build:
+      context: ./services/reaction-predict
+    restart: always
+    profiles: ["reaction"]
+    ports:
+      - "8051:8051"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8051/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  retrosynthesis:
+    build:
+      context: ./services/retrosynthesis
+    restart: always
+    volumes:
+      - ./data/aizynthfinder:/data/aizynthfinder:ro
+    env_file:
+      - .env
+    environment:
+      - AZF_CONFIG_PATH=/data/aizynthfinder/config.yml
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8052/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  frontend:
+    image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+      args:
+        - VITE_API_URL=
+        - NODE_ENV=production
+    volumes:
+      - ./frontend/nginx-ip.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  app-db-data:
+  redis-data:
