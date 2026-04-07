@@ -12,7 +12,7 @@ services:
       timeout: 3s
 
   db:
-    image: postgres:17
+    image: postgres:18
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
@@ -170,7 +170,7 @@ services:
       - ./frontend/nginx-ip.conf:/etc/nginx/conf.d/default.conf:ro
 
   langfuse-db:
-    image: postgres:17
+    image: postgres:18
     restart: always
     env_file:
       - .env
