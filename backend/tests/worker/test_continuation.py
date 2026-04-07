@@ -450,3 +450,43 @@ def test_trigger_rag_continuation_no_job_ids(
     assert "[Background: New Papers Available]" in content
     assert "recently parsed articles" in content
     mock_continuation.apply_async.assert_called_once_with(args=["conv-abc"], countdown=1)
+
+
+# ── _on_monitor_ingestion_failure ─────────────────────────────────────────────
+
+def test_on_monitor_ingestion_failure_logs_warning_not_error(caplog):
+    """Failure callback logs at WARNING level with conversation_id — must not raise."""
+    import logging
+    from app.worker.tasks.continuation import _on_monitor_ingestion_failure
+
+    with caplog.at_level(logging.WARNING, logger="app.worker.tasks.continuation"):
+        # Call as a plain function (not as bound Celery task method)
+        _on_monitor_ingestion_failure(
+            self=None,
+            exc=TimeoutError("max retries"),
+            task_id="task-uuid-123",
+            args=["conv-timeout"],
+            kwargs={},
+            einfo=None,
+        )
+
+    assert any("conv-timeout" in r.message for r in caplog.records)
+    assert all(r.levelno == logging.WARNING for r in caplog.records if "conv-timeout" in r.message)
+
+
+def test_on_monitor_ingestion_failure_handles_missing_args(caplog):
+    """If args is empty (shouldn't happen, but defensive) → logs 'unknown', no crash."""
+    import logging
+    from app.worker.tasks.continuation import _on_monitor_ingestion_failure
+
+    with caplog.at_level(logging.WARNING, logger="app.worker.tasks.continuation"):
+        _on_monitor_ingestion_failure(
+            self=None,
+            exc=Exception("boom"),
+            task_id="task-x",
+            args=[],   # empty — conversation_id not extractable
+            kwargs={},
+            einfo=None,
+        )
+
+    assert any("unknown" in r.message for r in caplog.records)
