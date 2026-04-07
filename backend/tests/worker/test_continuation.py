@@ -428,6 +428,8 @@ def test_trigger_rag_continuation_missing_redis_metadata(
 
     conv_id, content = mock_save.call_args[0]
     assert "recently parsed articles" in content
+    mock_publish.assert_called_once_with("conv-abc", {"event": "background_update"})
+    mock_continuation.apply_async.assert_called_once_with(args=["conv-abc"], countdown=1)
 
 
 @patch("app.worker.tasks.continuation.run_agent_continuation")
@@ -447,4 +449,4 @@ def test_trigger_rag_continuation_no_job_ids(
     conv_id, content = mock_save.call_args[0]
     assert "[Background: New Papers Available]" in content
     assert "recently parsed articles" in content
-    mock_continuation.apply_async.assert_called_once()
+    mock_continuation.apply_async.assert_called_once_with(args=["conv-abc"], countdown=1)
