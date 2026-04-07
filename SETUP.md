@@ -316,6 +316,14 @@ docker compose -f compose.production.yml up -d --build
 bash scripts/up-server-ip.sh
 ```
 
+**Легковесный production** (`compose.production.lite.yml`) — тот же стек, что и `compose.production.yml`, но без Langfuse и без отправки трейсов из `ai-agent` (пустые `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY`). Удобно для VPS с ограниченными ресурсами:
+
+```bash
+docker compose -f compose.production.lite.yml up -d --build
+```
+
+Скрипт `scripts/up-server-ip.sh` по умолчанию использует полный `compose.production.yml`; для lite-версии вызывайте `docker compose` с `-f compose.production.lite.yml` вручную.
+
 ### 4. Просмотр логов
 
 ```bash
