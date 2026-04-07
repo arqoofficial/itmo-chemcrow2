@@ -115,6 +115,18 @@ docker compose up --build -d
 
 Docker поднимет все сервисы автоматически.
 
+### 2.1 Легковесный локальный запуск (без Langfuse)
+
+Для более быстрого старта на локальной машине можно использовать облегченный compose-файл:
+
+```bash
+docker compose -f compose.lite.yml up --build -d
+```
+
+Что отключено в `compose.lite.yml`:
+- весь стек Langfuse (`langfuse-db`, `langfuse-zookeeper`, `langfuse-clickhouse`, `langfuse-minio`, `langfuse-cache`, `langfuse-server`, `langfuse-worker`);
+- отправка трейсов из `ai-agent` (в lite-конфиге `LANGFUSE_PUBLIC_KEY` и `LANGFUSE_SECRET_KEY` принудительно пустые).
+
 ### 3. Открыть в браузере
 
 | Сервис | URL |
@@ -134,10 +146,10 @@ Docker поднимет все сервисы автоматически.
 Для работы ретросинтеза нужны большие наборы данных, которые не входят в репозиторий:
 
 ```bash
-# AiZynthFinder: ONNX-модели и шаблоны USPTO (~1.5 GB)
+# AiZynthFinder: ONNX-модели и шаблоны USPTO (~1.5 GB) – Обязательно для запуска ретросинтеза
 uv run python scripts/download_public_data.py
 
-# RetroCast / Project Procrustes (~554 MB)
+# RetroCast / Project Procrustes (~554 MB) – Пока что не используются (#TODO)
 bash scripts/get-data-project-procrustes.sh all
 ```
 

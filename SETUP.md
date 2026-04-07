@@ -5,6 +5,7 @@
 - [Пререквизиты](#пререквизиты)
 - [Настройка окружения](#настройка-окружения)
 - [Вариант A: Локально с Docker](#вариант-a-локально-с-docker)
+- [Вариант A1: Легковесный локальный запуск (compose.lite.yml)](#вариант-a1-легковесный-локальный-запуск-composeliteyml)
 - [Сборка Docker без кэша](#сборка-образов-без-кэша)
 - [Вариант B: Локально без Docker](#вариант-b-локально-без-docker)
 - [Вариант C: Production (сервер)](#вариант-c-production-сервер)
@@ -66,6 +67,21 @@ docker compose up --build -d
 ```
 
 Docker соберёт и запустит: PostgreSQL, backend (с hot reload), frontend (nginx), Adminer, Mailcatcher.
+
+## Вариант A1: Легковесный локальный запуск (compose.lite.yml)
+
+Если нужен более быстрый и менее ресурсоемкий старт, используйте облегченный стек:
+
+```bash
+docker compose -f compose.lite.yml up --build -d
+```
+
+В `compose.lite.yml` отключено:
+
+- весь стек Langfuse (`langfuse-db`, `langfuse-zookeeper`, `langfuse-clickhouse`, `langfuse-minio`, `langfuse-cache`, `langfuse-server`, `langfuse-worker`);
+- отправка Langfuse-трейсов из `ai-agent` (в lite-конфиге принудительно пустые `LANGFUSE_PUBLIC_KEY` и `LANGFUSE_SECRET_KEY`).
+
+> В lite-режиме URL `http://localhost:3000` (Langfuse) недоступен по определению.
 
 ### Управление контейнерами
 
