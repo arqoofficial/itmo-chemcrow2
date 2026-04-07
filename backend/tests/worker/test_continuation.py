@@ -490,3 +490,35 @@ def test_on_monitor_ingestion_failure_handles_missing_args(caplog):
         )
 
     assert any("unknown" in r.message for r in caplog.records)
+
+
+# ── run_agent_continuation: lock released on streaming failure ─────────────────
+
+@patch("app.worker.tasks.continuation.get_sync_redis")
+@patch("app.worker.tasks.continuation.Session")
+@patch("app.worker.tasks.continuation._process_streaming")
+def test_run_agent_continuation_releases_lock_on_streaming_failure(
+    mock_streaming, mock_session, mock_redis
+):
+    """If _process_streaming raises, the Redis lock must still be deleted."""
+    mock_r = MagicMock()
+    mock_redis.return_value = mock_r
+    mock_r.set.return_value = True   # lock acquired
+    mock_r.llen.return_value = 0     # no pending
+
+    mock_db = MagicMock()
+    mock_session.return_value.__enter__ = lambda s: mock_db
+    mock_session.return_value.__exit__ = MagicMock(return_value=False)
+    mock_db.exec.return_value.all.return_value = []
+
+    mock_streaming.side_effect = RuntimeError("SSE connection dropped")
+
+    from app.worker.tasks.continuation import run_agent_continuation
+    # inner except returns early; outer finally still fires and releases the lock
+    run_agent_continuation("conv-crash")
+
+    # Lock MUST be released despite the streaming failure
+    mock_r.delete.assert_any_call("conv_processing:conv-crash")
+
+    # No assistant message saved (streaming failed before DB write)
+    mock_db.add.assert_not_called()
