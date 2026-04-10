@@ -11,11 +11,20 @@ import pytest
 
 
 def test_openalex_search_in_all_tools():
-    """Verify openalex_search is registered in ALL_TOOLS."""
+    """Verify openalex_search is registered in ALL_TOOLS when API key configured."""
+    from app.core.config import settings
     from app.tools import ALL_TOOLS
 
     tool_names = [tool.name for tool in ALL_TOOLS]
-    assert "openalex_search" in tool_names, "openalex_search not found in ALL_TOOLS"
+
+    if settings.OPENALEX_API_KEY:
+        assert (
+            "openalex_search" in tool_names
+        ), "openalex_search should be in ALL_TOOLS when OPENALEX_API_KEY is set"
+    else:
+        assert (
+            "openalex_search" not in tool_names
+        ), "openalex_search should NOT be in ALL_TOOLS when OPENALEX_API_KEY is not set"
 
 
 def test_openalex_search_tool_description():
@@ -38,14 +47,14 @@ def test_openalex_search_tool_args():
     assert "max_results" in args
 
 
-def test_agent_system_prompt_mentions_openalex_when_configured():
-    """Verify agent source code mentions OpenAlex logic."""
+def test_agent_system_prompt_mentions_openalex_routing():
+    """Verify agent system prompt mentions OpenAlex in routing logic."""
     from app.agent import SYSTEM_PROMPT
 
-    # Verify the base prompt mentions OpenAlex and routing logic
-    assert "OpenAlex" in SYSTEM_PROMPT
+    # Verify base prompt mentions OpenAlex routing and preferences
     assert "openalex_search" in SYSTEM_PROMPT
     assert "prefer" in SYSTEM_PROMPT.lower()
+    assert "broader coverage" in SYSTEM_PROMPT.lower()
 
 
 def test_agent_system_prompt_has_literature_routing():

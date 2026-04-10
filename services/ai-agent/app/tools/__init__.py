@@ -45,7 +45,11 @@ def get_all_tools() -> list[BaseTool]:
     try:
         from app.tools.search import literature_search, openalex_search, patent_check, web_search
 
-        tools.extend([patent_check, literature_search, openalex_search])
+        tools.extend([patent_check, literature_search])
+
+        if settings.OPENALEX_API_KEY:
+            tools.append(openalex_search)
+            logger.info("OpenAlex search tool enabled (OPENALEX_API_KEY set)")
 
         if settings.SERP_API_KEY:
             tools.append(web_search)
