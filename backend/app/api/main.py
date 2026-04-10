@@ -8,6 +8,7 @@ from app.api.routes import (
     login,
     private,
     retrosynthesis,
+    search,
     tasks,
     users,
     utils,
@@ -24,6 +25,7 @@ api_router.include_router(retrosynthesis.router)
 api_router.include_router(conversations.router)
 api_router.include_router(events.router)
 api_router.include_router(articles.router)
+api_router.include_router(search.router)
 
 
 if settings.ENVIRONMENT == "local":

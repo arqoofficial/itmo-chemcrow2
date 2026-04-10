@@ -19,9 +19,17 @@ export async function waitForBotResponse(page: Page, timeout = 60_000) {
   await page.getByTestId("message-bot").first().waitFor({ timeout })
 }
 
-export async function waitForToolCall(page: Page, toolName?: string, timeout = 60_000) {
+export async function waitForToolCall(
+  page: Page,
+  toolName?: string,
+  timeout = 60_000,
+) {
   if (toolName) {
-    await page.getByTestId("tool-call-card").filter({ hasText: toolName }).first().waitFor({ timeout })
+    await page
+      .getByTestId("tool-call-card")
+      .filter({ hasText: toolName })
+      .first()
+      .waitFor({ timeout })
   } else {
     await page.getByTestId("tool-call-card").first().waitFor({ timeout })
   }

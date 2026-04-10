@@ -54,6 +54,7 @@ def _build_llm():
         api_key=settings.OPENAI_API_KEY,
         base_url=settings.OPENAI_BASE_URL,
         temperature=0,
+        request_timeout=120,
     )
 
 
@@ -71,7 +72,11 @@ def _build_langfuse_handler():
         if not lf.auth_check():
             log.warning("Langfuse auth_check failed — tracing disabled")
             return None
-        return CallbackHandler()
+        return CallbackHandler(
+            public_key=settings.LANGFUSE_PUBLIC_KEY,
+            secret_key=settings.LANGFUSE_SECRET_KEY,
+            host=settings.LANGFUSE_BASE_URL,
+        )
     except Exception:
         log.warning("Langfuse unavailable — tracing disabled")
         return None
@@ -109,20 +114,36 @@ async def _notify_ai_agent(conversation_id: str, doc_key: str) -> None:
 
 
 async def _run_parser(job_id: str, object_key: str, conversation_id: str, doc_key: str) -> None:
+    """Parse PDF with timeout protection and comprehensive logging."""
+    job_timeout = 900  # 15 minutes — long papers with many chunks need this
+    log.info("job %s starting (doi=%s conv=%s)", job_id, object_key, conversation_id)
     await job_store.update(job_id, status=JobStatus.RUNNING)
+
     try:
-        pdf_bytes = await asyncio.to_thread(minio.download_pdf, object_key)
-        llm = _build_llm()
-        langfuse_handler = _build_langfuse_handler()
-        artifacts = await process_pdf_to_minio(
-            pdf_bytes, job_id, conversation_id, doc_key, minio, llm, langfuse_handler,
-        )
+        async def parse_work():
+            """Inner function to wrap with timeout."""
+            pdf_bytes = await asyncio.to_thread(minio.download_pdf, object_key)
+            log.info("job %s downloaded PDF (%d bytes)", job_id, len(pdf_bytes))
+            llm = _build_llm()
+            langfuse_handler = _build_langfuse_handler()
+            artifacts = await process_pdf_to_minio(
+                pdf_bytes, job_id, conversation_id, doc_key, minio, llm, langfuse_handler,
+            )
+            return artifacts
+
+        artifacts = await asyncio.wait_for(parse_work(), timeout=job_timeout)
         await job_store.update(job_id, status=JobStatus.COMPLETED, artifacts=artifacts)
         log.info("job %s completed with %d artifacts", job_id, len(artifacts))
         await _notify_ai_agent(conversation_id, doc_key)
+
+    except asyncio.TimeoutError:
+        error_msg = f"Parsing timeout (exceeded {job_timeout}s); paper may be too large or LLM unavailable"
+        log.error("job %s %s", job_id, error_msg)
+        await job_store.update(job_id, status=JobStatus.FAILED, error=error_msg)
     except Exception as exc:
-        log.exception("job %s failed", job_id)
-        await job_store.update(job_id, status=JobStatus.FAILED, error=str(exc))
+        error_msg = str(exc)
+        log.exception("job %s failed with exception", job_id)
+        await job_store.update(job_id, status=JobStatus.FAILED, error=error_msg)
 
 
 @app.get("/health")
@@ -165,3 +186,30 @@ async def get_job(job_id: str) -> JobStatusResponse:
     if job is None:
         raise HTTPException(status_code=404, detail=f"Job {job_id!r} not found")
     return JobStatusResponse.from_job(job)
+
+
+@app.post("/jobs/{job_id}/reparse", response_model=JobSubmitResponse, status_code=status.HTTP_202_ACCEPTED)
+async def reparse_job(job_id: str, background_tasks: BackgroundTasks) -> JobSubmitResponse:
+    """Re-queue a failed parse job. PDF must still be present in MinIO."""
+    job = await job_store.get(job_id)
+    if job is None:
+        raise HTTPException(status_code=404, detail=f"Job {job_id!r} not found")
+    if job.status != JobStatus.FAILED:
+        raise HTTPException(
+            status_code=409,
+            detail=f"Job {job_id!r} is not in failed state (status={job.status})",
+        )
+
+    await job_store.update(job_id, status=JobStatus.PENDING, error=None, artifacts={})
+
+    # object_key matches the convention used by article-fetcher: {job_id}.pdf
+    object_key = f"{job_id}.pdf"
+    background_tasks.add_task(
+        _run_parser,
+        job_id,
+        object_key,
+        job.conversation_id,
+        job.doc_key,
+    )
+    log.info("reparse requested for job %s (doi=%s conv=%s)", job_id, job.doi, job.conversation_id)
+    return JobSubmitResponse(job_id=job_id, status=JobStatus.PENDING)

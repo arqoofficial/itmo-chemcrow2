@@ -44,7 +44,9 @@ export function HazardWarning({ chemicals }: HazardWarningProps) {
               />
               <span className="text-sm font-semibold">
                 Опасные вещества&nbsp;
-                <span className="text-muted-foreground">({chemicals.length})</span>
+                <span className="text-muted-foreground">
+                  ({chemicals.length})
+                </span>
               </span>
             </div>
             <button
@@ -83,7 +85,9 @@ export function HazardWarning({ chemicals }: HazardWarningProps) {
                   <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-muted-foreground">
                     {chem.cas && <span>CAS: {chem.cas}</span>}
                     {chem.pkkn_list && (
-                      <span>{PKKN_LABELS[chem.pkkn_list] ?? chem.pkkn_list}</span>
+                      <span>
+                        {PKKN_LABELS[chem.pkkn_list] ?? chem.pkkn_list}
+                      </span>
                     )}
                   </div>
 

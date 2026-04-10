@@ -29,6 +29,13 @@ WINDOW_SIZE: int = 6000
 OVERLAP: int = 800
 DEFAULT_LANG: str = "en"
 
+# Limit concurrent LLM calls to avoid overwhelming the API endpoint.
+# At 4 concurrent calls, a 15-window paper completes in ≤4 batches.
+LLM_CONCURRENCY: int = 4
+# Per-window LLM timeout in seconds.  On timeout the raw Docling text is used
+# so the overall job never fails due to a slow model.
+WINDOW_TIMEOUT_SECS: int = 180
+
 # First word(s) of the human-turn template per language — used to detect and
 # strip prompt echoes from LLM outputs.
 _PROMPT_ECHO_PREFIXES: dict[str, str] = {
@@ -412,15 +419,29 @@ def build_chain(llm, lang: str = DEFAULT_LANG):
 # Async processing function with MinIO output
 # ---------------------------------------------------------------------------
 
-async def _clean_window(chain, window, total: int, job_id: str, langfuse_handler) -> str:
-    config = {"run_name": f"{job_id}_chunk_{window.i:03d}"}
-    if langfuse_handler:
-        config["callbacks"] = [langfuse_handler]
-    result = await chain.ainvoke(
-        {"part_idx": window.i + 1, "part_total": total, "text": window.text},
-        config=config,
-    )
-    return result.strip()
+async def _clean_window(
+    chain, window, total: int, job_id: str, langfuse_handler, semaphore: asyncio.Semaphore
+) -> tuple[str, bool]:
+    """Return (text, timed_out). On timeout, raw text is returned so other windows are not cancelled."""
+    async with semaphore:
+        config = {"run_name": f"{job_id}_chunk_{window.i:03d}"}
+        if langfuse_handler:
+            config["callbacks"] = [langfuse_handler]
+        try:
+            result = await asyncio.wait_for(
+                chain.ainvoke(
+                    {"part_idx": window.i + 1, "part_total": total, "text": window.text},
+                    config=config,
+                ),
+                timeout=WINDOW_TIMEOUT_SECS,
+            )
+            return result.strip(), False
+        except asyncio.TimeoutError:
+            log.error(
+                "parser: job %s window %d timed out after %ds",
+                job_id, window.i, WINDOW_TIMEOUT_SECS,
+            )
+            return window.text.strip(), True
 
 
 async def process_pdf_to_minio(
@@ -471,12 +492,21 @@ async def process_pdf_to_minio(
             log.warning("parser: job %s produced no windows (empty or unreadable document)", job_id)
             return artifacts
         chain = build_chain(llm, lang)
+        semaphore = asyncio.Semaphore(LLM_CONCURRENCY)
 
-        cleaned_parts: list[str] = await asyncio.gather(*[
-            _clean_window(chain, w, total, job_id, langfuse_handler)
+        results: list[tuple[str, bool]] = await asyncio.gather(*[
+            _clean_window(chain, w, total, job_id, langfuse_handler, semaphore)
             for w in windows
         ])
-        cleaned_parts = [strip_prompt_echo(c, lang) for c in cleaned_parts]
+        timed_out_windows = [w.i for w, (_, timed_out) in zip(windows, results) if timed_out]
+
+        if timed_out_windows:
+            raise RuntimeError(
+                f"LLM timed out on {len(timed_out_windows)}/{total} window(s): {timed_out_windows}. "
+                f"PDF is not fully parsed — job marked as failed."
+            )
+
+        cleaned_parts = [strip_prompt_echo(text, lang) for text, _ in results]
         bm25_parts = [make_bm25_chunk(c, lang) for c in cleaned_parts]
 
         # Upload chunk files with conversation-scoped keys

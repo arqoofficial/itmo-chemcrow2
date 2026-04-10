@@ -76,3 +76,9 @@ bun run generate-client
 - `src/client/` changes should always be committed alongside backend model changes
 - SSE streaming responses from `/chat` are handled in `src/components/Chat/` — don't replace with regular fetch
 - E2E tests require both frontend and backend to be running
+- React hooks rules: all `useMemo`/`useCallback`/`useQuery` calls must come **before** any early return — move hooks above `if (message.role === "background") return ...` patterns
+- `fetchEventSource` call is inside a `.then()` — in tests, `await Promise.resolve()` after `renderHook` before dispatching synthetic SSE events to the captured `onmessage`
+- When mocking `fetch` with URL-based dispatch, check longer/more-specific paths first (e.g. `/parse-status` before `/jobs/:id` since parse URL contains the job ID)
+- `waitFor` default timeout (1000ms) can be too short for TanStack Query with sequential round-trips — use `{ timeout: 5000 }` for two-hop queries (fetch status → parse status)
+- Mock `MarkdownContent` in component tests (`vi.mock("../MarkdownContent", ...)`) — otherwise rendered content is opaque for text assertions
+- `vi.spyOn(Storage.prototype, "getItem")` must be set up in `beforeEach` within each `describe` block that tests fetch calls — leaks across groups otherwise

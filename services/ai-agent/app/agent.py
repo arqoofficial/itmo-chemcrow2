@@ -69,10 +69,12 @@ Always respond in the same language the user is writing in.
 LITERATURE TOOL ROUTING:
 1. If the user asks for literature citations, references, or sources about a topic,
     call `rag_search` to search the local corpus first.
-2. If local corpus coverage is weak or empty, call `literature_search` as fallback
-    to fetch external papers from Semantic Scholar.
+2. If local corpus coverage is weak or empty, choose an external search:
+   - If OpenAlex API key is configured: prefer `openalex_search` (broader coverage, better metadata)
+   - If only Semantic Scholar available: use `literature_search`
+   - If both available: you can use both tools to get complementary results from different sources
 3. In final answers, cite the sources returned by tools and clearly distinguish
-    local-corpus results from external Semantic Scholar results.
+    local-corpus results from external Semantic Scholar or OpenAlex results.
 """
 
 
@@ -87,10 +89,17 @@ def _build_graph(llm: BaseChatModel) -> StateGraph:
     tools_by_name = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(tools)
 
+    # Build dynamic system prompt with API key availability info
+    system_prompt = SYSTEM_PROMPT
+    if settings.OPENALEX_API_KEY:
+        system_prompt += "\n\nNOTE: OpenAlex API key is configured. When searching external literature, prefer `openalex_search` over `literature_search` for broader coverage and better metadata."
+    else:
+        system_prompt += "\n\nNOTE: OpenAlex API key is not configured. Use `literature_search` (Semantic Scholar) for external literature searches."
+
     def call_model(state: AgentState, config: RunnableConfig) -> dict[str, Any]:
         messages = state["messages"]
         if not messages or not isinstance(messages[0], SystemMessage):
-            messages = [SystemMessage(content=SYSTEM_PROMPT)] + messages
+            messages = [SystemMessage(content=system_prompt)] + messages
         response = llm_with_tools.invoke(messages, config=config)
         return {"messages": [response]}
 

@@ -1,9 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router"
-
-import useAuth from "@/hooks/useAuth"
 import { Badge } from "@/components/ui/badge"
-import itmoHackathon from "/assets/images/itmo-hackathon.png"
+import useAuth from "@/hooks/useAuth"
 import chemcrowImg from "/assets/images/chemcrow2_3.jpg"
+import itmoHackathon from "/assets/images/itmo-hackathon.png"
 
 export const Route = createFileRoute("/_layout/")({
   component: Dashboard,
@@ -33,10 +32,12 @@ const technologies = [
 ]
 
 const categoryColors: Record<string, string> = {
-  backend: "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20",
+  backend:
+    "bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20",
   ai: "bg-purple-500/10 text-purple-400 border-purple-500/20 hover:bg-purple-500/20",
   chem: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20",
-  frontend: "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20",
+  frontend:
+    "bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-500/20",
   infra: "bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20",
 }
 
@@ -81,11 +82,12 @@ function Dashboard() {
             <p className="text-lg leading-relaxed text-muted-foreground">
               Мы — команда хакатона{" "}
               <span className="font-semibold text-foreground">ITMO</span>,
-              создавшая <span className="font-semibold text-emerald-400">ChemCrow2</span> —
-              интеллектуальный агентный ассистент для химиков нового поколения.
-              Приложение помогает специалистам в лабораторной работе: от поиска
-              информации о соединениях до прогнозирования свойств молекул и
-              планирования синтеза.
+              создавшая{" "}
+              <span className="font-semibold text-emerald-400">ChemCrow2</span>{" "}
+              — интеллектуальный агентный ассистент для химиков нового
+              поколения. Приложение помогает специалистам в лабораторной работе:
+              от поиска информации о соединениях до прогнозирования свойств
+              молекул и планирования синтеза.
             </p>
           </div>
 
@@ -121,18 +123,27 @@ function Dashboard() {
               ))}
             </div>
             <div className="flex flex-wrap gap-4 pt-1">
-              {(["backend", "ai", "chem", "frontend", "infra"] as const).map((cat) => (
-                <span key={cat} className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                  <span className={`inline-block size-2 rounded-full ${categoryColors[cat].split(" ")[0].replace("/10", "/60")}`} />
-                  {{
-                    backend: "Backend",
-                    ai: "AI / LLM",
-                    chem: "Химия",
-                    frontend: "Frontend",
-                    infra: "Инфраструктура",
-                  }[cat]}
-                </span>
-              ))}
+              {(["backend", "ai", "chem", "frontend", "infra"] as const).map(
+                (cat) => (
+                  <span
+                    key={cat}
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground"
+                  >
+                    <span
+                      className={`inline-block size-2 rounded-full ${categoryColors[cat].split(" ")[0].replace("/10", "/60")}`}
+                    />
+                    {
+                      {
+                        backend: "Backend",
+                        ai: "AI / LLM",
+                        chem: "Химия",
+                        frontend: "Frontend",
+                        infra: "Инфраструктура",
+                      }[cat]
+                    }
+                  </span>
+                ),
+              )}
             </div>
           </div>
         </div>
@@ -149,7 +160,9 @@ function Dashboard() {
         </div>
 
         <div className="flex-shrink-0 px-1">
-          <span className="text-3xl font-bold text-muted-foreground select-none">+</span>
+          <span className="text-3xl font-bold text-muted-foreground select-none">
+            +
+          </span>
         </div>
 
         <div className="flex-[670] min-w-0 overflow-hidden rounded-2xl border shadow-md aspect-square">

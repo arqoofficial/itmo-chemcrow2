@@ -1,10 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router"
 import { Bot, Plus } from "lucide-react"
 import { useState } from "react"
-
-import { Button } from "@/components/ui/button"
 import { ChatList } from "@/components/Chat/ChatList"
 import { NewChatDialog } from "@/components/Chat/NewChatDialog"
+import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/_layout/chat/")({
   component: ChatIndex,

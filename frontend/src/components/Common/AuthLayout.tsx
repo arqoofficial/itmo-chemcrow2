@@ -1,7 +1,7 @@
 import { Appearance } from "@/components/Common/Appearance"
-import { Footer } from "./Footer"
-import itmoHackathon from "/assets/images/itmo-hackathon.png"
 import chemcrowImg from "/assets/images/chemcrow2_3.jpg"
+import itmoHackathon from "/assets/images/itmo-hackathon.png"
+import { Footer } from "./Footer"
 
 interface AuthLayoutProps {
   children: React.ReactNode
@@ -20,7 +20,9 @@ export function AuthLayout({ children }: AuthLayoutProps) {
             />
           </div>
           <div className="flex-shrink-0 px-1">
-            <span className="text-3xl font-bold text-muted-foreground select-none">+</span>
+            <span className="text-3xl font-bold text-muted-foreground select-none">
+              +
+            </span>
           </div>
           <div className="flex-[670] min-w-0 overflow-hidden rounded-2xl border shadow-md aspect-square">
             <img

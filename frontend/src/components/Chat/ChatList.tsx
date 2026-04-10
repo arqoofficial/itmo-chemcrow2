@@ -25,12 +25,12 @@ function timeAgo(dateStr: string | null): string {
 
 export function ChatList() {
   const params = useParams({ strict: false })
-  const activeId = (params as Record<string, string | undefined>)
-    .conversationId
+  const activeId = (params as Record<string, string | undefined>).conversationId
 
   const [newOpen, setNewOpen] = useState(false)
-  const [deleteTarget, setDeleteTarget] =
-    useState<ConversationPublic | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<ConversationPublic | null>(
+    null,
+  )
 
   const { data, isLoading } = useQuery({
     queryKey: ["conversations"],
@@ -60,7 +60,10 @@ export function ChatList() {
             ))}
           </div>
         ) : !data?.data.length ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center" data-testid="empty-chat-list">
+          <div
+            className="flex flex-col items-center justify-center py-12 text-center"
+            data-testid="empty-chat-list"
+          >
             <MessageSquare className="mb-3 h-10 w-10 text-muted-foreground/50" />
             <p className="text-sm text-muted-foreground">Нет диалогов</p>
             <Button
@@ -75,7 +78,11 @@ export function ChatList() {
         ) : (
           <ul className="space-y-0.5 p-2">
             {data.data.map((conv) => (
-              <li key={conv.id} className="group relative" data-testid="chat-list-item">
+              <li
+                key={conv.id}
+                className="group relative"
+                data-testid="chat-list-item"
+              >
                 <Link
                   to="/chat/$conversationId"
                   params={{ conversationId: conv.id }}

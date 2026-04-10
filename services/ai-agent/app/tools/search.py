@@ -100,3 +100,43 @@ def literature_search(query: str, max_results: int = 5) -> str:
     except Exception:
         logger.exception("Failed to queue literature search")
         return "Literature search unavailable: could not reach the queue endpoint."
+
+
+@tool
+def openalex_search(query: str, max_results: int = 5) -> str:
+    """Search OpenAlex for scientific papers and research works.
+
+    OpenAlex provides free access to 250M+ scholarly research papers with
+    comprehensive metadata. Results are delivered asynchronously — you will
+    receive them as a background update in this conversation shortly after
+    calling this tool.
+
+    Args:
+        query: Search query describing the topic of interest.
+        max_results: Maximum number of results to return (default 5).
+    """
+    from app.config import settings
+    from app.tools.rag import _CURRENT_CONV_ID
+
+    conversation_id = _CURRENT_CONV_ID.get(None)
+    if not conversation_id:
+        return "OpenAlex search unavailable: no conversation context."
+
+    if not settings.OPENALEX_API_KEY:
+        return "OpenAlex search unavailable: API key not configured. Using Semantic Scholar instead."
+
+    try:
+        httpx.post(
+            f"{settings.BACKEND_INTERNAL_URL}/internal/queue-background-tool",
+            json={
+                "type": "openalex_search",
+                "conversation_id": conversation_id,
+                "query": query,
+                "max_results": max_results,
+            },
+            timeout=5,
+        )
+        return "OpenAlex search queued. Results will appear in this conversation shortly."
+    except Exception:
+        logger.exception("Failed to queue OpenAlex search")
+        return "OpenAlex search unavailable: could not reach the queue endpoint."

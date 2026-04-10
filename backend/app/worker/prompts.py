@@ -1,11 +1,19 @@
 """Background message templates for the async tool pipeline.
 
-Only two templates: S2 success and papers ingested.
+Templates for both S2 (Semantic Scholar) and OpenAlex literature searches.
 Failures are communicated via background_error SSE events — never as background messages.
 """
 
 S2_RESULTS = """\
-[Background: Literature Search Results]
+[Background: Literature Search Results (Semantic Scholar)]
+Your earlier search for "{query}" found {n} paper(s):
+
+{papers_formatted}
+
+Please analyze these results and provide relevant information to the conversation."""
+
+OPENALEX_RESULTS = """\
+[Background: Literature Search Results (OpenAlex)]
 Your earlier search for "{query}" found {n} paper(s):
 
 {papers_formatted}

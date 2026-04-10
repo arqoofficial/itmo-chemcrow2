@@ -1,5 +1,5 @@
-import { FaGithub } from "react-icons/fa"
 import { ExternalLink } from "lucide-react"
+import { FaGithub } from "react-icons/fa"
 
 const socialLinks = [
   {
@@ -22,7 +22,8 @@ export function Footer({ variant = "default" }: FooterProps) {
   const footerBase = "border-t py-4 px-6"
   const footerFixed =
     "fixed bottom-0 left-0 right-0 z-10 bg-white dark:bg-zinc-950"
-  const className = variant === "fixed" ? `${footerBase} ${footerFixed}` : footerBase
+  const className =
+    variant === "fixed" ? `${footerBase} ${footerFixed}` : footerBase
 
   return (
     <footer className={className}>

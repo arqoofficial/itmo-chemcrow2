@@ -1,5 +1,5 @@
 import { AlertCircle, Info, RefreshCw } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { OpenAPI } from "@/client"
 import type { ChatMessagePublic } from "@/client/chatTypes"
@@ -15,9 +15,13 @@ async function apiFetch(path: string, options?: RequestInit) {
     typeof OpenAPI.TOKEN === "function"
       ? await OpenAPI.TOKEN({} as never)
       : (OpenAPI.TOKEN ?? "")
+  const { headers: extraHeaders, ...restOptions } = options ?? {}
   return fetch(path, {
-    headers: { Authorization: `Bearer ${token}` },
-    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(extraHeaders as Record<string, string>),
+    },
+    ...restOptions,
   })
 }
 
@@ -27,15 +31,29 @@ export function BackgroundMessageCard({ message }: BackgroundMessageCardProps) {
   const [retrying, setRetrying] = useState(false)
   const [retryMessage, setRetryMessage] = useState<string | null>(null)
 
+  // Reset retry state when a new background error arrives (e.g. after a retry also fails)
+  useEffect(() => {
+    setRetryMessage(null)
+    setRetrying(false)
+  }, [message.id, message.content])
+
+  const query = message.metadata?.query as string | undefined
+
   const handleRetry = async () => {
     setRetrying(true)
     setRetryMessage(null)
     try {
       const resp = await apiFetch(
         `/api/v1/articles/conversations/${message.conversation_id}/retry-s2-search`,
-        { method: "POST" },
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query, original_message_id: message.id }),
+        },
       )
-      if (resp.status === 410) {
+      if (resp.status === 409) {
+        setRetryMessage("Search already in progress.")
+      } else if (resp.status === 410) {
         setRetryMessage("Search query expired — please start a new search.")
       } else if (resp.ok) {
         setRetryMessage("Search re-queued. Results will appear shortly.")

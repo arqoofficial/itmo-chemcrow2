@@ -18,8 +18,7 @@ dependencies = [
     "docling>=2.0.0",
     "spacy>=3.7.0",
     "python-dotenv>=1.0.0",
-    # langfuse is optional; install manually for LLM call tracing
-    # "langfuse>=3.9.0",
+    "langfuse>=3.9.0",
 ]
 
 [dependency-groups]

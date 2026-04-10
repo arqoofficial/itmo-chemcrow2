@@ -71,7 +71,11 @@ export function NewChatDialog({ open, onOpenChange }: NewChatDialogProps) {
             >
               Отмена
             </Button>
-            <Button type="submit" disabled={mutation.isPending} data-testid="create-chat-button">
+            <Button
+              type="submit"
+              disabled={mutation.isPending}
+              data-testid="create-chat-button"
+            >
               {mutation.isPending ? "Создаю…" : "Создать"}
             </Button>
           </DialogFooter>

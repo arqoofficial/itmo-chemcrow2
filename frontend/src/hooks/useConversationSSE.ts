@@ -5,7 +5,12 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { OpenAPI } from "@/client"
-import type { ArticleDownloadJob, ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
+import type {
+  ArticleDownloadJob,
+  ChatMessagePublic,
+  HazardChemical,
+  ToolCallInfo,
+} from "@/client/chatTypes"
 
 export type StreamingState = "idle" | "connecting" | "thinking" | "streaming"
 
@@ -17,6 +22,8 @@ interface UseConversationSSEOptions {
   onHazards?: (chemicals: HazardChemical[]) => void
   onArticleDownloads?: (jobs: ArticleDownloadJob[]) => void
   onError?: (err: string) => void
+  onBackgroundUpdate?: () => void
+  onBackgroundError?: (detail: string) => void
 }
 
 export function useConversationSSE({
@@ -27,12 +34,30 @@ export function useConversationSSE({
   onHazards,
   onArticleDownloads,
   onError,
+  onBackgroundUpdate,
+  onBackgroundError,
 }: UseConversationSSEOptions) {
   const [streamingState, setStreamingState] = useState<StreamingState>("idle")
   const [streamingContent, setStreamingContent] = useState("")
   const abortRef = useRef<AbortController | null>(null)
-  const callbacksRef = useRef({ onMessage, onToolCall, onHazards, onArticleDownloads, onError })
-  callbacksRef.current = { onMessage, onToolCall, onHazards, onArticleDownloads, onError }
+  const callbacksRef = useRef({
+    onMessage,
+    onToolCall,
+    onHazards,
+    onArticleDownloads,
+    onError,
+    onBackgroundUpdate,
+    onBackgroundError,
+  })
+  callbacksRef.current = {
+    onMessage,
+    onToolCall,
+    onHazards,
+    onArticleDownloads,
+    onError,
+    onBackgroundUpdate,
+    onBackgroundError,
+  }
 
   const contentRef = useRef("")
   const rafRef = useRef<number | null>(null)
@@ -68,7 +93,8 @@ export function useConversationSSE({
     const url = `${base}/api/v1/events/conversations/${conversationId}`
 
     const getToken = async () => {
-      if (typeof OpenAPI.TOKEN === "function") return await OpenAPI.TOKEN({} as never)
+      if (typeof OpenAPI.TOKEN === "function")
+        return await OpenAPI.TOKEN({} as never)
       return OpenAPI.TOKEN ?? ""
     }
 
@@ -82,7 +108,9 @@ export function useConversationSSE({
         onopen: async (response) => {
           if (
             response.ok &&
-            response.headers.get("content-type")?.includes(EventStreamContentType)
+            response.headers
+              .get("content-type")
+              ?.includes(EventStreamContentType)
           ) {
             return
           }
@@ -131,6 +159,14 @@ export function useConversationSSE({
               case "error":
                 setStreamingState("idle")
                 callbacksRef.current.onError?.(data.detail ?? "Unknown error")
+                break
+              case "background_update":
+                callbacksRef.current.onBackgroundUpdate?.()
+                break
+              case "background_error":
+                callbacksRef.current.onBackgroundError?.(
+                  data.detail ?? "Background error",
+                )
                 break
             }
           } catch {
