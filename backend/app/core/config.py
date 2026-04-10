@@ -81,6 +81,9 @@ class Settings(BaseSettings):
     ARTICLE_FETCHER_URL: str = "http://localhost:8200"
     PDF_PARSER_URL: str = "http://localhost:8300"
 
+    OPENALEX_API_KEY: str = ""
+    OPENALEX_API_BASE: str = "https://api.openalex.org"
+
     SMTP_TLS: bool = True
     SMTP_SSL: bool = False
     SMTP_PORT: int = 587

@@ -29,17 +29,44 @@ def save_background_message(
     conversation_id: str,
     content: str,
     variant: str = "info",
+    extra_metadata: dict | None = None,
+    replace_message_id: str | None = None,
 ) -> None:
-    """Persist a background message. variant='info'|'error' controls frontend card style."""
+    """Persist a background message. variant='info'|'error' controls frontend card style.
+
+    If replace_message_id is given, update that message in-place instead of inserting a new one.
+    """
+    import uuid as _uuid
+    metadata: dict = {"variant": variant}
+    if extra_metadata:
+        metadata.update(extra_metadata)
     with Session(engine) as db:
+        if replace_message_id:
+            existing = db.get(ChatMessage, _uuid.UUID(replace_message_id))
+            if existing:
+                existing.content = content
+                existing.msg_metadata = metadata
+                db.add(existing)
+                db.commit()
+                return
         msg = ChatMessage(
             conversation_id=conversation_id,
             role="background",
             content=content,
-            msg_metadata={"variant": variant},
+            msg_metadata=metadata,
         )
         db.add(msg)
         db.commit()
+
+
+def _delete_message(message_id: str) -> None:
+    """Delete a background message by ID (e.g. superseded error card after successful retry)."""
+    import uuid as _uuid
+    with Session(engine) as db:
+        msg = db.get(ChatMessage, _uuid.UUID(message_id))
+        if msg:
+            db.delete(msg)
+            db.commit()
 
 
 def _format_s2_results(papers: list[dict], query: str) -> str:
@@ -64,68 +91,221 @@ def _format_s2_results(papers: list[dict], query: str) -> str:
     )
 
 
-@celery_app.task(queue="chat", ignore_result=True)
-def run_s2_search(conversation_id: str, query: str, max_results: int = 5) -> None:
-    """Call ai-agent blocking S2 search, save background message, dispatch continuation."""
-    logger.info("run_s2_search started conv=%s query=%r", conversation_id, query)
-
-    # 1. Call ai-agent blocking endpoint
-    try:
-        with httpx.Client(timeout=30.0) as client:
-            resp = client.post(
-                f"{_AI_AGENT_URL}/internal/s2-search",
-                json={"query": query, "max_results": max_results},
-            )
-            resp.raise_for_status()
-        papers = resp.json().get("papers", [])
-    except Exception:
-        logger.exception("S2 search failed for conv=%s", conversation_id)
-        _publish_sync(conversation_id, {
-            "event": "background_error",
-            "detail": f'Literature search for "{query}" failed. Please try again.',
-            "retry_available": True,
-        })
-        return
-
-    # 2. No results
-    if not papers:
-        _publish_sync(conversation_id, {
-            "event": "background_error",
-            "detail": f'No papers found for "{query}".',
-            "retry_available": False,
-        })
-        return
-
-    # 3. Submit article downloads
-    r = get_sync_redis()
-    dois = [p["doi"] for p in papers if p.get("doi")]
-    new_jobs = _submit_article_jobs(r, conversation_id, dois)
-
-    # 4. Save paper metadata per job_id for PAPERS_INGESTED prompt (48h TTL)
-    paper_by_doi = {p["doi"]: p for p in papers if p.get("doi")}
-    for job in new_jobs:
-        meta_key = f"s2_paper_meta:{job['job_id']}"
-        r.set(meta_key, json.dumps(paper_by_doi.get(job["doi"], {})), ex=48 * 3600)
-
-    # 5. Save background message (S2 results)
-    content = _format_s2_results(papers, query)
-    save_background_message(conversation_id, content, variant="info")
-
-    # 6. Publish background_update so frontend re-enables SSE
-    _publish_sync(conversation_id, {"event": "background_update"})
-
-    # 7. Dispatch continuation (abstract-level response) and ingestion monitor
-    # countdown=1 gives frontend time to re-enable SSE before streaming starts
-    run_agent_continuation.apply_async(args=[conversation_id], countdown=1)
-
-    if new_jobs:
-        job_ids = [j["job_id"] for j in new_jobs]
-        monitor_ingestion.delay(conversation_id, job_ids)
-
-    logger.info(
-        "run_s2_search done conv=%s papers=%d jobs=%d",
-        conversation_id, len(papers), len(new_jobs),
+def _format_openalex_results(papers: list[dict], query: str) -> str:
+    lines = []
+    for i, p in enumerate(papers, 1):
+        doi = p.get("doi") or "N/A"
+        authors = p.get("authors") or "Unknown"
+        year = p.get("year") or "N/A"
+        title = p.get("title") or "Untitled"
+        abstract = p.get("abstract") or "No abstract."
+        if len(abstract) > 400:
+            abstract = abstract[:400] + "..."
+        citation_count = p.get("citation_count", 0)
+        lines.append(
+            f"{i}. **{title}** — {authors} ({year}) — DOI: {doi} — Citations: {citation_count}\n"
+            f"   Abstract: {abstract}"
+        )
+    papers_formatted = "\n\n".join(lines)
+    return prompts.OPENALEX_RESULTS.format(
+        query=query,
+        n=len(papers),
+        papers_formatted=papers_formatted,
     )
+
+
+@celery_app.task(queue="chat", ignore_result=True)
+def run_s2_search(
+    conversation_id: str,
+    query: str,
+    max_results: int = 5,
+    original_message_id: str | None = None,
+    dedup_key: str | None = None,
+) -> None:
+    """Call ai-agent blocking S2 search, save background message, dispatch continuation.
+
+    original_message_id: if set, update or delete that error card instead of creating a new one.
+    dedup_key: Redis key to release when this task finishes (prevents duplicate dispatches).
+    """
+    logger.info("run_s2_search started conv=%s query=%r", conversation_id, query)
+    r = get_sync_redis()
+
+    try:
+        # 1. Call ai-agent blocking endpoint
+        try:
+            with httpx.Client(timeout=150.0) as client:
+                resp = client.post(
+                    f"{_AI_AGENT_URL}/internal/s2-search",
+                    json={"query": query, "max_results": max_results},
+                )
+                resp.raise_for_status()
+            papers = resp.json().get("papers", [])
+        except Exception:
+            logger.exception("S2 search failed for conv=%s", conversation_id)
+            save_background_message(
+                conversation_id,
+                f'Literature search for "{query}" failed. Please try again.',
+                variant="error",
+                extra_metadata={"query": query},
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'Literature search for "{query}" failed. Please try again.',
+                "retry_available": True,
+            })
+            return
+
+        # 2. No results
+        if not papers:
+            save_background_message(
+                conversation_id,
+                f'No papers found for "{query}".',
+                variant="error",
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'No papers found for "{query}".',
+                "retry_available": False,
+            })
+            return
+
+        # 3. Submit article downloads
+        dois = [p["doi"] for p in papers if p.get("doi")]
+        new_jobs = _submit_article_jobs(r, conversation_id, dois)
+
+        # 4. Save paper metadata per job_id for PAPERS_INGESTED prompt (48h TTL)
+        paper_by_doi = {p["doi"]: p for p in papers if p.get("doi")}
+        for job in new_jobs:
+            meta_key = f"s2_paper_meta:{job['job_id']}"
+            r.set(meta_key, json.dumps(paper_by_doi.get(job["doi"], {})), ex=48 * 3600)
+
+        # 5. Success: delete original error card (results message replaces it)
+        if original_message_id:
+            _delete_message(original_message_id)
+
+        # 6. Save background message (S2 results)
+        content = _format_s2_results(papers, query)
+        save_background_message(conversation_id, content, variant="info")
+
+        # 7. Publish background_update so frontend re-enables SSE
+        _publish_sync(conversation_id, {"event": "background_update"})
+
+        # 8. Dispatch continuation (abstract-level response) and ingestion monitor
+        # countdown=1 gives frontend time to re-enable SSE before streaming starts
+        run_agent_continuation.apply_async(args=[conversation_id], countdown=1)
+
+        if new_jobs:
+            job_ids = [j["job_id"] for j in new_jobs]
+            monitor_ingestion.delay(conversation_id, job_ids)
+
+        logger.info(
+            "run_s2_search done conv=%s papers=%d jobs=%d",
+            conversation_id, len(papers), len(new_jobs),
+        )
+
+    finally:
+        # Always release dedup lock so the query can be retried again if needed
+        if dedup_key:
+            r.delete(dedup_key)
+
+
+@celery_app.task(queue="chat", ignore_result=True)
+def run_openalex_search(
+    conversation_id: str,
+    query: str,
+    max_results: int = 5,
+    original_message_id: str | None = None,
+    dedup_key: str | None = None,
+) -> None:
+    """Call OpenAlex API blocking search, save background message, dispatch continuation.
+
+    original_message_id: if set, update or delete that error card instead of creating a new one.
+    dedup_key: Redis key to release when this task finishes (prevents duplicate dispatches).
+    """
+    logger.info("run_openalex_search started conv=%s query=%r", conversation_id, query)
+    r = get_sync_redis()
+
+    try:
+        # 1. Call backend blocking endpoint
+        try:
+            with httpx.Client(timeout=30.0) as client:
+                resp = client.post(
+                    f"http://backend:8000/internal/openalex-search",
+                    json={"query": query, "max_results": max_results},
+                )
+                resp.raise_for_status()
+            papers = resp.json().get("papers", [])
+        except Exception:
+            logger.exception("OpenAlex search failed for conv=%s", conversation_id)
+            save_background_message(
+                conversation_id,
+                f'OpenAlex search for "{query}" failed. Please try again.',
+                variant="error",
+                extra_metadata={"query": query},
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'OpenAlex search for "{query}" failed. Please try again.',
+                "retry_available": True,
+            })
+            return
+
+        # 2. No results
+        if not papers:
+            save_background_message(
+                conversation_id,
+                f'No papers found for "{query}" on OpenAlex.',
+                variant="error",
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'No papers found for "{query}" on OpenAlex.',
+                "retry_available": False,
+            })
+            return
+
+        # 3. Submit article downloads
+        dois = [p["doi"] for p in papers if p.get("doi")]
+        new_jobs = _submit_article_jobs(r, conversation_id, dois)
+
+        # 4. Save paper metadata per job_id for PAPERS_INGESTED prompt (48h TTL)
+        paper_by_doi = {p["doi"]: p for p in papers if p.get("doi")}
+        for job in new_jobs:
+            meta_key = f"openalex_paper_meta:{job['job_id']}"
+            r.set(meta_key, json.dumps(paper_by_doi.get(job["doi"], {})), ex=48 * 3600)
+
+        # 5. Success: delete original error card (results message replaces it)
+        if original_message_id:
+            _delete_message(original_message_id)
+
+        # 6. Save background message (OpenAlex results)
+        content = _format_openalex_results(papers, query)
+        save_background_message(conversation_id, content, variant="info")
+
+        # 7. Publish background_update so frontend re-enables SSE
+        _publish_sync(conversation_id, {"event": "background_update"})
+
+        # 8. Dispatch continuation (abstract-level response) and ingestion monitor
+        # countdown=1 gives frontend time to re-enable SSE before streaming starts
+        run_agent_continuation.apply_async(args=[conversation_id], countdown=1)
+
+        if new_jobs:
+            job_ids = [j["job_id"] for j in new_jobs]
+            monitor_ingestion.delay(conversation_id, job_ids)
+
+        logger.info(
+            "run_openalex_search done conv=%s papers=%d jobs=%d",
+            conversation_id, len(papers), len(new_jobs),
+        )
+
+    finally:
+        # Always release dedup lock so the query can be retried again if needed
+        if dedup_key:
+            r.delete(dedup_key)
 
 
 @celery_app.task(queue="chat", ignore_result=True)
@@ -275,6 +455,7 @@ def monitor_ingestion(self, conversation_id: str, job_ids: list[str]) -> None:
         # STOP: all downloads failed
         if all(s == "failed" for s in fetch_statuses.values()):
             logger.warning("All article downloads failed for conv=%s", conversation_id)
+            save_background_message(conversation_id, "All article downloads failed.", variant="error")
             _publish_sync(conversation_id, {
                 "event": "background_error",
                 "detail": "All article downloads failed.",
@@ -289,6 +470,7 @@ def monitor_ingestion(self, conversation_id: str, job_ids: list[str]) -> None:
         # STOP: any parse failed
         if any(s == "failed" for s in parse_statuses.values()):
             logger.warning("Parse failure detected for conv=%s", conversation_id)
+            save_background_message(conversation_id, "One or more articles failed to parse.", variant="error")
             _publish_sync(conversation_id, {
                 "event": "background_error",
                 "detail": "One or more articles failed to parse.",

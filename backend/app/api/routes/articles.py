@@ -5,7 +5,7 @@ import json
 import uuid
 
 import httpx
-from fastapi import APIRouter, HTTPException, Path
+from fastapi import APIRouter, Body, HTTPException, Path
 from pydantic import BaseModel
 from sqlmodel import Session
 
@@ -13,7 +13,7 @@ from app.api.deps import CurrentUser, SessionDep
 from app.core.config import settings
 from app.core.redis import get_async_redis
 from app.models import Conversation
-from app.worker.tasks.continuation import _trigger_rag_continuation, run_s2_search
+from app.worker.tasks.continuation import _trigger_rag_continuation, run_openalex_search, run_s2_search
 
 router = APIRouter(prefix="/articles", tags=["articles"])
 
@@ -122,20 +122,77 @@ async def get_conversation_article_jobs(
     return [ArticleJobInfo(**json.loads(item)) for item in raw]
 
 
+class RetryS2SearchRequest(BaseModel):
+    query: str | None = None
+    original_message_id: uuid.UUID | None = None
+
+
 @router.post("/conversations/{conversation_id}/retry-s2-search", status_code=202)
 async def retry_s2_search(
     conversation_id: uuid.UUID,
     current_user: CurrentUser,  # noqa: ARG001 — auth guard
+    body: RetryS2SearchRequest | None = Body(default=None),
 ) -> dict:
-    """Re-run the last S2 search for a conversation. Returns 410 if query expired (>24h)."""
-    r = get_async_redis()
-    query = await r.get(f"s2_last_query:{conversation_id}")
+    """Re-run an S2 search. If query is provided in body, use it; otherwise fall back to Redis.
+
+    Returns 409 if the same query is already running for this conversation.
+    """
+    query = body.query if body else None
+    original_message_id = str(body.original_message_id) if body and body.original_message_id else None
+    if not query:
+        r = get_async_redis()
+        query = await r.get(f"s2_last_query:{conversation_id}")
     if not query:
         raise HTTPException(
             status_code=410,
             detail="Search query expired. Please start a new search.",
         )
-    run_s2_search.delay(str(conversation_id), query)
+
+    import hashlib
+    dedup_key = f"s2_search_active:{conversation_id}:{hashlib.sha256(query.lower().strip().encode()).hexdigest()[:16]}"
+    r = get_async_redis()
+    acquired = await r.set(dedup_key, "1", nx=True, ex=200)
+    if not acquired:
+        raise HTTPException(status_code=409, detail="Search already in progress for this query.")
+
+    run_s2_search.delay(str(conversation_id), query, original_message_id=original_message_id, dedup_key=dedup_key)
+    return {"status": "queued"}
+
+
+class RetryOpenAlexSearchRequest(BaseModel):
+    query: str | None = None
+    original_message_id: uuid.UUID | None = None
+
+
+@router.post("/conversations/{conversation_id}/retry-openalex-search", status_code=202)
+async def retry_openalex_search(
+    conversation_id: uuid.UUID,
+    current_user: CurrentUser,  # noqa: ARG001 — auth guard
+    body: RetryOpenAlexSearchRequest | None = Body(default=None),
+) -> dict:
+    """Re-run an OpenAlex search. If query is provided in body, use it; otherwise fall back to Redis.
+
+    Returns 409 if the same query is already running for this conversation.
+    """
+    query = body.query if body else None
+    original_message_id = str(body.original_message_id) if body and body.original_message_id else None
+    if not query:
+        r = get_async_redis()
+        query = await r.get(f"openalex_last_query:{conversation_id}")
+    if not query:
+        raise HTTPException(
+            status_code=410,
+            detail="Search query expired. Please start a new search.",
+        )
+
+    import hashlib
+    dedup_key = f"openalex_search_active:{conversation_id}:{hashlib.sha256(query.lower().strip().encode()).hexdigest()[:16]}"
+    r = get_async_redis()
+    acquired = await r.set(dedup_key, "1", nx=True, ex=200)
+    if not acquired:
+        raise HTTPException(status_code=409, detail="Search already in progress for this query.")
+
+    run_openalex_search.delay(str(conversation_id), query, original_message_id=original_message_id, dedup_key=dedup_key)
     return {"status": "queued"}
 
 

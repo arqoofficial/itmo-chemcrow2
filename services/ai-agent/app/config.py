@@ -35,6 +35,8 @@ class Settings(BaseSettings):
     SERP_API_KEY: str = ""
     CHEMSPACE_API_KEY: str = ""
     SEMANTIC_SCHOLAR_API_KEY: str = ""
+    OPENALEX_API_KEY: str = ""
+    OPENALEX_API_BASE: str = "https://api.openalex.org"
 
     # Reaction containers
     REACTION_PREDICT_URL: str = "http://reaction-predict:8051"

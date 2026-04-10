@@ -41,11 +41,11 @@ def get_all_tools() -> list[BaseTool]:
     except ImportError:
         logger.exception("Failed to load core chemistry tools (rdkit missing?)")
 
-    # Search tools (molbloom + Semantic Scholar)
+    # Search tools (molbloom + Semantic Scholar + OpenAlex)
     try:
-        from app.tools.search import literature_search, patent_check, web_search
+        from app.tools.search import literature_search, openalex_search, patent_check, web_search
 
-        tools.extend([patent_check, literature_search])
+        tools.extend([patent_check, literature_search, openalex_search])
 
         if settings.SERP_API_KEY:
             tools.append(web_search)
