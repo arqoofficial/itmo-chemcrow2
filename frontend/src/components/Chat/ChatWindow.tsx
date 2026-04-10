@@ -4,12 +4,17 @@ import { useCallback, useEffect, useRef, useState } from "react"
 
 import { OpenAPI } from "@/client"
 import { ConversationsService } from "@/client/chatService"
-import type { ArticleDownloadJob, ChatMessagePublic, HazardChemical, ToolCallInfo } from "@/client/chatTypes"
-import { ArticleDownloadsCard } from "./ArticleDownloadsCard"
+import type {
+  ArticleDownloadJob,
+  ChatMessagePublic,
+  HazardChemical,
+  ToolCallInfo,
+} from "@/client/chatTypes"
 import {
   type StreamingState,
   useConversationSSE,
 } from "@/hooks/useConversationSSE"
+import { ArticleDownloadsCard } from "./ArticleDownloadsCard"
 import { ChatInput } from "./ChatInput"
 import { HazardWarning } from "./HazardWarning"
 import { MarkdownContent } from "./MarkdownContent"
@@ -30,7 +35,10 @@ function ThinkingIndicator({ toolCalls = [] }: { toolCalls?: ToolCallInfo[] }) {
         {toolCalls.length > 0 && (
           <div className="w-full">
             {toolCalls.map((tc, i) => (
-              <ToolCallCard key={`${tc.name}-${JSON.stringify(tc.args)}-${i}`} toolCall={tc} />
+              <ToolCallCard
+                key={tc.call_id ?? `${tc.name}-${JSON.stringify(tc.args)}-${i}`}
+                toolCall={tc}
+              />
             ))}
           </div>
         )}
@@ -59,7 +67,10 @@ function StreamingBubble({
         {toolCalls.length > 0 && (
           <div className="w-full">
             {toolCalls.map((tc, i) => (
-              <ToolCallCard key={`${tc.name}-${JSON.stringify(tc.args)}-${i}`} toolCall={tc} />
+              <ToolCallCard
+                key={tc.call_id ?? `${tc.name}-${JSON.stringify(tc.args)}-${i}`}
+                toolCall={tc}
+              />
             ))}
           </div>
         )}
@@ -81,7 +92,9 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
   const [localMessages, setLocalMessages] = useState<ChatMessagePublic[]>([])
   const [pendingToolCalls, setPendingToolCalls] = useState<ToolCallInfo[]>([])
   const [hazardChemicals, setHazardChemicals] = useState<HazardChemical[]>([])
-  const [articleDownloadBatches, setArticleDownloadBatches] = useState<ArticleDownloadJob[][]>([])
+  const [articleDownloadBatches, setArticleDownloadBatches] = useState<
+    ArticleDownloadJob[][]
+  >([])
   const [sseEnabled, setSseEnabled] = useState(false)
   const [isRecovering, setIsRecovering] = useState(false)
   const messageCountBeforeSend = useRef(0)
@@ -110,9 +123,12 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
         typeof OpenAPI.TOKEN === "function"
           ? await OpenAPI.TOKEN({} as never)
           : (OpenAPI.TOKEN ?? "")
-      const resp = await fetch(`/api/v1/articles/conversations/${conversationId}/jobs`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const resp = await fetch(
+        `/api/v1/articles/conversations/${conversationId}/jobs`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      )
       if (!resp.ok) return [] as ArticleDownloadJob[]
       return resp.json() as Promise<ArticleDownloadJob[]>
     },
@@ -131,7 +147,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     setHazardChemicals([])
     setArticleDownloadBatches([])
     stopPolling()
-  }, [conversationId, stopPolling])
+  }, [stopPolling])
 
   useEffect(() => {
     return () => stopPolling()
@@ -141,9 +157,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     if (data?.data) {
       setLocalMessages((prev) => {
         const serverIds = new Set(data.data.map((m) => m.id))
-        const localOnly = prev.filter(
-          (m) => m.id && !serverIds.has(m.id),
-        )
+        const localOnly = prev.filter((m) => m.id && !serverIds.has(m.id))
         if (localOnly.length === 0) return data.data
         return [...data.data, ...localOnly]
       })
@@ -159,7 +173,7 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     )
   }, [])
 
-  useEffect(scrollToBottom, [localMessages, pendingToolCalls, scrollToBottom])
+  useEffect(scrollToBottom, [scrollToBottom])
 
   const handleSSEMessage = useCallback(
     (msg: ChatMessagePublic) => {
@@ -178,10 +192,13 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
 
   const handleToolCall = useCallback((tc: ToolCallInfo) => {
     setPendingToolCalls((prev) => {
-      const tcKey = `${tc.name}:${JSON.stringify(tc.args)}`
-      const existingIndex = prev.findIndex(
-        (item) => `${item.name}:${JSON.stringify(item.args)}` === tcKey,
-      )
+      const existingIndex = tc.call_id
+        ? prev.findIndex((item) => item.call_id === tc.call_id)
+        : prev.findIndex(
+            (item) =>
+              `${item.name}:${JSON.stringify(item.args)}` ===
+              `${tc.name}:${JSON.stringify(tc.args)}`,
+          )
 
       if (existingIndex === -1) return [...prev, tc]
 
@@ -224,6 +241,29 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     [conversationId, queryClient, stopPolling],
   )
 
+  const handleBackgroundUpdate = useCallback(() => {
+    setSseEnabled(true)
+    scrollToBottom()
+  }, [scrollToBottom])
+
+  const handleBackgroundError = useCallback(
+    (detail: string) => {
+      setLocalMessages((prev) => [
+        ...prev,
+        {
+          id: crypto.randomUUID(),
+          conversation_id: conversationId,
+          role: "background",
+          content: detail,
+          tool_calls: null,
+          created_at: null,
+          metadata: { variant: "error" },
+        },
+      ])
+    },
+    [conversationId],
+  )
+
   const { streamingState, streamingContent } = useConversationSSE({
     conversationId,
     enabled: sseEnabled,
@@ -232,6 +272,8 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
     onHazards: handleHazards,
     onArticleDownloads: handleArticleDownloads,
     onError: handleError,
+    onBackgroundUpdate: handleBackgroundUpdate,
+    onBackgroundError: handleBackgroundError,
   })
 
   const sendMutation = useMutation({
@@ -286,7 +328,11 @@ export function ChatWindow({ conversationId }: ChatWindowProps) {
             ))}
 
             {articleDownloadBatches.map((batch, i) => (
-              <ArticleDownloadsCard key={i} jobs={batch} />
+              <ArticleDownloadsCard
+                key={i}
+                jobs={batch}
+                conversationId={conversationId}
+              />
             ))}
 
             {(streamingState === "thinking" || isRecovering) && (

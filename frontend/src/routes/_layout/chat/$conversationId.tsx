@@ -18,8 +18,7 @@ function ConversationPage() {
 
   const { data: conversation, isLoading } = useQuery({
     queryKey: ["conversation", conversationId],
-    queryFn: () =>
-      ConversationsService.getConversation({ conversationId }),
+    queryFn: () => ConversationsService.getConversation({ conversationId }),
   })
 
   if (isLoading) {

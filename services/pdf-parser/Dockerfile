@@ -13,7 +13,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 COPY services/pdf-parser/pyproject.toml .
-COPY services/pdf-parser/app ./app
 
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv pip install --system .
@@ -21,6 +20,8 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Pre-download spaCy models
 RUN python -m spacy download en_core_web_sm && \
     python -m spacy download ru_core_news_sm
+
+COPY services/pdf-parser/app ./app
 
 EXPOSE 8300
 

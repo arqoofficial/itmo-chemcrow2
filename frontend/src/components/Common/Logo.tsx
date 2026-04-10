@@ -40,7 +40,9 @@ export function Logo({
         src={variant === "full" ? chemLogo : chemIcon}
         alt="ChemCrow2"
         className={cn(
-          variant === "full" ? "h-6 w-auto" : "size-6 rounded-full object-cover",
+          variant === "full"
+            ? "h-6 w-auto"
+            : "size-6 rounded-full object-cover",
           className,
         )}
       />

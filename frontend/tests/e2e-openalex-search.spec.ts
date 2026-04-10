@@ -28,7 +28,7 @@ test.describe("OpenAlex Search Feature", () => {
     if ((await loginButton.count()) > 0) {
       await loginButton.click()
       // Complete auth flow (adjust based on your auth implementation)
-      await page.waitForURL(/.*chat.*)
+      await page.waitForURL(/.*chat.*/)
     }
   })
 

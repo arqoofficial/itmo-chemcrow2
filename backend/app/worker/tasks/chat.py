@@ -201,7 +201,13 @@ def _process_streaming(
                     run_id = data.get("run_id", "")
                     args = pending_tool_args.get(run_id or name, {})
                     for tc in tool_calls:
-                        if tc.get("run_id") == run_id or tc["name"] == name:
+                        # Match by run_id when available; fall back to name only
+                        # when run_id is absent (avoids mismatching duplicate tool names).
+                        matched = (
+                            (run_id and tc.get("run_id") == run_id)
+                            or (not run_id and tc["name"] == name and "result" not in tc)
+                        )
+                        if matched:
                             tc["result"] = output
                             tc["status"] = "completed"
                             break

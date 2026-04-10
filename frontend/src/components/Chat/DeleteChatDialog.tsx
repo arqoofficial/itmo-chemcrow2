@@ -25,8 +25,7 @@ export function DeleteChatDialog({
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const params = useParams({ strict: false })
-  const activeId = (params as Record<string, string | undefined>)
-    .conversationId
+  const activeId = (params as Record<string, string | undefined>).conversationId
 
   const mutation = useMutation({
     mutationFn: () =>

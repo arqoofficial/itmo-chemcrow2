@@ -1,9 +1,9 @@
 import { Bot, User } from "lucide-react"
 import { useMemo } from "react"
-
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import type { ChatMessagePublic, ToolCallInfo } from "@/client/chatTypes"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
+import { BackgroundMessageCard } from "./BackgroundMessageCard"
 import { MarkdownContent } from "./MarkdownContent"
 import { ToolCallCard } from "./ToolCallCard"
 
@@ -23,10 +23,14 @@ export function MessageBubble({ message }: MessageBubbleProps) {
     }
   }, [message.tool_calls])
 
+  if (message.role === "background") {
+    return <BackgroundMessageCard message={message} />
+  }
+
   return (
     <div
       className={cn(
-          "flex gap-3 py-3",
+        "flex gap-3 py-3",
         isUser ? "flex-row-reverse" : "flex-row",
       )}
       data-testid={isUser ? "message-user" : "message-bot"}

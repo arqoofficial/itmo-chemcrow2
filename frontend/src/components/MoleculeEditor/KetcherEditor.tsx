@@ -1,5 +1,5 @@
-import { useCallback, useRef, useState } from "react"
 import { Editor } from "ketcher-react"
+import { useCallback, useRef, useState } from "react"
 import "ketcher-react/dist/index.css"
 import { StandaloneStructServiceProvider } from "ketcher-standalone"
 
@@ -41,18 +41,18 @@ export default function KetcherEditor() {
       }}
     >
       <div style={{ flex: 1, minHeight: 0, position: "relative" }}>
-      <Editor
-        staticResourcesUrl=""
-        structServiceProvider={structServiceProvider}
-        errorHandler={(message) => console.error("Ketcher error:", message)}
-        onInit={(ketcher: any) => {
-          ketcherRef.current = ketcher
-          ketcher.editor.subscribe("change", () => {
+        <Editor
+          staticResourcesUrl=""
+          structServiceProvider={structServiceProvider}
+          errorHandler={(message) => console.error("Ketcher error:", message)}
+          onInit={(ketcher: any) => {
+            ketcherRef.current = ketcher
+            ketcher.editor.subscribe("change", () => {
+              void updateSmiles()
+            })
             void updateSmiles()
-          })
-          void updateSmiles()
-        }}
-      />
+          }}
+        />
       </div>
       <div
         style={{

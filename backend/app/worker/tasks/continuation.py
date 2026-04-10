@@ -221,9 +221,14 @@ def run_openalex_search(
 ) -> None:
     """Call OpenAlex API blocking search, save background message, dispatch continuation.
 
+    Timeout: 30.0s (vs 150.0s for S2) because OpenAlex API is faster.
+    countdown=1 delay before continuation allows frontend time to re-enable SSE.
+
     original_message_id: if set, update or delete that error card instead of creating a new one.
     dedup_key: Redis key to release when this task finishes (prevents duplicate dispatches).
     """
+    from app.core.config import settings
+
     logger.info("run_openalex_search started conv=%s query=%r", conversation_id, query)
     r = get_sync_redis()
 
@@ -232,13 +237,33 @@ def run_openalex_search(
         try:
             with httpx.Client(timeout=30.0) as client:
                 resp = client.post(
-                    f"http://backend:8000/internal/openalex-search",
+                    f"{settings.BACKEND_INTERNAL_URL}/internal/openalex-search",
                     json={"query": query, "max_results": max_results},
                 )
                 resp.raise_for_status()
             papers = resp.json().get("papers", [])
-        except Exception:
-            logger.exception("OpenAlex search failed for conv=%s", conversation_id)
+        except httpx.TimeoutException:
+            logger.error("OpenAlex search timeout after 30s for conv=%s query=%r", conversation_id, query)
+            save_background_message(
+                conversation_id,
+                f'OpenAlex search for "{query}" timed out. Please try again.',
+                variant="error",
+                extra_metadata={"query": query},
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'OpenAlex search timed out. Please try again.',
+                "retry_available": True,
+            })
+            return
+        except httpx.HTTPStatusError as exc:
+            logger.error(
+                "OpenAlex backend error %d for conv=%s query=%r",
+                exc.response.status_code,
+                conversation_id,
+                query,
+            )
             save_background_message(
                 conversation_id,
                 f'OpenAlex search for "{query}" failed. Please try again.',
@@ -248,7 +273,27 @@ def run_openalex_search(
             )
             _publish_sync(conversation_id, {
                 "event": "background_error",
-                "detail": f'OpenAlex search for "{query}" failed. Please try again.',
+                "detail": f'OpenAlex search failed. Please try again.',
+                "retry_available": True,
+            })
+            return
+        except httpx.RequestError as exc:
+            logger.error(
+                "OpenAlex backend connection failed for conv=%s query=%r: %s",
+                conversation_id,
+                query,
+                exc,
+            )
+            save_background_message(
+                conversation_id,
+                f'OpenAlex search for "{query}" failed (backend unreachable). Please try again.',
+                variant="error",
+                extra_metadata={"query": query},
+                replace_message_id=original_message_id,
+            )
+            _publish_sync(conversation_id, {
+                "event": "background_error",
+                "detail": f'OpenAlex search failed. Please try again.',
                 "retry_available": True,
             })
             return
@@ -419,11 +464,16 @@ def _trigger_rag_continuation(conversation_id: str, completed_job_ids: list[str]
     """Build PAPERS_INGESTED message from Redis metadata and dispatch continuation.
 
     completed_job_ids is optional. When None (manual trigger), uses generic message.
+    Searches both s2_paper_meta and openalex_paper_meta namespaces for metadata.
     """
     r = get_sync_redis()
     lines = []
     for i, job_id in enumerate(completed_job_ids or [], 1):
+        # Try both S2 and OpenAlex namespaces (supports mixed searches)
         raw = r.get(f"s2_paper_meta:{job_id}")
+        if not raw:
+            raw = r.get(f"openalex_paper_meta:{job_id}")
+
         if raw:
             p = json.loads(raw)
             doi = p.get("doi") or "N/A"

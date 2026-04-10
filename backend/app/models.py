@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from pydantic import EmailStr
+from pydantic import EmailStr, model_validator
 from sqlalchemy import Column, DateTime, JSON, Text
 from sqlmodel import Field, Relationship, SQLModel
 
@@ -194,6 +194,25 @@ class ChatMessagePublic(SQLModel):
     tool_calls: str | None = None
     metadata: dict | None = None
     created_at: datetime | None = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def _remap_msg_metadata(cls, data: object) -> object:
+        """Map msg_metadata (ORM attr) → metadata (public field name)."""
+        if hasattr(data, "msg_metadata"):
+            return {
+                "id": data.id,  # type: ignore[union-attr]
+                "conversation_id": data.conversation_id,  # type: ignore[union-attr]
+                "role": data.role,  # type: ignore[union-attr]
+                "content": data.content,  # type: ignore[union-attr]
+                "tool_calls": data.tool_calls,  # type: ignore[union-attr]
+                "metadata": data.msg_metadata,  # type: ignore[union-attr]
+                "created_at": data.created_at,  # type: ignore[union-attr]
+            }
+        if isinstance(data, dict) and "msg_metadata" in data:
+            data = dict(data)
+            data["metadata"] = data.pop("msg_metadata")
+        return data
 
 
 class ChatMessagesPublic(SQLModel):

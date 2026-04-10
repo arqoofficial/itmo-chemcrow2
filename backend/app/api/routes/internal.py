@@ -46,11 +46,20 @@ def queue_background_tool(payload: QueueBackgroundToolRequest) -> dict:
     elif payload.type == "openalex_search":
         # Persist query for retry support (24h TTL)
         r = get_sync_redis()
-        r.set(
-            f"openalex_last_query:{payload.conversation_id}",
-            payload.query,
-            ex=24 * 3600,
-        )
+        try:
+            r.set(
+                f"openalex_last_query:{payload.conversation_id}",
+                payload.query,
+                ex=24 * 3600,
+            )
+        except Exception as exc:
+            logger.warning(
+                "Failed to cache OpenAlex query for retry conv=%s: %s",
+                payload.conversation_id,
+                exc,
+            )
+            # Don't fail the entire request — queue task anyway
+            # Retry may fail later with "query expired" but that's acceptable
         run_openalex_search.delay(payload.conversation_id, payload.query, payload.max_results)
         logger.info("Queued run_openalex_search for conv=%s query=%r", payload.conversation_id, payload.query)
         return {"status": "queued"}
@@ -65,35 +74,51 @@ class OpenAlexSearchRequest(BaseModel):
 
 @router.post("/openalex-search")
 def openalex_search(payload: OpenAlexSearchRequest) -> dict:
-    """Blocking call to OpenAlex API. Called by Celery run_openalex_search task."""
+    """Blocking call to OpenAlex API. Called by Celery run_openalex_search task.
+
+    Returns error key in response if API key not configured or search fails.
+    """
     import httpx
+    import json
 
     from app.core.config import settings
 
     if not settings.OPENALEX_API_KEY:
-        logger.warning("OpenAlex API search called but API key not configured")
-        return {"papers": []}
+        logger.error("OpenAlex API search called but OPENALEX_API_KEY not configured")
+        return {
+            "papers": [],
+            "error": "OpenAlex API key not configured. Search cannot proceed.",
+        }
 
     try:
         url = f"{settings.OPENALEX_API_BASE}/works"
         params = {
             "search": payload.query,
             "per_page": payload.max_results,
-            "api_key": settings.OPENALEX_API_KEY,
         }
-        resp = httpx.get(url, params=params, timeout=15.0)
+        headers = {
+            "Authorization": f"Bearer {settings.OPENALEX_API_KEY}",
+        }
+        resp = httpx.get(url, params=params, headers=headers, timeout=15.0)
         resp.raise_for_status()
 
         data = resp.json()
         papers = []
 
         for result in data.get("results", []):
+            # Safely extract author names with fallback
+            authors = []
+            for auth in result.get("authorships", []):
+                author = auth.get("author", {})
+                name = author.get("display_name", "Unknown")
+                if name:
+                    authors.append(name)
+            authors_str = ", ".join(authors) or "Unknown"
+
             paper = {
                 "doi": result.get("doi"),
                 "title": result.get("title", "Untitled"),
-                "authors": ", ".join(
-                    [auth["author"]["display_name"] for auth in result.get("authorships", [])]
-                ) or "Unknown",
+                "authors": authors_str,
                 "year": result.get("publication_year", "N/A"),
                 "abstract": result.get("abstract") or "",
                 "citation_count": result.get("cited_by_count", 0),
@@ -103,9 +128,28 @@ def openalex_search(payload: OpenAlexSearchRequest) -> dict:
         logger.info("OpenAlex search succeeded query=%r papers=%d", payload.query, len(papers))
         return {"papers": papers}
 
+    except httpx.TimeoutException as exc:
+        logger.error("OpenAlex HTTP timeout after 15s for query=%r", payload.query)
+        return {
+            "papers": [],
+            "error": "OpenAlex search timed out. Please try again.",
+        }
+    except httpx.HTTPStatusError as exc:
+        logger.error(
+            "OpenAlex HTTP error %d for query=%r",
+            exc.response.status_code,
+            payload.query,
+        )
+        return {
+            "papers": [],
+            "error": f"OpenAlex API returned error {exc.response.status_code}",
+        }
     except httpx.RequestError as exc:
-        logger.exception("OpenAlex HTTP request failed for query=%r", payload.query)
-        return {"papers": [], "error": f"Connection error: {exc}"}
-    except Exception:
-        logger.exception("OpenAlex search failed for query=%r", payload.query)
-        return {"papers": [], "error": "Search failed"}
+        logger.error("OpenAlex HTTP connection failed for query=%r: %s", payload.query, exc)
+        return {"papers": [], "error": "Connection error: could not reach OpenAlex"}
+    except json.JSONDecodeError as exc:
+        logger.error("OpenAlex returned invalid JSON for query=%r", payload.query)
+        return {
+            "papers": [],
+            "error": "OpenAlex returned invalid response format",
+        }
