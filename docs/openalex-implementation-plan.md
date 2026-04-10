@@ -129,12 +129,23 @@ Add OpenAlex search feature as a complementary literature search tool, following
 
 ## Deduplication & State Management
 
-### Redis Keys
-- `openalex_last_query:{conversation_id}` (24h TTL)
-  - Stores last search query for retry
-- `openalex_search_active:{conversation_id}:{query_hash}` (200s TTL)
-  - Prevents concurrent identical searches
-  - Hash is first 16 chars of SHA256(query.lower().strip())
+### Redis Keys and Rationale
+
+**`openalex_last_query:{conversation_id}`** (24h TTL)
+- **Purpose:** Stores last search query for retry without user re-typing
+- **Rationale:** 24h aligns with typical user session duration; cleaned up automatically after a day
+- **Design:** Single-value cache per conversation; single key eliminates query lookup complexity
+
+**`openalex_search_active:{conversation_id}:{query_hash}`** (200s TTL)
+- **Purpose:** Prevents concurrent identical searches (deduplication)
+- **Rationale:** 200s = 2× typical search latency (30s endpoint timeout + queue/network overhead)
+- **Design:** Hash is first 16 chars of SHA256(query.lower().strip()); enables case-insensitive dedup
+- **Behavior:** Second identical request gets 409 Conflict; user sees "already in progress"
+
+**`openalex_paper_meta:{job_id}`** (48h TTL, stored during search, used during RAG continuation)
+- **Purpose:** Caches paper metadata (DOI, title, authors, year) for display during RAG follow-up
+- **Rationale:** 48h ensures metadata available throughout multi-day research session; aligns with article retention policy
+- **Design:** Stored immediately after OpenAlex API call; retrieved when articles finish parsing
 
 ### HTTP Status Codes
 - 202: Accepted (search queued)

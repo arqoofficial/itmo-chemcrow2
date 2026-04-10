@@ -16,9 +16,10 @@ https://api.openalex.org
 ```
 
 ### Authentication
-- Free API key from https://openalex.org/settings/api
-- Passed as query parameter: `?api_key=YOUR_KEY`
-- Cost: $1/day free, additional usage available
+- Free API; no authentication required for basic usage (2000 requests/min per IP)
+- Optional API key from https://openalex.org/settings/api for higher query priorities
+- Passed via Authorization header: `Authorization: Bearer YOUR_KEY`
+- Cost: Completely free; no usage limits or tiers
 
 ### Search Endpoint
 ```
