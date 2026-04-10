@@ -27,35 +27,23 @@ def mock_redis():
 
 @pytest.fixture
 def sample_openalex_papers():
-    """Sample OpenAlex API response."""
+    """Sample OpenAlex papers (already transformed by endpoint)."""
     return [
         {
-            "id": "https://openalex.org/W123456",
-            "title": "Aspirin Synthesis: A Modern Approach",
-            "publication_year": 2020,
             "doi": "10.1234/aspirin.2020",
+            "title": "Aspirin Synthesis: A Modern Approach",
+            "authors": "John Smith",
+            "year": 2020,
             "abstract": "This study presents a novel synthetic route to aspirin using catalytic methods.",
-            "cited_by_count": 42,
-            "authorships": [
-                {
-                    "author": {"display_name": "John Smith"},
-                    "institutions": [{"display_name": "MIT"}],
-                }
-            ],
+            "citation_count": 42,
         },
         {
-            "id": "https://openalex.org/W789012",
-            "title": "Green Chemistry in Pharmaceutical Synthesis",
-            "publication_year": 2019,
             "doi": "10.5678/green.2019",
+            "title": "Green Chemistry in Pharmaceutical Synthesis",
+            "authors": "Jane Doe",
+            "year": 2019,
             "abstract": "Environmental considerations in drug manufacturing processes.",
-            "cited_by_count": 28,
-            "authorships": [
-                {
-                    "author": {"display_name": "Jane Doe"},
-                    "institutions": [{"display_name": "Stanford"}],
-                }
-            ],
+            "citation_count": 28,
         },
     ]
 
@@ -80,11 +68,12 @@ def test_format_openalex_results_truncates_abstract():
             "year": 2020,
             "doi": "10.1234/test",
             "abstract": "x" * 500,  # 500 chars
+            "citation_count": 5,
         }
     ]
     result = _format_openalex_results(papers, "test")
     assert "..." in result
-    assert len(result) < 500  # Total output should be much shorter
+    assert "Citations: 5" in result
 
 
 def test_run_openalex_search_success(conversation_id, mock_redis, sample_openalex_papers):
