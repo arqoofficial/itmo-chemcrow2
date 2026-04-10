@@ -12,6 +12,7 @@ import { test, expect, Page } from "@playwright/test"
  * 6. Papers are submitted for download/parsing
  */
 
+const TIMEOUT_10S = 10000
 const TIMEOUT_30S = 30000
 const TIMEOUT_60S = 60000
 
