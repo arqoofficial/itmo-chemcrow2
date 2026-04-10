@@ -118,12 +118,12 @@ def openalex_search(query: str, max_results: int = 5) -> str:
     from app.config import settings
     from app.tools.rag import _CURRENT_CONV_ID
 
-    if not settings.OPENALEX_API_KEY:
-        return "OpenAlex search unavailable: API key not configured. Using Semantic Scholar instead."
-
     conversation_id = _CURRENT_CONV_ID.get(None)
     if not conversation_id:
         return "OpenAlex search unavailable: no conversation context."
+
+    if not settings.OPENALEX_API_KEY:
+        return "OpenAlex search unavailable: API key not configured. Using Semantic Scholar instead."
 
     try:
         httpx.post(
